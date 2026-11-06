@@ -1,232 +1,95 @@
-
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#f7f7f2">
-<title>Daily English - 每日英语</title>
-
+<meta name="description" content="每天 20 个单词，结合间隔复习、听力与口语练习的英语学习工具。">
+<title>Daily English · 每日英语</title>
 <style>
-* {
-  box-sizing: border-box;
-}
-
-body {
-  margin: 0;
-  padding: 25px 18px;
-  background: #f7f7f2;
-  color: #202b20;
-  font-family: Arial, sans-serif;
-}
-
-main {
-  max-width: 500px;
-  margin: 0 auto;
-}
-
-header {
-  font-size: 23px;
-  font-weight: bold;
-  margin-bottom: 35px;
-}
-
-.subtitle {
-  color: #888;
-  font-size: 14px;
-}
-
-h1 {
-  font-size: 28px;
-  line-height: 1.4;
-}
-
-.card {
-  background: white;
-  border-radius: 22px;
-  padding: 30px 20px;
-  text-align: center;
-  margin-top: 25px;
-  box-shadow: 0 5px 25px #00000008;
-}
-
-.word {
-  font-size: 38px;
-  font-weight: bold;
-  margin: 30px 0 10px;
-}
-
-.phonetic {
-  color: #999;
-}
-
-.meaning {
-  font-size: 23px;
-  margin-top: 25px;
-  font-weight: bold;
-}
-
-.example {
-  margin-top: 15px;
-  line-height: 1.8;
-  color: #777;
-}
-
-button {
-  width: 100%;
-  border: none;
-  padding: 16px;
-  border-radius: 13px;
-  font-size: 16px;
-  margin-top: 15px;
-  cursor: pointer;
-}
-
-.primary {
-  background: #263b29;
-  color: white;
-}
-
-.secondary {
-  background: #e5eee3;
-  color: #426b45;
-}
-
-.hidden {
-  display: none;
-}
-
-.progress {
-  background: #e5e8df;
-  height: 7px;
-  border-radius: 10px;
-  margin-top: 20px;
-  overflow: hidden;
-}
-
-.bar {
-  height: 100%;
-  width: 0%;
-  background: #577b5b;
-}
-
-.stats {
-  display: flex;
-  justify-content: space-around;
-  margin-top: 25px;
-  color: #777;
-  font-size: 14px;
-}
+:root{--ink:#202b20;--muted:#788078;--green:#263b29;--green-2:#577b5b;--pale:#e5eee3;--paper:#f7f7f2;--line:#e9ece5;--white:#fff;--shadow:0 10px 35px #1727170b}*{box-sizing:border-box}body{margin:0;background:var(--paper);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;padding:0 16px 96px}button,input,select,textarea{font:inherit}button{cursor:pointer}button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:3px solid #9dbb9c;outline-offset:2px}.shell{max-width:760px;margin:0 auto}.topbar{display:flex;align-items:center;justify-content:space-between;padding:22px 2px 14px}.brand{font-size:21px;font-weight:800;letter-spacing:-.5px}.brand span{color:var(--green-2)}.date-label{font-size:12px;color:var(--muted)}.hero{padding:10px 2px 4px}.eyebrow{font-size:12px;color:var(--green-2);font-weight:750;letter-spacing:1.2px}.hero h1{font-size:clamp(25px,6vw,34px);line-height:1.28;margin:10px 0 8px;letter-spacing:-.7px}.hero p{margin:0;color:var(--muted);font-size:14px;line-height:1.6}.stats-row{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:20px 0}.stat{background:#fff;border-radius:16px;padding:13px 14px;box-shadow:var(--shadow)}.stat strong{display:block;font-size:21px}.stat span{font-size:12px;color:var(--muted)}.progress-wrap{display:flex;align-items:center;gap:12px;margin:18px 0 8px;color:var(--muted);font-size:12px}.progress{height:8px;flex:1;background:#e5e8df;border-radius:99px;overflow:hidden}.bar{height:100%;width:0;background:var(--green-2);border-radius:99px;transition:width .25s}.card{background:var(--white);border-radius:22px;padding:24px 20px;margin-top:16px;box-shadow:var(--shadow)}.word-card{text-align:center;padding:24px 20px 22px}.word-top{display:flex;justify-content:space-between;align-items:center;color:var(--muted);font-size:12px}.tag{display:inline-flex;padding:5px 9px;border-radius:99px;background:#f0f3ed;color:#5d705e;font-size:11px;font-weight:700}.word-button{border:0;background:transparent;color:var(--ink);font-size:clamp(34px,9vw,46px);font-weight:800;letter-spacing:-1px;margin:20px 0 4px;padding:0}.phonetic{color:#8a928a;font-size:14px}.sound{border:0;background:var(--pale);color:var(--green);border-radius:50%;width:42px;height:42px;font-size:19px;vertical-align:middle;margin-left:10px}.answer{margin-top:22px;padding-top:18px;border-top:1px solid var(--line);text-align:left}.meaning{font-size:20px;font-weight:750;text-align:center;margin:0 0 15px}.examples{display:grid;gap:12px}.example{padding:12px 13px;background:#fafbf8;border-radius:13px;font-size:14px;line-height:1.6}.example p{margin:0}.example .zh{color:var(--muted);margin-top:3px}.example-label{font-size:10px;color:var(--green-2);font-weight:750;letter-spacing:.5px;margin-bottom:4px}.actions{display:grid;gap:10px;margin-top:16px}.btn{border:0;border-radius:13px;padding:14px 16px;font-weight:700}.btn-primary{background:var(--green);color:white}.btn-secondary{background:var(--pale);color:#426b45}.btn-quiet{background:#f1f3ef;color:#536153}.rating-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:13px}.rating{border:1px solid var(--line);background:#fff;border-radius:12px;padding:11px 5px;color:var(--ink);font-size:12px;font-weight:700}.rating small{display:block;color:var(--muted);font-weight:500;margin-top:3px;font-size:10px}.rating:hover{border-color:#9bb39b;background:#f8faf6}.section-title{font-size:20px;margin:0 0 6px}.section-sub{color:var(--muted);font-size:13px;line-height:1.6;margin:0 0 16px}.nav{position:fixed;z-index:5;bottom:0;left:0;right:0;padding:9px 10px calc(9px + env(safe-area-inset-bottom));background:#fffffff2;backdrop-filter:blur(14px);border-top:1px solid var(--line)}.nav-inner{max-width:760px;margin:auto;display:grid;grid-template-columns:repeat(5,1fr);gap:4px}.nav button{border:0;background:transparent;color:#818981;border-radius:12px;padding:7px 2px;font-size:10px}.nav button b{display:block;font-size:19px;font-weight:500;margin-bottom:2px}.nav button.active{background:#edf3ea;color:var(--green);font-weight:750}.panel{margin-top:16px}.row{display:flex;align-items:center;justify-content:space-between;gap:10px}.field{width:100%;border:1px solid #dfe5dc;background:white;border-radius:12px;padding:12px;color:var(--ink)}.form-grid{display:grid;gap:12px}.label{display:block;font-weight:700;font-size:12px;margin:0 0 6px}.two-col{display:grid;grid-template-columns:1fr 1fr;gap:10px}.choice-list{display:grid;gap:9px}.choice{width:100%;text-align:left;border:1px solid var(--line);background:white;border-radius:13px;padding:13px;color:var(--ink)}.choice:disabled{cursor:default}.choice.correct{border-color:#88ad87;background:#edf6eb}.choice.wrong{border-color:#d4a39c;background:#fff2ef}.feedback{padding:12px;border-radius:12px;margin-top:12px;font-size:14px}.good{background:#edf6eb;color:#345a34}.bad{background:#fff2ef;color:#8a453d}.listen-word{font-size:26px;font-weight:800;letter-spacing:4px;text-align:center;padding:20px 0}.tabs{display:flex;gap:8px;margin:10px 0 14px}.pill{border:0;background:#edf0ea;padding:9px 13px;border-radius:99px;font-size:12px;color:#586358}.pill.active{background:var(--green);color:#fff}.phrase-item{padding:14px 0;border-bottom:1px solid var(--line)}.phrase-item:last-child{border-bottom:0}.phrase-item strong{display:block}.phrase-item p{margin:5px 0 0;color:var(--muted);font-size:13px;line-height:1.5}.danger{color:#a3483f;background:#fff0ee}.muted{color:var(--muted)}.small{font-size:12px}.hidden{display:none!important}.empty{text-align:center;padding:30px 12px;color:var(--muted)}.toggle-row{display:flex;align-items:center;justify-content:space-between;padding:13px 0;border-bottom:1px solid var(--line)}.toggle-row input{width:20px;height:20px;accent-color:var(--green)}.toast{position:fixed;left:50%;bottom:88px;transform:translateX(-50%);background:#263b29;color:white;border-radius:99px;padding:11px 16px;font-size:13px;z-index:10;box-shadow:var(--shadow);white-space:nowrap}.notice{font-size:12px;color:var(--muted);line-height:1.6}.error-text{color:#98483e;font-size:13px}@media(min-width:650px){body{padding-top:8px}.main-grid{display:grid;grid-template-columns:1fr 270px;gap:16px;align-items:start}.sidebar .card{margin-top:16px}.actions{grid-template-columns:1fr 1fr}.word-card .actions{grid-template-columns:1fr}.nav{padding-top:10px}}@media(max-width:380px){body{padding-left:12px;padding-right:12px}.card{padding:19px 15px}.rating-grid{gap:5px}.rating{font-size:11px;padding:10px 3px}.stat{padding:11px 9px}}
 </style>
 </head>
-
 <body>
-<main>
-
-<header>Daily English.</header>
-
-<p class="subtitle">TODAY'S PRACTICE · 今日英语练习</p>
-
-<h1>每天进步一点点，<br>让英语成为你的习惯。</h1>
-
-<div class="progress">
-  <div class="bar" id="bar"></div>
+<div class="shell">
+  <div class="topbar"><div class="brand">Daily <span>English.</span></div><div class="date-label" id="dateLabel"></div></div>
+  <div class="hero"><div class="eyebrow">A LITTLE EVERY DAY · 每日英语</div><h1>让英语，成为每天的好习惯。</h1><p id="planLine">为你安排今天的学习计划</p></div>
+  <div class="stats-row" id="summaryStats"></div>
+  <div id="app"></div>
 </div>
-
-<div class="card">
-
-  <div id="count">1 / 10</div>
-
-  <div class="word" id="word">Actually</div>
-
-  <div class="phonetic" id="phonetic">
-    /ˈæk.tʃu.ə.li/
-  </div>
-
-  <div id="answer" class="hidden">
-    <div class="meaning" id="meaning"></div>
-    <div class="example" id="example"></div>
-  </div>
-
-</div>
-
-<button class="primary" id="show">
-显示中文释义
-</button>
-
-<button class="secondary" id="next">
-下一个单词 →
-</button>
-
-<div class="stats">
-  <div>已学习：<strong id="learned">0</strong></div>
-  <div>剩余：<strong id="remaining">10</strong></div>
-</div>
-
-</main>
-
+<nav class="nav"><div class="nav-inner" id="nav">
+  <button data-view="learn" class="active"><b>📖</b>单词</button><button data-view="listen"><b>🎧</b>听力</button><button data-view="speak"><b>🗣️</b>口语</button><button data-view="phrases"><b>✍️</b>我的词组</button><button data-view="stats"><b>📊</b>记录</button>
+</div></nav>
+<div id="toast" class="toast hidden" role="status"></div>
 <script>
-const words = [
-  ["Actually","/ˈæk.tʃu.ə.li/","实际上；事实上","Actually, I agree with you.","事实上，我同意你的看法。"],
-  ["Improve","/ɪmˈpruːv/","提高；改善","I want to improve my English.","我想提高我的英语。"],
-  ["Opportunity","/ˌɑː.pɚˈtuː.nə.t̬i/","机会","This is a good opportunity.","这是一个好机会。"],
-  ["Confident","/ˈkɑːn.fə.dənt/","自信的","Be confident when you speak.","说英语时要自信。"],
-  ["Experience","/ɪkˈspɪr.i.əns/","经验；经历","Learning takes experience.","学习需要积累经验。"],
-  ["Decision","/dɪˈsɪʒ.ən/","决定","It was a difficult decision.","那是一个艰难的决定。"],
-  ["Available","/əˈveɪ.lə.bəl/","有空的；可获得的","Are you available tomorrow?","你明天有空吗？"],
-  ["Probably","/ˈprɑː.bə.bli/","很可能；大概","I will probably go tomorrow.","我明天很可能会去。"],
-  ["Habit","/ˈhæb.ɪt/","习惯","Reading is a good habit.","阅读是一个好习惯。"],
-  ["Focus","/ˈfoʊ.kəs/","专注","Focus on your goals.","专注于你的目标。"]
+'use strict';
+const SEED_WORDS = [
+ {id:'actually',word:'Actually',phonetic:'/ˈæk.tʃu.ə.li/',meaning:'实际上；事实上',level:'初级',category:'常见词',examples:[['Actually, I’m free this afternoon.','事实上，我今天下午有空。'],['It was actually easier than I expected.','这其实比我想象的容易。'],['Actually, could we get the check?','不好意思，我们可以结账了吗？']]},
+ {id:'improve',word:'Improve',phonetic:'/ɪmˈpruːv/',meaning:'提高；改善',level:'初级',category:'常见词',examples:[['I’m trying to improve my English.','我正在努力提高英语。'],['A short walk can improve your mood.','短暂散步能改善心情。'],['We need to improve the service.','我们需要改进服务。']]},
+ {id:'habit',word:'Habit',phonetic:'/ˈhæb.ɪt/',meaning:'习惯',level:'初级',category:'常见词',examples:[['I have a habit of reading before bed.','我有睡前阅读的习惯。'],['Drinking water in the morning is a healthy habit.','早上喝水是个健康习惯。'],['It takes time to build a new habit.','养成新习惯需要时间。']]},
+ {id:'focus',word:'Focus',phonetic:'/ˈfoʊ.kəs/',meaning:'专注；焦点',level:'初级',category:'常见词',examples:[['I can’t focus with all this noise.','这么吵我没法集中注意力。'],['Let’s focus on the main problem.','我们把注意力放在主要问题上吧。'],['This camera can focus quickly.','这台相机对焦很快。']]},
+ {id:'available',word:'Available',phonetic:'/əˈveɪ.lə.bəl/',meaning:'有空的；可获得的',level:'初级',category:'常见词',examples:[['Are you available for lunch tomorrow?','你明天有空一起吃午饭吗？'],['Is this seat available?','这个座位有人吗？'],['Tickets are available online.','门票可以在线购买。']]},
+ {id:'probably',word:'Probably',phonetic:'/ˈprɑː.bə.bli/',meaning:'很可能；大概',level:'初级',category:'常见词',examples:[['I’ll probably take the train.','我大概会坐火车。'],['She’s probably still at work.','她很可能还在上班。'],['It will probably rain tonight.','今晚可能会下雨。']]},
+ {id:'decide',word:'Decide',phonetic:'/dɪˈsaɪd/',meaning:'决定',level:'初级',category:'常见词',examples:[['I can’t decide what to order.','我不知道该点什么。'],['We decided to stay home.','我们决定待在家里。'],['Have you decided on a date?','你定好日期了吗？']]},
+ {id:'experience',word:'Experience',phonetic:'/ɪkˈspɪr.i.əns/',meaning:'经验；经历',level:'初级',category:'常见词',examples:[['Do you have experience with customer service?','你有客户服务方面的经验吗？'],['It was a wonderful travel experience.','那是一次很棒的旅行经历。'],['You learn a lot from experience.','你能从经验中学到很多。']]},
+ {id:'confident',word:'Confident',phonetic:'/ˈkɑːn.fə.dənt/',meaning:'自信的；确信的',level:'初级',category:'常见词',examples:[['I feel more confident speaking English now.','我现在说英语更有自信了。'],['She’s confident about the interview.','她对这次面试很有信心。'],['Be confident and speak clearly.','自信一点，清楚地表达。']]},
+ {id:'opportunity',word:'Opportunity',phonetic:'/ˌɑː.pɚˈtuː.nə.t̬i/',meaning:'机会',level:'初级',category:'常见词',examples:[['This is a great opportunity to learn.','这是一个很好的学习机会。'],['I had the opportunity to meet the team.','我有机会见到了团队。'],['Thank you for giving me this opportunity.','谢谢你给我这个机会。']]},
+ {id:'prepare',word:'Prepare',phonetic:'/prɪˈper/',meaning:'准备；预备',level:'初级',category:'常见词',examples:[['I need to prepare for my meeting.','我得为会议做准备。'],['We prepared dinner together.','我们一起准备了晚餐。'],['Please prepare your passport before the trip.','旅行前请准备好护照。']]},
+ {id:'comfortable',word:'Comfortable',phonetic:'/ˈkʌm.fɚ.t̬ə.bəl/',meaning:'舒服的；自在的',level:'初级',category:'常见词',examples:[['These shoes are really comfortable.','这双鞋真的很舒服。'],['Make yourself comfortable.','别客气，请随意。'],['I’m not comfortable sharing that information.','我不太愿意分享那个信息。']]},
+ {id:'consider',word:'Consider',phonetic:'/kənˈsɪd.ɚ/',meaning:'考虑；认为',level:'中级',category:'常见词',examples:[['I’ll consider your suggestion.','我会考虑你的建议。'],['We’re considering moving closer to work.','我们在考虑搬到离公司近一点的地方。'],['Consider it a small thank-you.','就把它当作一点小小的谢意吧。']]},
+ {id:'recommend',word:'Recommend',phonetic:'/ˌrek.əˈmend/',meaning:'推荐；建议',level:'中级',category:'常见词',examples:[['Can you recommend a good coffee shop?','你能推荐一家不错的咖啡店吗？'],['I highly recommend this book.','我强烈推荐这本书。'],['The doctor recommended more exercise.','医生建议多锻炼。']]},
+ {id:'require',word:'Require',phonetic:'/rɪˈkwaɪr/',meaning:'需要；要求',level:'中级',category:'常见词',examples:[['This job requires strong communication skills.','这份工作需要很强的沟通能力。'],['The recipe requires two eggs.','这个食谱需要两个鸡蛋。'],['No experience is required.','无需经验。']]},
+ {id:'effective',word:'Effective',phonetic:'/ɪˈfek.tɪv/',meaning:'有效的',level:'中级',category:'词缀：-ive',examples:[['This is an effective way to save time.','这是节省时间的有效方法。'],['The new medicine was effective.','这种新药很有效。'],['We need a more effective plan.','我们需要一个更有效的计划。']]},
+ {id:'careless',word:'Careless',phonetic:'/ˈker.ləs/',meaning:'粗心的；不小心的',level:'中级',category:'词缀：-less',examples:[['I made a careless mistake on the form.','我在表格上犯了个粗心的错误。'],['Don’t be careless with your keys.','别把钥匙随手乱放。'],['One careless comment hurt her feelings.','一句无心的话伤了她的心。']]},
+ {id:'preview',word:'Preview',phonetic:'/ˈpriː.vjuː/',meaning:'预览；预告',level:'中级',category:'词缀：pre-',examples:[['Can I preview the presentation first?','我可以先预览一下演示文稿吗？'],['The trailer gives a preview of the movie.','预告片展示了电影的大致内容。'],['We got a preview of the new collection.','我们提前看到了新系列。']]},
+ {id:'rewrite',word:'Rewrite',phonetic:'/ˌriːˈraɪt/',meaning:'重写；改写',level:'中级',category:'词缀：re-',examples:[['I need to rewrite this email.','我需要重写这封邮件。'],['Could you rewrite the last paragraph?','你能改写最后一段吗？'],['She rewrote her notes after class.','她课后重新整理了笔记。']]},
+ {id:'transport',word:'Transport',phonetic:'/ˈtræn.spɔːrt/',meaning:'交通运输；运送',level:'中级',category:'词根：port（携带）',examples:[['Public transport is easy to use here.','这里的公共交通很方便。'],['The company transports fresh food overnight.','这家公司夜间运送新鲜食品。'],['How will we transport the furniture?','我们怎么运送这些家具？']]},
+ {id:'predict',word:'Predict',phonetic:'/prɪˈdɪkt/',meaning:'预测；预言',level:'中级',category:'词根：dict（说）',examples:[['It’s hard to predict the weather.','天气很难预测。'],['Experts predict prices will rise.','专家预测价格会上涨。'],['I didn’t predict such a busy day.','我没想到今天会这么忙。']]},
+ {id:'flexible',word:'Flexible',phonetic:'/ˈflek.sə.bəl/',meaning:'灵活的；可变通的',level:'高级',category:'词缀：-ible',examples:[['My work schedule is flexible.','我的工作时间比较灵活。'],['We need to be flexible about the location.','地点方面我们需要灵活一些。'],['This material is strong but flexible.','这种材料结实又有韧性。']]},
+ {id:'efficient',word:'Efficient',phonetic:'/ɪˈfɪʃ.ənt/',meaning:'效率高的；高效的',level:'高级',category:'词缀：-ent',examples:[['The new system is much more efficient.','新系统效率高多了。'],['She’s an efficient and thoughtful manager.','她是一位高效又周到的经理。'],['Taking the express train is more efficient.','坐特快列车更省时间。']]},
+ {id:'negotiate',word:'Negotiate',phonetic:'/nɪˈɡoʊ.ʃi.eɪt/',meaning:'协商；谈判',level:'高级',category:'常见词',examples:[['We need to negotiate a better price.','我们需要协商一个更好的价格。'],['They negotiated the terms of the contract.','他们协商了合同条款。'],['I’m willing to negotiate on the delivery date.','我愿意就交货日期协商。']]},
+ {id:'substantial',word:'Substantial',phonetic:'/səbˈstæn.ʃəl/',meaning:'大量的；可观的；重要的',level:'高级',category:'词缀：-ial',examples:[['The project requires a substantial investment.','这个项目需要大量投资。'],['There has been a substantial improvement.','情况有了明显改善。'],['We had a substantial lunch before the hike.','徒步前我们吃了一顿丰盛的午餐。']]}
 ];
-
-let index = 0;
-let learned = 0;
-
-function render() {
-  if (index >= words.length) {
-    document.querySelector("main").innerHTML = `
-      <h1>🎉 今日学习完成！</h1>
-      <p>本次学习了 ${learned} 个单词。</p>
-      <button class="primary" onclick="location.reload()">
-        再学一遍
-      </button>
-    `;
-    return;
-  }
-
-  const w = words[index];
-
-  document.getElementById("word").textContent = w[0];
-  document.getElementById("phonetic").textContent = w[1];
-  document.getElementById("meaning").textContent = w[2];
-  document.getElementById("example").innerHTML =
-    w[3] + "<br>" + w[4];
-
-  document.getElementById("count").textContent =
-    (index + 1) + " / " + words.length;
-
-  document.getElementById("learned").textContent = learned;
-  document.getElementById("remaining").textContent =
-    words.length - index;
-
-  document.getElementById("bar").style.width =
-    (index / words.length * 100) + "%";
-
-  document.getElementById("answer").classList.add("hidden");
-}
-
-document.getElementById("show").onclick = function() {
-  document.getElementById("answer").classList.remove("hidden");
-};
-
-document.getElementById("next").onclick = function() {
-  learned++;
-  index++;
-  render();
-};
-
+const STORAGE_KEY='dailyEnglish.v2';
+const today=()=>{const d=new Date();return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`};
+const dateOffset=(n)=>{const d=new Date();d.setDate(d.getDate()+n);return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`};
+const escapeHTML=(v)=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+function freshState(){return {level:'初级',autoPlay:false,view:'learn',cards:{},custom:[],daily:{date:'',ids:[],index:0},stats:{streak:0,lastStudy:'',unique:[],correct:0,attempts:0,studyDays:[]},listen:{mode:'choice'}}}
+function loadState(){try{return {...freshState(),...JSON.parse(localStorage.getItem(STORAGE_KEY)||'{}')}}catch(e){return freshState()}}
+let state=loadState(), listenQuestion=null, speakingText='', recognition=null,toastTimer;
+function save(){try{localStorage.setItem(STORAGE_KEY,JSON.stringify(state))}catch(e){toast('无法保存数据，请检查浏览器存储设置。')}}
+function allEntries(){return [...SEED_WORDS,...state.custom]}
+function entryById(id){return allEntries().find(x=>x.id===id)}
+function showToast(msg){const el=document.getElementById('toast');el.textContent=msg;el.classList.remove('hidden');clearTimeout(toastTimer);toastTimer=setTimeout(()=>el.classList.add('hidden'),2100)}
+function markActivity(){const t=today(),s=state.stats;if(s.lastStudy!==t){s.streak=s.lastStudy===dateOffset(-1)?(s.streak||0)+1:1;s.lastStudy=t}if(!s.studyDays.includes(t))s.studyDays.push(t);save()}
+function dailyQueue(){const t=today();if(state.daily.date!==t){const all=allEntries(),level=state.level;const due=all.filter(x=>state.cards[x.id]?.seen&&state.cards[x.id].due<=t);const fresh=all.filter(x=>!state.cards[x.id]?.seen&&x.level===level);const cap=20;const ids=[...due.slice(0,cap).map(x=>x.id),...fresh.slice(0,Math.max(0,cap-Math.min(cap,due.length))).map(x=>x.id)];state.daily={date:t,ids,index:0};save()}return state.daily.ids.map(entryById).filter(Boolean)}
+function ensureDaily(){dailyQueue();const list=state.daily.ids.map(entryById).filter(Boolean);if(state.daily.index>list.length)state.daily.index=list.length;return list}
+function dueCount(){return allEntries().filter(x=>state.cards[x.id]?.seen&&state.cards[x.id].due<=today()).length}
+function speak(text){if(!('speechSynthesis'in window)){showToast('此浏览器暂不支持语音播放');return}window.speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(text);u.lang='en-US';u.rate=.88;const voices=window.speechSynthesis.getVoices();u.voice=voices.find(v=>v.lang==='en-US'&&/Samantha|Google US English|Ava|Jenny|Aria/i.test(v.name))||voices.find(v=>v.lang==='en-US')||null;window.speechSynthesis.speak(u)}
+function renderHeader(){const d=new Date();document.getElementById('dateLabel').textContent=d.toLocaleDateString('zh-CN',{month:'long',day:'numeric',weekday:'short'});const learned=Object.values(state.cards).filter(x=>x.seen).length;const accuracy=state.stats.attempts?Math.round(state.stats.correct/state.stats.attempts*100):0;document.getElementById('summaryStats').innerHTML=`<div class="stat"><strong>🔥 ${state.stats.streak||0}</strong><span>连续学习天数</span></div><div class="stat"><strong>📚 ${learned}</strong><span>累计掌握词条</span></div><div class="stat"><strong>🎯 ${accuracy}%</strong><span>练习正确率</span></div>`;const fresh=allEntries().filter(x=>!state.cards[x.id]?.seen&&x.level===state.level).length;document.getElementById('planLine').textContent=`${state.level}计划 · 今日复习 ${dueCount()} 个 · 新词最多 ${Math.min(20,fresh)} 个`}
+function render(){renderHeader();document.querySelectorAll('#nav button').forEach(b=>b.classList.toggle('active',b.dataset.view===state.view));const app=document.getElementById('app');if(state.view==='learn')renderLearn(app);else if(state.view==='listen')renderListen(app);else if(state.view==='speak')renderSpeak(app);else if(state.view==='phrases')renderPhrases(app);else if(state.view==='stats')renderStats(app)}
+function renderLearn(app){const list=ensureDaily(),index=state.daily.index,progress=list.length?Math.min(index/list.length*100,100):100;let content='';if(!list.length){content=`<div class="card empty"><div style="font-size:34px">🌱</div><h2>今天的计划完成了</h2><p>太棒了！明天会为你安排新的单词和复习内容。</p><button class="btn btn-secondary" data-action="open-settings">调整学习水平</button></div>`}else if(index>=list.length){content=`<div class="card empty"><div style="font-size:36px">🎉</div><h2>今日学习完成！</h2><p>今天完成了 ${list.length} 个学习项目。坚持每天一点点。</p><button class="btn btn-secondary" data-action="reset-today">重新浏览今日词汇</button></div>`}else{const w=list[index],card=state.cards[w.id]||{},revealed=!!card.revealed;content=`<div class="progress-wrap"><span>今日进度</span><div class="progress"><div class="bar" style="width:${progress}%"></div></div><span>${index}/${list.length}</span></div><article class="card word-card"><div class="word-top"><span>${index+1} / ${list.length}${card.seen?' · 复习':''}</span><span class="tag">${escapeHTML(w.level)} · ${escapeHTML(w.category)}</span></div><div><button class="word-button" data-action="say-word" data-id="${escapeHTML(w.id)}" aria-label="播放 ${escapeHTML(w.word)} 的发音">${escapeHTML(w.word)}</button><button class="sound" data-action="say-word" data-id="${escapeHTML(w.id)}" aria-label="播放发音">🔊</button></div><div class="phonetic">${escapeHTML(w.phonetic)} · 美式发音</div><div class="answer ${revealed?'':'hidden'}"><div class="meaning">${escapeHTML(w.meaning)}</div><div class="examples">${w.examples.map((e,i)=>`<div class="example"><div class="example-label">生活场景 ${i+1}</div><p>${escapeHTML(e[0])}</p><p class="zh">${escapeHTML(e[1])}</p></div>`).join('')}</div></div></article>${!revealed?`<div class="actions"><button class="btn btn-primary" data-action="reveal">显示释义和例句</button></div>`:`<div class="rating-grid"><button class="rating" data-action="rate" data-rating="known">认识<small>7 天后复习</small></button><button class="rating" data-action="rate" data-rating="vague">模糊<small>明天复习</small></button><button class="rating" data-action="rate" data-rating="unknown">不认识<small>稍后再学</small></button><button class="rating" data-action="rate" data-rating="new">陌生<small>明天复习</small></button></div>`}`}
+app.innerHTML=`<section>${content}<div class="card"><div class="row"><div><strong>今日学习计划</strong><div class="small muted">每日最多 20 个新词，优先安排到期复习</div></div><span class="tag">${dueCount()} 个待复习</span></div></div><div class="card"><div class="row"><div><strong>学习设置</strong><div class="small muted">当前水平：${escapeHTML(state.level)}</div></div><button class="btn btn-quiet" style="width:auto;padding:10px 13px;margin:0" data-action="open-settings">设置</button></div></div></section>`;if(state.autoPlay&&list[index]&&index<list.length&&!state.cards[list[index].id]?.autoSpoken){state.cards[list[index].id].autoSpoken=true;save();setTimeout(()=>speak(list[index].word),250)}}
+function renderListen(app){const mode=state.listen.mode||'choice';app.innerHTML=`<section class="panel"><div class="card"><h2 class="section-title">听力训练</h2><p class="section-sub">听清楚再作答，练习结束后会记录正确率。</p><div class="tabs"><button class="pill ${mode==='choice'?'active':''}" data-action="listen-mode" data-mode="choice">听音选中文</button><button class="pill ${mode==='dictation'?'active':''}" data-action="listen-mode" data-mode="dictation">听写单词</button></div><div id="listenExercise">${listenQuestion?renderListenQuestion():`<div class="empty"><div style="font-size:32px">🎧</div><p>准备好开始了吗？</p><button class="btn btn-primary" data-action="start-listen">开始练习</button></div>`}</div></div></section>`}
+function renderListenQuestion(){const q=listenQuestion;if(!q)return '';if(state.listen.mode==='choice'){return `<button class="btn btn-secondary" style="width:100%" data-action="play-listen">▶ 播放英文</button><div class="choice-list" style="margin-top:14px">${q.options.map((x,i)=>`<button class="choice ${q.answered?(x.id===q.word.id?'correct':x.id===q.selected?'wrong':''):''}" data-action="answer-choice" data-id="${escapeHTML(x.id)}" ${q.answered?'disabled':''}>${escapeHTML(x.meaning)}</button>`).join('')}</div>${q.answered?`<div class="feedback ${q.correct?'good':'bad'}">${q.correct?'回答正确！':'再听一遍也没关系。'} ${escapeHTML(q.word.word)} · ${escapeHTML(q.word.meaning)}</div><button class="btn btn-primary" style="width:100%" data-action="next-listen">下一题</button>`:''}`}return `<button class="btn btn-secondary" style="width:100%" data-action="play-listen">▶ 播放单词</button><div class="form-grid" style="margin-top:15px"><label class="label" for="dictation">听音输入英文单词</label><input id="dictation" class="field" autocomplete="off" autocapitalize="none" placeholder="Type what you hear" ${q.answered?'disabled':''} value="${escapeHTML(q.input||'')}"><button class="btn btn-primary" data-action="check-dictation" ${q.answered?'disabled':''}>检查答案</button></div>${q.answered?`<div class="feedback ${q.correct?'good':'bad'}">${q.correct?'拼写正确！':'正确拼写：'} <strong>${escapeHTML(q.word.word)}</strong></div><button class="btn btn-primary" style="width:100%" data-action="next-listen">下一题</button>`:''}`}
+function newListenQuestion(){const entries=allEntries();if(!entries.length)return;const word=entries[Math.floor(Math.random()*entries.length)];const others=entries.filter(x=>x.id!==word.id).sort(()=>Math.random()-.5).slice(0,3);listenQuestion={word,options:[word,...others].sort(()=>Math.random()-.5),answered:false,correct:false,selected:null,input:''}}
+function renderSpeak(app){if(!speakingText){const entries=allEntries();const w=entries[Math.floor(Math.random()*entries.length)];speakingText=w?.examples[Math.floor(Math.random()*w.examples.length)][0]||'How are you today?'}const supported=!!(window.SpeechRecognition||window.webkitSpeechRecognition);app.innerHTML=`<section class="panel"><div class="card"><h2 class="section-title">口语跟读</h2><p class="section-sub">先听示范，再大声跟读。允许麦克风权限后，可查看语音识别结果。</p><div class="example" style="text-align:center;padding:22px 15px"><div class="example-label">DAILY EXPRESSION</div><div style="font-size:21px;font-weight:750;line-height:1.5">${escapeHTML(speakingText)}</div></div><div class="actions"><button class="btn btn-secondary" data-action="speak-sentence">🔊 听示范</button><button class="btn btn-primary" data-action="record-speech">🎙️ 开始跟读</button></div><div id="speechResult" class="feedback hidden"></div><p class="notice">${supported?'语音识别由浏览器提供，识别效果取决于设备和环境。':'当前浏览器不支持语音识别；仍可播放句子并自行跟读。建议使用最新版 Safari 或 Chrome。'}</p><button class="btn btn-quiet" style="width:100%" data-action="new-sentence">换一句</button></div></section>`}
+function renderPhrases(app){const items=state.custom;app.innerHTML=`<section class="panel"><div class="card"><h2 class="section-title">我的记忆词组</h2><p class="section-sub">添加自己的单词或短语，保存后会进入个人词库，并按记忆情况安排复习。</p><form id="phraseForm" class="form-grid"><div><label class="label" for="customWord">英文单词 / 词组</label><input class="field" id="customWord" required maxlength="60" placeholder="例如：Could you give me a hand?"></div><div><label class="label" for="customMeaning">中文释义</label><input class="field" id="customMeaning" required maxlength="100" placeholder="例如：你能帮我一下吗？"></div><div class="two-col"><div><label class="label" for="customLevel">学习难度</label><select class="field" id="customLevel"><option>初级</option><option>中级</option><option>高级</option></select></div><div><label class="label" for="customCategory">分类</label><select class="field" id="customCategory"><option>自定义词组</option><option>常见词</option><option>词根词缀</option><option>旅行</option><option>工作</option><option>日常交流</option></select></div></div><div><label class="label" for="customEx1">例句 1（英文）</label><input class="field" id="customEx1" maxlength="160" placeholder="可选，留空时使用词组本身"></div><div><label class="label" for="customEx1zh">例句 1（中文）</label><input class="field" id="customEx1zh" maxlength="160" placeholder="可选"></div><div class="two-col"><div><label class="label" for="customEx2">例句 2（英文，可选）</label><input class="field" id="customEx2" maxlength="160" placeholder="添加一个生活场景"></div><div><label class="label" for="customEx2zh">例句 2（中文）</label><input class="field" id="customEx2zh" maxlength="160" placeholder="中文翻译"></div></div><div class="two-col"><div><label class="label" for="customEx3">例句 3（英文，可选）</label><input class="field" id="customEx3" maxlength="160" placeholder="再添加一个场景"></div><div><label class="label" for="customEx3zh">例句 3（中文）</label><input class="field" id="customEx3zh" maxlength="160" placeholder="中文翻译"></div></div><button class="btn btn-primary">＋ 保存到我的词库</button></form></div><div class="card"><div class="row"><strong>已保存的词组</strong><span class="tag">${items.length} 条</span></div>${items.length?items.slice().reverse().map(x=>`<div class="phrase-item"><div class="row"><strong>${escapeHTML(x.word)}</strong><button class="btn danger" style="width:auto;padding:7px 10px;margin:0;font-size:12px" data-action="delete-phrase" data-id="${escapeHTML(x.id)}">删除</button></div><p>${escapeHTML(x.meaning)} · ${escapeHTML(x.level)} · ${escapeHTML(x.category)}</p></div>`).join(''):'<div class="empty">还没有自定义词组，添加第一条吧。</div>'}</div></section>`}
+function renderStats(app){const learned=Object.values(state.cards).filter(x=>x.seen).length,acc=state.stats.attempts?Math.round(state.stats.correct/state.stats.attempts*100):0,days=(state.stats.studyDays||[]).slice(-7).reverse();app.innerHTML=`<section class="panel"><div class="card"><h2 class="section-title">你的学习记录</h2><p class="section-sub">学习数据保存在当前浏览器中，清除浏览器数据后记录可能会丢失。</p><div class="stats-row" style="margin-bottom:0"><div class="stat"><strong>🔥 ${state.stats.streak||0}</strong><span>连续天数</span></div><div class="stat"><strong>📚 ${learned}</strong><span>学过的词条</span></div><div class="stat"><strong>🎯 ${acc}%</strong><span>练习正确率</span></div></div></div><div class="card"><h3 style="margin:0 0 12px">最近学习</h3>${days.length?days.map(d=>`<div class="row" style="padding:9px 0;border-bottom:1px solid var(--line)"><span>${escapeHTML(d)}</span><span class="tag">已学习</span></div>`).join(''):'<p class="muted small">开始学习后，这里会显示你的学习日期。</p>'}</div><div class="card"><div class="row"><div><strong>学习水平与发音</strong><p class="small muted" style="margin:5px 0 0">调整每日新词内容和自动播放</p></div><button class="btn btn-quiet" style="width:auto;padding:10px 13px;margin:0" data-action="open-settings">设置</button></div></div><div class="card"><h3 style="margin:0 0 8px">练习统计</h3><div class="row"><span class="muted">答题数</span><strong>${state.stats.attempts||0}</strong></div><div class="row" style="margin-top:10px"><span class="muted">正确数</span><strong>${state.stats.correct||0}</strong></div><div class="row" style="margin-top:10px"><span class="muted">到期复习</span><strong>${dueCount()}</strong></div></div></section>`}
+function openSettings(){const app=document.getElementById('app');app.innerHTML=`<section class="panel"><div class="card"><div class="row"><h2 class="section-title">学习设置</h2><button class="btn btn-quiet" style="width:auto;padding:8px 11px;margin:0" data-action="close-settings">完成</button></div><p class="section-sub">每日计划将根据所选水平安排新词；复习词会优先出现。</p><label class="label" for="levelSelect">当前英语水平</label><select id="levelSelect" class="field"><option ${state.level==='初级'?'selected':''}>初级</option><option ${state.level==='中级'?'selected':''}>中级</option><option ${state.level==='高级'?'selected':''}>高级</option></select><div class="toggle-row"><div><strong>自动播放单词发音</strong><div class="small muted">进入单词时播放美式发音</div></div><input id="autoPlayToggle" type="checkbox" ${state.autoPlay?'checked':''}></div><p class="notice">语音由设备浏览器的美式英语语音提供。首次播放可能需要先点击页面。</p><button class="btn btn-primary" style="width:100%" data-action="save-settings">保存设置</button></div></section>`}
+function rateWord(rating){const list=ensureDaily(),w=list[state.daily.index];if(!w)return;const old=state.cards[w.id]||{},delay={known:7,vague:1,unknown:0,new:1}[rating];const next=old.seen?({known:14,vague:1,unknown:1,new:1}[rating]):delay;state.cards[w.id]={seen:true,due:dateOffset(next),level:rating,reviewedAt:today(),autoSpoken:false};if(!state.stats.unique.includes(w.id))state.stats.unique.push(w.id);state.daily.index++;markActivity();save();render()}
+function answerListen(id){if(!listenQuestion||listenQuestion.answered)return;listenQuestion.selected=id;listenQuestion.correct=id===listenQuestion.word.id;listenQuestion.answered=true;state.stats.attempts++;if(listenQuestion.correct)state.stats.correct++;markActivity();render()}
+function checkDictation(){if(!listenQuestion||listenQuestion.answered)return;const input=document.getElementById('dictation')?.value.trim().toLowerCase().replace(/[^a-z']/g,'')||'';listenQuestion.input=input;listenQuestion.correct=input===listenQuestion.word.word.toLowerCase().replace(/[^a-z']/g,'');listenQuestion.answered=true;state.stats.attempts++;if(listenQuestion.correct)state.stats.correct++;markActivity();render()}
+function addCustom(form){const fd=new FormData(form),word=String(fd.get('customWord')).trim(),meaning=String(fd.get('customMeaning')).trim();if(!word||!meaning)return;const makeExamples=[];for(let i=1;i<=3;i++){const en=String(fd.get(`customEx${i}`)||'').trim(),zh=String(fd.get(`customEx${i}zh`)||'').trim();if(en)makeExamples.push([en,zh])}while(makeExamples.length<3)makeExamples.push([word,meaning]);const entry={id:`custom-${Date.now()}-${Math.random().toString(36).slice(2,7)}`,word,phonetic:'',meaning,level:String(fd.get('customLevel')),category:String(fd.get('customCategory')),examples:makeExamples,isCustom:true};state.custom.push(entry);save();markActivity();showToast('已添加到个人词库');render()}
+function setView(view){state.view=view;save();render()}
+function handleAction(button){const action=button.dataset.action;if(action==='say-word'){const w=entryById(button.dataset.id);if(w)speak(w.word)}else if(action==='reveal'){const w=ensureDaily()[state.daily.index];if(w){state.cards[w.id]={...(state.cards[w.id]||{}),revealed:true};render()}}else if(action==='rate')rateWord(button.dataset.rating);else if(action==='open-settings')openSettings();else if(action==='close-settings'){state.view='learn';render()}else if(action==='save-settings'){const level=document.getElementById('levelSelect').value;state.level=level;state.autoPlay=document.getElementById('autoPlayToggle').checked;state.daily.date='';save();showToast('设置已保存');render()}else if(action==='reset-today'){state.daily.index=0;render()}else if(action==='listen-mode'){state.listen.mode=button.dataset.mode;listenQuestion=null;save();render()}else if(action==='start-listen'){newListenQuestion();render()}else if(action==='play-listen'&&listenQuestion)speak(listenQuestion.word.word);else if(action==='answer-choice')answerListen(button.dataset.id);else if(action==='check-dictation')checkDictation();else if(action==='next-listen'){newListenQuestion();render()}else if(action==='speak-sentence')speak(speakingText);else if(action==='new-sentence'){speakingText='';document.getElementById('speechResult')?.classList.add('hidden');render()}else if(action==='record-speech')startRecognition();else if(action==='delete-phrase'){const item=entryById(button.dataset.id);if(!item?.isCustom)return;if(!confirm(`确定删除“${item.word}”吗？`))return;state.custom=state.custom.filter(x=>x.id!==item.id);delete state.cards[item.id];state.daily.date='';save();render()}}
+function startRecognition(){const SR=window.SpeechRecognition||window.webkitSpeechRecognition;if(!SR){showToast('当前浏览器不支持语音识别');return}try{recognition=new SR();recognition.lang='en-US';recognition.interimResults=false;recognition.maxAlternatives=1;const result=document.getElementById('speechResult');result.textContent='正在聆听，请开始跟读…';result.classList.remove('hidden','good','bad');recognition.onresult=e=>{const transcript=e.results[0][0].transcript;result.textContent=`识别结果：${transcript}`;result.classList.remove('hidden');result.classList.add('good');markActivity()};recognition.onerror=()=>{result.textContent='没有识别到语音，请检查麦克风权限后再试。';result.classList.remove('hidden');result.classList.add('bad')};recognition.start()}catch(e){showToast('无法启动麦克风，请检查浏览器权限')}}
+document.getElementById('nav').addEventListener('click',e=>{const b=e.target.closest('button[data-view]');if(b){listenQuestion=null;setView(b.dataset.view)}});
+document.getElementById('app').addEventListener('click',e=>{const b=e.target.closest('[data-action]');if(b)handleAction(b)});
+document.getElementById('app').addEventListener('submit',e=>{if(e.target.id==='phraseForm'){e.preventDefault();addCustom(e.target)}});
+document.getElementById('app').addEventListener('change',e=>{if(e.target.id==='levelSelect'||e.target.id==='autoPlayToggle'){} });
+document.getElementById('app').addEventListener('input',e=>{if(e.target.id==='dictation'&&listenQuestion)listenQuestion.input=e.target.value});
 render();
 </script>
-
 </body>
 </html>
