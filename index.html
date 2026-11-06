@@ -1,0 +1,232 @@
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#f7f7f2">
+<title>Daily English - 每日英语</title>
+
+<style>
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  padding: 25px 18px;
+  background: #f7f7f2;
+  color: #202b20;
+  font-family: Arial, sans-serif;
+}
+
+main {
+  max-width: 500px;
+  margin: 0 auto;
+}
+
+header {
+  font-size: 23px;
+  font-weight: bold;
+  margin-bottom: 35px;
+}
+
+.subtitle {
+  color: #888;
+  font-size: 14px;
+}
+
+h1 {
+  font-size: 28px;
+  line-height: 1.4;
+}
+
+.card {
+  background: white;
+  border-radius: 22px;
+  padding: 30px 20px;
+  text-align: center;
+  margin-top: 25px;
+  box-shadow: 0 5px 25px #00000008;
+}
+
+.word {
+  font-size: 38px;
+  font-weight: bold;
+  margin: 30px 0 10px;
+}
+
+.phonetic {
+  color: #999;
+}
+
+.meaning {
+  font-size: 23px;
+  margin-top: 25px;
+  font-weight: bold;
+}
+
+.example {
+  margin-top: 15px;
+  line-height: 1.8;
+  color: #777;
+}
+
+button {
+  width: 100%;
+  border: none;
+  padding: 16px;
+  border-radius: 13px;
+  font-size: 16px;
+  margin-top: 15px;
+  cursor: pointer;
+}
+
+.primary {
+  background: #263b29;
+  color: white;
+}
+
+.secondary {
+  background: #e5eee3;
+  color: #426b45;
+}
+
+.hidden {
+  display: none;
+}
+
+.progress {
+  background: #e5e8df;
+  height: 7px;
+  border-radius: 10px;
+  margin-top: 20px;
+  overflow: hidden;
+}
+
+.bar {
+  height: 100%;
+  width: 0%;
+  background: #577b5b;
+}
+
+.stats {
+  display: flex;
+  justify-content: space-around;
+  margin-top: 25px;
+  color: #777;
+  font-size: 14px;
+}
+</style>
+</head>
+
+<body>
+<main>
+
+<header>Daily English.</header>
+
+<p class="subtitle">TODAY'S PRACTICE · 今日英语练习</p>
+
+<h1>每天进步一点点，<br>让英语成为你的习惯。</h1>
+
+<div class="progress">
+  <div class="bar" id="bar"></div>
+</div>
+
+<div class="card">
+
+  <div id="count">1 / 10</div>
+
+  <div class="word" id="word">Actually</div>
+
+  <div class="phonetic" id="phonetic">
+    /ˈæk.tʃu.ə.li/
+  </div>
+
+  <div id="answer" class="hidden">
+    <div class="meaning" id="meaning"></div>
+    <div class="example" id="example"></div>
+  </div>
+
+</div>
+
+<button class="primary" id="show">
+显示中文释义
+</button>
+
+<button class="secondary" id="next">
+下一个单词 →
+</button>
+
+<div class="stats">
+  <div>已学习：<strong id="learned">0</strong></div>
+  <div>剩余：<strong id="remaining">10</strong></div>
+</div>
+
+</main>
+
+<script>
+const words = [
+  ["Actually","/ˈæk.tʃu.ə.li/","实际上；事实上","Actually, I agree with you.","事实上，我同意你的看法。"],
+  ["Improve","/ɪmˈpruːv/","提高；改善","I want to improve my English.","我想提高我的英语。"],
+  ["Opportunity","/ˌɑː.pɚˈtuː.nə.t̬i/","机会","This is a good opportunity.","这是一个好机会。"],
+  ["Confident","/ˈkɑːn.fə.dənt/","自信的","Be confident when you speak.","说英语时要自信。"],
+  ["Experience","/ɪkˈspɪr.i.əns/","经验；经历","Learning takes experience.","学习需要积累经验。"],
+  ["Decision","/dɪˈsɪʒ.ən/","决定","It was a difficult decision.","那是一个艰难的决定。"],
+  ["Available","/əˈveɪ.lə.bəl/","有空的；可获得的","Are you available tomorrow?","你明天有空吗？"],
+  ["Probably","/ˈprɑː.bə.bli/","很可能；大概","I will probably go tomorrow.","我明天很可能会去。"],
+  ["Habit","/ˈhæb.ɪt/","习惯","Reading is a good habit.","阅读是一个好习惯。"],
+  ["Focus","/ˈfoʊ.kəs/","专注","Focus on your goals.","专注于你的目标。"]
+];
+
+let index = 0;
+let learned = 0;
+
+function render() {
+  if (index >= words.length) {
+    document.querySelector("main").innerHTML = `
+      <h1>🎉 今日学习完成！</h1>
+      <p>本次学习了 ${learned} 个单词。</p>
+      <button class="primary" onclick="location.reload()">
+        再学一遍
+      </button>
+    `;
+    return;
+  }
+
+  const w = words[index];
+
+  document.getElementById("word").textContent = w[0];
+  document.getElementById("phonetic").textContent = w[1];
+  document.getElementById("meaning").textContent = w[2];
+  document.getElementById("example").innerHTML =
+    w[3] + "<br>" + w[4];
+
+  document.getElementById("count").textContent =
+    (index + 1) + " / " + words.length;
+
+  document.getElementById("learned").textContent = learned;
+  document.getElementById("remaining").textContent =
+    words.length - index;
+
+  document.getElementById("bar").style.width =
+    (index / words.length * 100) + "%";
+
+  document.getElementById("answer").classList.add("hidden");
+}
+
+document.getElementById("show").onclick = function() {
+  document.getElementById("answer").classList.remove("hidden");
+};
+
+document.getElementById("next").onclick = function() {
+  learned++;
+  index++;
+  render();
+};
+
+render();
+</script>
+
+</body>
+</html>
