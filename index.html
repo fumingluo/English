@@ -293,7 +293,7 @@ async function start(id,create){
  if(create){if(snap.exists())throw new Error('配对码冲突，请重新创建');await setDoc(ref,{data:payloadFor(window.getAppState()),writer:clientId,clientUpdatedAt:Date.now(),updatedAt:serverTimestamp()})}
  else{if(!snap.exists())throw new Error('没有找到这份云端数据，请检查配对码');const cloud=snap.data();if(!cloud.data)throw new Error('云端数据格式不正确');applyingRemote=true;try{window.applyCloudState(cloud.data)}finally{applyingRemote=false}}
  activeRef=ref;localStorage.setItem('dailyEnglish.sync.v1',JSON.stringify({id}));connected=true;
- unsubscribe=onSnapshot(ref,snapshot=>{if(!snapshot.exists())return;const cloud=snapshot.data();if(!cloud||cloud.writer===clientId||!cloud.data||applyingRemote)return;applyingRemote=true;try{window.applyCloudState(cloud.data)}finally{applyingRemote=false}},error=>{connected=false;console.error('Firebase sync listener:',error);if(window.showToast)window.showToast('云同步连接中断：'+error.message)});
+ unsubscribe=onSnapshot(ref,snapshot=>{if(!snapshot.exists())return;const cloud=snapshot.data();if(!cloud||cloud.writer===clientId||!cloud.data||applyingRemote)return;clearTimeout(writeTimer);applyingRemote=true;try{window.applyCloudState(cloud.data)}finally{applyingRemote=false}},error=>{connected=false;console.error('Firebase sync listener:',error);if(window.showToast)window.showToast('云同步连接中断：'+error.message)});
  return id;
 }
 function queue(state){if(!activeRef||!connected||applyingRemote)return;clearTimeout(writeTimer);writeTimer=setTimeout(async()=>{try{await setDoc(activeRef,{data:payloadFor(state),writer:clientId,clientUpdatedAt:Date.now(),updatedAt:serverTimestamp()})}catch(e){console.error('Firebase sync write:',e);if(window.showToast)window.showToast('云端保存失败：'+e.message)}},1200)}
