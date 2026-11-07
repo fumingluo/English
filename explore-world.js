@@ -71,7 +71,7 @@ export async function mountExploreWorld(){
     const milestones=[];
     for(let i=1;i<=4;i++){const t=i/5,p=routeCurve.getPointAt(t);const orb=new THREE.Mesh(new THREE.SphereGeometry(.24,9,7),new THREE.MeshStandardMaterial({color:0xffe5a1,emissive:0x80602a,emissiveIntensity:.28,roughness:.6}));orb.position.copy(p);orb.position.y+=.35;scene.add(orb);milestones.push(orb);}
     const appState=window.getAppState?window.getAppState():{};
-    const words=(Array.isArray(appState.custom)?appState.custom.length:0)+24;
+    const words=window.getAllWordsCount?window.getAllWordsCount():(Array.isArray(appState.custom)?appState.custom.length+25:25);
     const cards=appState.cards||{};
     const learned=Object.values(cards).filter(c=>c&&c.seen).length;
     const t=Math.max(.015,Math.min(.985,learned/Math.max(1,words)));
