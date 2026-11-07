@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
@@ -78,83 +77,38 @@ const WORDS=[
 {id:'substantial',word:'Substantial',phonetic:'/səbˈstæn.ʃəl/',meaning:'大量的；可观的；重要的',level:'高级',category:'词缀：-ial',en:'The project needs a substantial investment.',zh:'这个项目需要大量投资。'}
 ];
 
-<!DOCTYPE html>
-<html lang="zh-CN">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#f7f7f2">
-<title>Daily English · 每日英语</title>
-<style>
-:root{--ink:#202b20;--muted:#788078;--green:#263b29;--green2:#577b5b;--pale:#e5eee3;--paper:#f7f7f2;--line:#e9ece5;--shadow:0 8px 26px #1727170b;--red:#a45b50;--gold:#9a7535}
-*{box-sizing:border-box}body{margin:0;background:var(--paper);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;padding:0 14px calc(92px + env(safe-area-inset-bottom))}button,input,select,textarea{font:inherit}button{cursor:pointer;-webkit-tap-highlight-color:transparent}.shell{max-width:720px;margin:auto}.topbar{height:60px;display:flex;align-items:center;justify-content:space-between}.brand{font-size:20px;font-weight:800}.brand span{color:var(--green2)}.date-label,.muted{color:var(--muted)}.date-label{font-size:12px}.hero{padding:10px 2px 0}.eyebrow{font-size:11px;color:var(--green2);font-weight:800;letter-spacing:1px}.hero h1{font-size:clamp(25px,6vw,32px);line-height:1.3;margin:8px 0 5px}.hero p{margin:0;color:var(--muted);font-size:13px}.stats-row{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin:17px 0}.stat{background:white;border-radius:15px;padding:11px 12px;box-shadow:var(--shadow)}.stat strong{display:block;font-size:19px}.stat span{font-size:11px;color:var(--muted)}.card{background:white;border-radius:20px;padding:20px 17px;margin-top:13px;box-shadow:var(--shadow)}.progress-wrap{display:flex;align-items:center;gap:10px;margin:17px 2px 8px;color:var(--muted);font-size:11px}.progress{height:7px;flex:1;background:#e5e8df;border-radius:99px;overflow:hidden}.bar{height:100%;background:var(--green2);border-radius:99px;transition:width .2s}.word-card{text-align:center;padding:18px 17px}.word-top,.row{display:flex;align-items:center;justify-content:space-between;gap:9px}.word-top{font-size:11px;color:var(--muted)}.tag{padding:5px 9px;border-radius:99px;background:#f0f3ed;color:#5d705e;font-size:10px;font-weight:750}.word-line{display:flex;justify-content:center;align-items:center;gap:9px;margin:16px 0 2px}.word-button{border:0;background:transparent;color:var(--ink);font-size:clamp(34px,9vw,44px);font-weight:800;padding:4px}.sound{border:0;background:var(--pale);color:var(--green);border-radius:50%;width:42px;height:42px;font-size:18px}.phonetic{color:#8a928a;font-size:13px}.answer{margin-top:16px;padding-top:15px;border-top:1px solid var(--line);text-align:left}.meaning{text-align:center;font-size:20px;font-weight:750;margin:0 0 12px}.example{padding:13px;background:#f8faf6;border-radius:13px;font-size:14px;line-height:1.65}.example-label{font-size:10px;color:var(--green2);font-weight:800;margin-bottom:5px}.example p{margin:0}.example .zh{color:var(--muted);margin-top:4px}.btn{border:0;border-radius:13px;padding:13px 15px;min-height:44px;font-weight:750}.primary{background:var(--green);color:white}.secondary{background:var(--pale);color:#426b45}.quiet{background:#f1f3ef;color:#536153}.gold{background:#f7f0df;color:var(--gold)}.danger{background:#f8e9e6;color:var(--red)}.actions{display:grid;gap:9px;margin-top:12px}.rating-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-top:12px}.rating{min-height:58px;border:1px solid var(--line);background:white;border-radius:13px;font-size:13px;font-weight:750;color:var(--ink)}.rating small{display:block;color:var(--muted);font-size:10px;font-weight:500;margin-top:4px}.section-title{font-size:19px;margin:0 0 5px}.section-sub{color:var(--muted);font-size:12px;line-height:1.6;margin:0 0 14px}.small{font-size:11px}.nav{position:fixed;z-index:5;bottom:0;left:0;right:0;padding:7px 6px calc(7px + env(safe-area-inset-bottom));background:#fffffff2;backdrop-filter:blur(14px);border-top:1px solid var(--line)}.nav-inner{max-width:720px;margin:auto;display:grid;grid-template-columns:repeat(6,1fr);gap:2px}.nav button{border:0;background:transparent;color:#818981;border-radius:11px;padding:6px 1px;min-height:48px;font-size:10px;white-space:nowrap}.nav button b{display:block;font-size:18px;font-weight:500}.nav button.active{background:#edf3ea;color:var(--green);font-weight:750}.field{width:100%;border:1px solid #dfe5dc;background:white;border-radius:12px;padding:12px;min-height:44px;color:var(--ink)}.form-grid{display:grid;gap:11px}.label{font-size:12px;font-weight:700;display:block;margin-bottom:5px}.choice-list{display:grid;gap:8px;margin-top:12px}.choice{width:100%;text-align:left;border:1px solid var(--line);background:white;border-radius:12px;padding:12px;min-height:44px}.choice.correct{background:#edf6eb;border-color:#88ad87}.choice.wrong{background:#fff2ef;border-color:#d4a39c}.feedback{margin-top:10px;padding:11px;border-radius:12px;font-size:13px;line-height:1.6}.good{background:#edf6eb;color:#345a34}.bad{background:#fff2ef;color:#8a453d}.tabs{display:flex;gap:7px;margin:12px 0}.pill{border:0;border-radius:99px;padding:9px 12px;background:#edf0ea;font-size:11px}.pill.active{background:var(--green);color:#fff}.phrase{padding:12px 0;border-bottom:1px solid var(--line)}.empty{text-align:center;padding:25px 10px;color:var(--muted)}.hidden{display:none!important}.toast{position:fixed;bottom:84px;left:50%;transform:translateX(-50%);background:var(--green);color:white;padding:10px 14px;border-radius:99px;font-size:12px;z-index:9;max-width:90%;text-align:center}.field-label{font-size:12px;color:var(--muted);display:block;margin:10px 0 5px}.verse-en{font-family:Georgia,"Times New Roman",serif;font-size:17px;line-height:1.8;color:#263426}.verse-zh{font-size:14px;line-height:1.8;color:#727a70;margin-top:9px}.verse-ref{font-size:11px;font-weight:800;color:var(--green2);letter-spacing:.4px}.typing-box{width:100%;min-height:130px;resize:vertical;border:1.5px solid #dfe5dc;border-radius:14px;padding:14px;background:#fcfdfb;color:var(--ink);font-size:16px;line-height:1.7;outline:none}.typing-box:focus{border-color:#8da78b}.typing-box:disabled{background:#f2f5f0}.typing-metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:12px 0}.metric{background:#f6f8f4;border-radius:12px;padding:10px;text-align:center}.metric strong{display:block;font-size:18px}.metric span{font-size:10px;color:var(--muted)}.key-words{display:flex;flex-wrap:wrap;gap:7px;margin-top:10px}.key-word{border:0;border-radius:99px;background:#f0f3ed;padding:7px 10px;color:#4f684d;font-size:11px}.review-item{padding:12px 0;border-bottom:1px solid var(--line)}.review-item:last-child{border:0}.interval-list{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin-top:12px}.interval{background:#f5f7f2;border-radius:11px;text-align:center;padding:9px 4px}.interval b{display:block;font-size:14px}.interval span{font-size:10px;color:var(--muted)}.toast{pointer-events:none}
-/* Typing-tutor style Bible practice */
-.typing-stage{position:relative;border:1.5px solid #dfe6dc;border-radius:16px;background:#fbfcf9;padding:18px 15px;min-height:150px;overflow:hidden;cursor:text;}
-.typing-display{position:relative;z-index:1;font-family:Georgia,"Times New Roman",serif;font-size:clamp(19px,5vw,23px);line-height:2.45;color:#9ba49a;white-space:normal;overflow-wrap:anywhere;user-select:none;-webkit-user-select:none;}
-.typing-word{display:inline-flex;flex-direction:column;align-items:center;vertical-align:top;margin:0 .12em .24em 0;}
-.typing-letters{display:inline-flex;white-space:pre;}
-.typing-char{display:inline-block;min-width:.56em;text-align:center;border-radius:4px;transition:background .08s,color .08s;}
-.typing-char.done{color:#4c7950;}
-.typing-char.pending{color:#9ba49a;}
-.typing-char.current{color:#203a23;background:#e4f0df;box-shadow:0 2px 0 #769b72;font-weight:800;}
-.typing-char.current.error{color:#8f352d;background:#f8deda;box-shadow:0 2px 0 #c77c72;}
-.typing-gloss{display:block;min-height:15px;margin-top:1px;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;font-size:10px;line-height:1.2;color:#557b53;white-space:nowrap;}
-.typing-space{white-space:pre;}
-.typing-capture{position:absolute;z-index:3;inset:0;width:100%;height:100%;opacity:.012;color:transparent;background:transparent;border:0;outline:0;caret-color:transparent;font-size:16px;cursor:text;}
-.typing-capture::selection{background:transparent;}
-.typing-instruction{font-size:11px;color:#818a80;margin:10px 2px 0;line-height:1.6;}
-.typing-live-row{display:flex;gap:8px;align-items:center;justify-content:space-between;margin-top:12px;}
-.typing-translation{margin-top:12px;padding:14px;border-radius:13px;background:#edf4e9;border:1px solid #dbe8d7;}
-.typing-translation strong{display:block;font-size:11px;color:#52744f;margin-bottom:5px;}
-.typing-translation p{margin:0;font-size:15px;line-height:1.8;color:#334b32;}
-.typing-focus-btn{margin-top:10px;width:100%;}
-@media(min-width:650px){body{padding-top:8px}.card{padding:22px}.word-card{padding:24px}.actions{grid-template-columns:1fr 1fr}.word-card .actions{grid-template-columns:1fr 1fr}.rating-grid{grid-template-columns:repeat(4,1fr)}}@media(max-width:380px){.nav button{font-size:9px}.nav button b{font-size:17px}.card{padding:17px 14px}.rating{font-size:12px}}
-</style>
-</head>
-<body>
-<div class="shell">
- <div class="topbar"><div class="brand">Daily <span>English.</span></div><div class="date-label" id="dateLabel"></div></div>
- <div class="hero"><div class="eyebrow">A LITTLE EVERY DAY · 每日英语</div><h1>让英语，成为每天的好习惯。</h1><p id="planLine">为你安排今天的学习计划</p></div>
- <div class="stats-row" id="summaryStats"></div>
- <main id="app" aria-live="polite"></main>
-</div>
-<nav class="nav"><div class="nav-inner" id="nav">
- <button data-view="learn" class="active"><b>📖</b>单词</button>
- <button data-view="review"><b>🔁</b>复习</button>
- <button data-view="listen"><b>🎧</b>听力</button>
- <button data-view="bible"><b>✝️</b>经文打字</button>
- <button data-view="speak"><b>🗣️</b>口语</button>
- <button data-view="mine"><b>✍️</b>我的</button>
-</div></nav>
-<div id="toast" class="toast hidden" role="status"></div>
-<script>
-'use strict';
-const WORDS=[
-{id:'actually',word:'Actually',phonetic:'/ˈæk.tʃu.ə.li/',meaning:'实际上；事实上',level:'初级',category:'常见词',en:'Actually, I’m free this afternoon.',zh:'事实上，我今天下午有空。'},
-{id:'improve',word:'Improve',phonetic:'/ɪmˈpruːv/',meaning:'提高；改善',level:'初级',category:'常见词',en:'I’m trying to improve my English.',zh:'我正在努力提高英语。'},
-{id:'habit',word:'Habit',phonetic:'/ˈhæb.ɪt/',meaning:'习惯',level:'初级',category:'常见词',en:'I have a habit of reading before bed.',zh:'我有睡前阅读的习惯。'},
-{id:'focus',word:'Focus',phonetic:'/ˈfoʊ.kəs/',meaning:'专注；焦点',level:'初级',category:'常见词',en:'I can’t focus with all this noise.',zh:'这么吵我没法集中注意力。'},
-{id:'available',word:'Available',phonetic:'/əˈveɪ.lə.bəl/',meaning:'有空的；可获得的',level:'初级',category:'常见词',en:'Are you free for lunch tomorrow?',zh:'你明天有空一起吃午饭吗？'},
-{id:'probably',word:'Probably',phonetic:'/ˈprɑː.bə.bli/',meaning:'很可能；大概',level:'初级',category:'常见词',en:'I’ll probably take the train.',zh:'我大概会坐火车。'},
-{id:'decide',word:'Decide',phonetic:'/dɪˈsaɪd/',meaning:'决定',level:'初级',category:'常见词',en:'I can’t decide what to order.',zh:'我不知道该点什么。'},
-{id:'experience',word:'Experience',phonetic:'/ɪkˈspɪr.i.əns/',meaning:'经验；经历',level:'初级',category:'常见词',en:'Do you have customer service experience?',zh:'你有客户服务方面的经验吗？'},
-{id:'confident',word:'Confident',phonetic:'/ˈkɑːn.fə.dənt/',meaning:'自信的；确信的',level:'初级',category:'常见词',en:'I feel more confident speaking English now.',zh:'我现在说英语更有自信了。'},
-{id:'opportunity',word:'Opportunity',phonetic:'/ˌɑː.pɚˈtuː.nə.t̬i/',meaning:'机会',level:'初级',category:'常见词',en:'This is a great opportunity to learn.',zh:'这是一个很好的学习机会。'},
-{id:'prepare',word:'Prepare',phonetic:'/prɪˈper/',meaning:'准备；预备',level:'初级',category:'常见词',en:'I need to get ready for my meeting.',zh:'我得为会议做准备。'},
-{id:'comfortable',word:'Comfortable',phonetic:'/ˈkʌm.fɚ.t̬ə.bəl/',meaning:'舒服的；自在的',level:'初级',category:'常见词',en:'These shoes are really comfortable.',zh:'这双鞋真的很舒服。'},
-{id:'consider',word:'Consider',phonetic:'/kənˈsɪd.ɚ/',meaning:'考虑；认为',level:'中级',category:'常见词',en:'I’ll think about your suggestion.',zh:'我会考虑你的建议。'},
-{id:'recommend',word:'Recommend',phonetic:'/ˌrek.əˈmend/',meaning:'推荐；建议',level:'中级',category:'常见词',en:'Can you recommend a good coffee shop?',zh:'你能推荐一家不错的咖啡店吗？'},
-{id:'require',word:'Require',phonetic:'/rɪˈkwaɪr/',meaning:'需要；要求',level:'中级',category:'常见词',en:'This job requires strong communication skills.',zh:'这份工作需要很强的沟通能力。'},
-{id:'effective',word:'Effective',phonetic:'/ɪˈfek.tɪv/',meaning:'有效的',level:'中级',category:'词缀：-ive',en:'This is an effective way to save time.',zh:'这是节省时间的有效方法。'},
-{id:'careless',word:'Careless',phonetic:'/ˈker.ləs/',meaning:'粗心的；不小心的',level:'中级',category:'词缀：-less',en:'I made a careless mistake on the form.',zh:'我在表格上犯了个粗心的错误。'},
-{id:'preview',word:'Preview',phonetic:'/ˈpriː.vjuː/',meaning:'预览；预告',level:'中级',category:'词缀：pre-',en:'Can I take a quick look at the presentation first?',zh:'我可以先快速看一下演示文稿吗？'},
-{id:'rewrite',word:'Rewrite',phonetic:'/ˌriːˈraɪt/',meaning:'重写；改写',level:'中级',category:'词缀：re-',en:'I need to rewrite this email.',zh:'我需要重写这封邮件。'},
-{id:'transport',word:'Transport',phonetic:'/ˈtræn.spɔːrt/',meaning:'交通运输；运送',level:'中级',category:'词根：port（携带）',en:'Public transport is easy to use here.',zh:'这里的公共交通很方便。'},
-{id:'predict',word:'Predict',phonetic:'/prɪˈdɪkt/',meaning:'预测；预言',level:'中级',category:'词根：dict（说）',en:'It’s hard to predict the weather.',zh:'天气很难预测。'},
-{id:'flexible',word:'Flexible',phonetic:'/ˈflek.sə.bəl/',meaning:'灵活的；可变通的',level:'高级',category:'词缀：-ible',en:'My work schedule is pretty flexible.',zh:'我的工作时间比较灵活。'},
-{id:'efficient',word:'Efficient',phonetic:'/ɪˈfɪʃ.ənt/',meaning:'效率高的；高效的',level:'高级',category:'词缀：-ent',en:'The new system saves us a lot of time.',zh:'新系统帮我们节省了很多时间。'},
-{id:'negotiate',word:'Negotiate',phonetic:'/nɪˈɡoʊ.ʃi.eɪt/',meaning:'协商；谈判',level:'高级',category:'常见词',en:'Could we talk about a better price?',zh:'我们能谈谈更合适的价格吗？'},
-{id:'substantial',word:'Substantial',phonetic:'/səbˈstæn.ʃəl/',meaning:'大量的；可观的；重要的',level:'高级',category:'词缀：-ial',en:'The project needs a substantial investment.',zh:'这个项目需要大量投资。'}
+
+/* Built-in World English Bible (WEB) practice passages.
+   Chinese text below is a study aid, not a published Chinese Bible translation. */
+const BIBLE = [
+ {id:'gen1',title:'创世记 Genesis · 1',verses:[
+  {ref:'Genesis 1:1',en:'In the beginning God created the heavens and the earth.',zh:'起初，神创造天地。',v:[['In the beginning','起初'],['God','神'],['created','创造'],['the heavens','诸天'],['the earth','大地'] ]},
+  {ref:'Genesis 1:2',en:"Now the earth was formless and empty. Darkness was on the surface of the deep. God's Spirit was hovering over the surface of the waters.",zh:'地是空虚混沌，渊面黑暗；神的灵运行在水面上。',v:[['formless','空虚混沌的'],['empty','空虚的'],['darkness','黑暗'],['surface','表面'],['the deep','深渊'],["God's Spirit",'神的灵'],['hovering','运行'],['waters','众水'] ]},
+  {ref:'Genesis 1:3',en:'God said, “Let there be light,” and there was light.',zh:'神说：“要有光”，就有了光。',v:[['said','说'],['Let there be','要有'],['light','光'] ]}
+ ]},
+ {id:'ps23',title:'诗篇 Psalms · 23',verses:[
+  {ref:'Psalms 23:1',en:'Yahweh is my shepherd: I shall lack nothing.',zh:'耶和华是我的牧者，我必不至缺乏。',v:[['Yahweh','耶和华'],['shepherd','牧者'],['lack nothing','一无所缺'] ]},
+  {ref:'Psalms 23:2',en:'He makes me lie down in green pastures. He leads me beside still waters.',zh:'他使我躺卧在青草地上，领我在可安歇的水边。',v:[['makes me lie down','使我躺卧'],['green pastures','青草地'],['leads','引领'],['still waters','安歇的水边'] ]},
+  {ref:'Psalms 23:3',en:"He restores my soul. He guides me in the paths of righteousness for his name's sake.",zh:'他使我的灵魂苏醒，为自己的名引导我走义路。',v:[['restores','使……苏醒'],['soul','灵魂'],['guides','引导'],['paths of righteousness','义路'],["for his name's sake",'为自己的名'] ]}
+ ]},
+ {id:'john1',title:'约翰福音 John · 1',verses:[
+  {ref:'John 1:1',en:'In the beginning was the Word, and the Word was with God, and the Word was God.',zh:'太初有道，道与神同在，道就是神。',v:[['In the beginning','太初'],['the Word','道'],['with God','与神同在'] ]},
+  {ref:'John 1:2',en:'The same was in the beginning with God.',zh:'这道太初与神同在。',v:[['The same','这道'],['in the beginning','太初'],['with God','与神同在'] ]},
+  {ref:'John 1:3',en:'All things were made through him. Without him was not anything made that has been made.',zh:'万物是借着他造的；凡被造的，没有一样不是借着他造的。',v:[['All things','万物'],['were made','被造'],['through him','借着他'],['Without him','若没有他'] ]}
+ ]},
+ {id:'john316',title:'约翰福音 John · 3:16',verses:[
+  {ref:'John 3:16',en:'For God so loved the world, that he gave his only begotten Son, that whoever believes in him should not perish, but have eternal life.',zh:'神爱世人，甚至将他的独生子赐给他们，叫一切信他的，不至灭亡，反得永生。',v:[['so loved','如此爱'],['the world','世人'],['only begotten Son','独生子'],['whoever believes','凡相信的人'],['perish','灭亡'],['eternal life','永生'] ]}
+ ]},
+ {id:'phil4',title:'腓立比书 Philippians · 4',verses:[
+  {ref:'Philippians 4:6',en:'In nothing be anxious, but in everything, by prayer and petition with thanksgiving, let your requests be made known to God.',zh:'应当一无挂虑，只要凡事借着祷告、祈求和感谢，将你们所要的告诉神。',v:[['be anxious','忧虑'],['in everything','凡事'],['prayer','祷告'],['petition','祈求'],['thanksgiving','感谢'],['requests','所求的'] ]},
+  {ref:'Philippians 4:7',en:'And the peace of God, which surpasses all understanding, will guard your hearts and your thoughts in Christ Jesus.',zh:'神所赐、超越人所能理解的平安，必在基督耶稣里保守你们的心怀意念。',v:[['peace of God','神所赐的平安'],['surpasses','超越'],['understanding','理解'],['guard','保守'],['hearts','心怀'],['thoughts','意念'] ]}
+ ]},
+ {id:'matt5',title:'马太福音 Matthew · 5',verses:[
+  {ref:'Matthew 5:3',en:'Blessed are the poor in spirit, for theirs is the Kingdom of Heaven.',zh:'虚心的人有福了，因为天国是他们的。',v:[['Blessed','有福了'],['poor in spirit','虚心的人'],['Kingdom of Heaven','天国'] ]},
+  {ref:'Matthew 5:4',en:'Blessed are those who mourn, for they shall be comforted.',zh:'哀恸的人有福了，因为他们必得安慰。',v:[['those who mourn','哀恸的人'],['comforted','得安慰'] ]},
+  {ref:'Matthew 5:5',en:'Blessed are the gentle, for they shall inherit the earth.',zh:'温柔的人有福了，因为他们必承受地土。',v:[['gentle','温柔的人'],['inherit','承受'],['earth','地土'] ]},
+  {ref:'Matthew 5:6',en:'Blessed are those who hunger and thirst after righteousness, for they shall be filled.',zh:'饥渴慕义的人有福了，因为他们必得饱足。',v:[['hunger and thirst','饥渴慕'],['righteousness','义'],['filled','得饱足'] ]}
+ ]}
 ];
 
 const KEY='dailyEnglish.v3',OLD_KEY='dailyEnglish.v2',INTERVALS=[1,2,4,7,15,30,60,90];
@@ -197,7 +151,7 @@ for(let i=0;i<pairs.length;i++){let phrase=String(pairs[i][0]).toLowerCase().rep
 return WORD_GLOSSES[key]||'结合整句理解'}
 function typingMarkup(verse,pos,error){let tokens=[],re=/\S+|\s+/g,m;while((m=re.exec(verse.en))!==null){if(/^\s+$/.test(m[0]))tokens.push({space:m[0],start:m.index});else tokens.push({word:m[0],start:m.index})}let words=tokens.filter(x=>x.word).map(x=>x.word),wi=0,html='';tokens.forEach(t=>{if(t.space){html+='<span class="typing-space">'+esc(t.space)+'</span>';return}let word=t.word,start=t.start,end=start+word.length,done=end<=pos,gloss=done?getWordGloss(word,wi,words,verse):'';let letters='';Array.from(word).forEach((ch,j)=>{let n=start+j,cls=n<pos?'done':n===pos?'current'+(error?' error':''):'pending';letters+='<span class="typing-char '+cls+'">'+esc(ch)+'</span>'});html+='<span class="typing-word"><span class="typing-letters">'+letters+'</span><span class="typing-gloss">'+(gloss?esc(gloss):'&nbsp;')+'</span></span>';wi++});return html}
 let typingError='',typingErrorCount=0;
-function finishBibleVerse(verse){if(!state.bible.completed.includes(verse.ref)){state.bible.completed.push(verse.ref);state.bible.totalTyped=(state.bible.totalTyped||0)+verse.en.length;state.stats.typedChars=(state.stats.typedChars||0)+verse.en.length;markActivity();showToast('完成 '+verse.ref+'！完整中文释义已显示。')}}
+function finishBibleVerse(verse){if(!state.bible.completed.includes(verse.ref)){state.bible.completed.push(verse.ref);state.bible.totalTyped=(state.bible.totalTyped||0)+Array.from(verse.en).length;state.stats.typedChars=(state.stats.typedChars||0)+Array.from(verse.en).length;markActivity();showToast('完成 '+verse.ref+'！完整中文释义已显示。')}}
 function updateTypingUI(verse){let pos=typingPosition(verse),total=Array.from(verse.en).length,done=pos>=total,display=document.getElementById('typingDisplay'),progress=document.getElementById('typeProgress'),accuracy=document.getElementById('typeAccuracy'),count=document.getElementById('typeChars'),feedback=document.getElementById('typingFeedback'),translation=document.getElementById('typingTranslation');if(!display)return;display.innerHTML=typingMarkup(verse,pos,!!typingError);if(progress)progress.textContent=Math.round(pos/Math.max(1,total)*100)+'%';if(accuracy)accuracy.textContent=Math.round(pos/Math.max(1,pos+typingErrorCount)*100)+'%';if(count)count.textContent=pos+'/'+total;if(feedback){feedback.className='feedback '+(typingError?'bad':done?'good':'');feedback.textContent=typingError?'按键不正确：当前应输入 “'+(Array.from(verse.en)[pos]||'')+'”。删除错误输入后再继续；正确字符才会推进。':done?'本节经文已经完整输入！下方已显示整句中文译文。':'逐字输入英文。每完成一个单词，该词的中文释义就会出现在单词下方。'}if(translation){translation.classList.toggle('hidden',!done);translation.innerHTML='<strong>本节完整中文译文 · '+esc(verse.ref)+'</strong><p>'+esc(verse.zh)+'</p>'}let stage=document.getElementById('typingStage');if(stage)stage.classList.toggle('is-complete',done)}
 function typeBibleCharacter(ch){let verse=getVerse(),pos=typingPosition(verse),chars=Array.from(verse.en),expected=chars[pos];if(!expected)return;if(typeNormChar(ch)!==typeNormChar(expected)){typingError=ch;typingErrorCount++;updateTypingUI(verse);return}typingError='';state.bible.drafts[verse.ref]=chars.slice(0,pos+1).join('');if(pos+1>=chars.length)finishBibleVerse(verse);save();updateTypingUI(verse)}
 function backspaceBibleCharacter(){let verse=getVerse();if(typingError){typingError='';updateTypingUI(verse);return}let chars=Array.from(state.bible.drafts[verse.ref]||'');if(chars.length){chars.pop();state.bible.drafts[verse.ref]=chars.join('')}save();updateTypingUI(verse)}
