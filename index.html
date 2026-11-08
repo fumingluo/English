@@ -421,10 +421,10 @@ else if(a==='reader-word'){const same=state.bible.readerWord&&state.bible.reader
 else if(a==='reader-pronounce'){say(b.dataset.word)}
 else if(a==='reader-level'){state.bible.readerLevel=Number(b.dataset.level)||1;state.bible.readerWord=null;save();renderPreservingScroll()}
 else if(a==='reader-rate'){state.bible.readerWordLevels=Object.assign({},state.bible.readerWordLevels||{},{[b.dataset.word]:b.dataset.rating});save();renderPreservingScroll();showToast('熟练度已保存')}
-else if(a==='reader-retry'){window.readerCuvError=false;window.readerCuvLoading=false;render()}
+else if(a==='reader-retry'){window.readerCuvError=false;window.readerCuvLoading=false;renderPreservingScroll()}
 
 else if(a==='reader-add-word'){let x=state.bible.readerWord;if(x){let id='bible-'+x.en.toLowerCase().replace(/[^a-z0-9]+/g,'-');if(!allWords().some(w=>w.id===id)){state.custom.push({id,word:x.en,phonetic:'',meaning:x.meaning,level:state.level,category:'启示录词汇',en:x.en,zh:'',isCustom:true});save();showToast('已加入个人词库和复习系统')}else showToast('这个词已经在个人词库中');renderPreservingScroll()}}
-else if(a==='reader-prev'||a==='reader-next'){state.bible.readerChapter=Math.max(1,Math.min(22,(Number(state.bible.readerChapter)||1)+(a==='reader-next'?1:-1)));state.bible.readerWord=null;save();render()}
+else if(a==='reader-prev'||a==='reader-next'){state.bible.readerChapter=Math.max(1,Math.min(22,(Number(state.bible.readerChapter)||1)+(a==='reader-next'?1:-1)));state.bible.readerWord=null;save();renderPreservingScroll()}
 
 else if(a==='load-revelation')loadRevelation()
 else if(a==='verse-play'){let v=getVerse();if(v)say(v.en)}
