@@ -88,31 +88,28 @@
 @media(max-width:380px){.explore-canvas{height:420px}.explore-chip{padding:8px 9px}.explore-progress{padding:11px}.nav button{font-size:8px}}
 
 
-/* Revelation context reader */
-.reader-layout{display:grid;grid-template-columns:210px minmax(0,1fr);gap:10px;align-items:start;margin-top:10px}
-.reader-article{background:#fff;border-radius:18px;padding:18px 16px;box-shadow:var(--shadow);min-width:0}
-.reader-verse{font-family:Georgia,"Times New Roman",serif;font-size:16px;line-height:2.05;margin:0 0 13px;color:#283629}
-.reader-ref{display:inline-block;font:700 10px -apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;color:#8b9688;margin:0 6px 0 0;vertical-align:middle}
-.reader-word{display:inline;border:0;border-radius:4px;background:#f5edcf;color:#745b24;padding:0 2px;font:inherit;line-height:inherit;text-decoration:underline;text-decoration-color:#d8bd76;text-decoration-thickness:1px;text-underline-offset:3px}
-.reader-word.selected{background:#dcebd8;color:#294b2c;outline:1px solid #91b18c}
-.reader-vocab{background:#fff;border-radius:16px;padding:13px;box-shadow:var(--shadow);position:sticky;top:8px;max-height:72vh;overflow:auto}
-.reader-vocab h3{font-size:13px;margin:0 0 9px}.reader-vocab-item{display:block;width:100%;border:0;border-bottom:1px solid var(--line);background:transparent;text-align:left;padding:8px 2px;color:var(--ink)}
-.reader-vocab-item strong{display:block;font-size:12px}.reader-vocab-item small{display:block;color:var(--muted);font-size:10px;margin-top:3px;line-height:1.4}
-.reader-detail{background:#f4f7f1;border-radius:12px;padding:11px;margin-top:9px;font-size:12px;line-height:1.6}.reader-detail strong{font-size:15px}.reader-controls{display:flex;align-items:center;gap:8px;flex-wrap:wrap}.reader-controls select{max-width:150px}
-@media(max-width:620px){.reader-layout{grid-template-columns:1fr}.reader-vocab{position:static;max-height:none;order:2}.reader-article{order:1}.reader-verse{font-size:15px;line-height:2}}
-
-.reader-word.status-unlearned{background:#f5edcf;color:#765c20;text-decoration-color:#d8bd76}
-.reader-word.status-learning{background:#e3efff;color:#315b91;text-decoration-color:#8bb2e4}
-.reader-word.status-mastered{background:#e1f1e3;color:#28623a;text-decoration-color:#8ac39a}
-.reader-vocab-item.status-unlearned{border-left:3px solid #c9a75a;padding-left:8px}
-.reader-vocab-item.status-learning{border-left:3px solid #75a4dc;padding-left:8px}
-.reader-vocab-item.status-mastered{border-left:3px solid #70b17e;padding-left:8px}
-.reader-status{display:inline-flex;align-items:center;border-radius:99px;padding:2px 7px;font-size:10px;font-weight:700;margin-top:4px}
-.reader-status.status-unlearned{background:#f5edcf;color:#765c20}
-.reader-status.status-learning{background:#e3efff;color:#315b91}
-.reader-status.status-mastered{background:#e1f1e3;color:#28623a}
-.reader-legend{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0 10px}
-.reader-vocab-item .reader-status{margin-top:5px}
+/* Progressive Chinese-English Revelation reader */
+.reader-layout{display:block;margin-top:12px}
+.reader-article{background:#fff;border-radius:18px;padding:20px 18px;box-shadow:var(--shadow);min-width:0}
+.reader-verse{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;font-size:17px;line-height:2.15;margin:0 0 14px;color:#283629}
+.reader-ref{display:inline-block;font:700 10px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:#8b9688;margin:0 7px 0 0;vertical-align:middle}
+.reader-word{display:inline;border:0;border-radius:5px;background:#f5edcf;color:#765c20;padding:1px 3px;font:inherit;font-weight:700;line-height:inherit;text-decoration:underline;text-decoration-color:#d8bd76;text-underline-offset:3px}
+.reader-word.status-familiar{background:#e3efff;color:#315b91;text-decoration-color:#8bb2e4}
+.reader-word.status-known{background:#e5eee3;color:#426b45;text-decoration-color:#8eb28d}
+.reader-word.status-fluent{background:transparent;color:#758276;text-decoration:none;font-weight:500}
+.reader-word.selected{outline:2px solid #91b18c}
+.reader-controls{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:10px 0}
+.reader-controls select{max-width:180px}
+.reader-detail{background:#f4f7f1;border-radius:14px;padding:14px;margin-top:14px;font-size:13px;line-height:1.65}
+.reader-detail strong{font-size:18px}
+.reader-levels{display:flex;gap:6px;flex-wrap:wrap;margin:10px 0}
+.reader-level{border:1px solid var(--line);background:white;color:var(--muted);border-radius:99px;padding:7px 11px;font-size:11px}
+.reader-level.active{background:var(--green);border-color:var(--green);color:white}
+.reader-ratings{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;margin-top:10px}
+.reader-rating{border:1px solid var(--line);background:white;border-radius:10px;padding:10px 7px;font-size:12px;color:var(--ink)}
+.reader-rating.active{border-color:#789c76;background:#edf5eb;color:#315b35;font-weight:750}
+.reader-stats{display:flex;gap:12px;flex-wrap:wrap;color:var(--muted);font-size:11px;margin:8px 0}
+@media(max-width:620px){.reader-verse{font-size:16px;line-height:2.05}.reader-article{padding:17px 14px}}
 </style>
 </head>
 <body>
@@ -200,7 +197,7 @@ const KEY='dailyEnglish.v3',OLD_KEY='dailyEnglish.v2',INTERVALS=[{n:1,u:'分钟'
 function today(){const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
 function plusDays(n){const d=new Date();d.setDate(d.getDate()+n);return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
 function esc(v){return String(v==null?'':v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
-function blank(){return {level:'初级',autoPlay:false,view:'learn',cards:{},custom:[],daily:{date:'',ids:[],index:0,relearnQueue:[]},review:{ids:[],index:0,active:false},stats:{streak:0,lastStudy:'',unique:[],correct:0,attempts:0,studyDays:[],typingDone:[],typedChars:0},listenMode:'choice',bible:{passage:'rev-all',verse:0,drafts:{},completed:[],totalTyped:0,extraPassages:[],revelationVerses:[]}}}
+function blank(){return {level:'初级',autoPlay:false,view:'learn',cards:{},custom:[],daily:{date:'',ids:[],index:0,relearnQueue:[]},review:{ids:[],index:0,active:false},stats:{streak:0,lastStudy:'',unique:[],correct:0,attempts:0,studyDays:[],typingDone:[],typedChars:0},listenMode:'choice',bible:{passage:'rev-all',verse:0,drafts:{},completed:[],totalTyped:0,extraPassages:[],revelationVerses:[],readerChapter:1,readerLevel:1,readerWordLevels:{},cuvChapters:{}}}}
 function load(){let s=blank();try{let raw=localStorage.getItem(KEY);if(!raw)raw=localStorage.getItem(OLD_KEY);if(raw){let old=JSON.parse(raw);s=Object.assign(s,old);s.stats=Object.assign(blank().stats,old.stats||{});s.daily=Object.assign(blank().daily,old.daily||{});s.review=Object.assign(blank().review,old.review||{});s.bible=Object.assign(blank().bible,old.bible||{});s.cards=old.cards&&typeof old.cards==='object'?old.cards:{};s.custom=Array.isArray(old.custom)?old.custom:[];if(!Array.isArray(s.stats.studyDays))s.stats.studyDays=[];if(!Array.isArray(s.stats.unique))s.stats.unique=[];if(!Array.isArray(s.bible.completed))s.bible.completed=[];if(!Array.isArray(s.bible.revelationVerses))s.bible.revelationVerses=[];Object.keys(s.cards).forEach(k=>{let c=s.cards[k];if(c&&c.stage==null)c.stage=c.rating==='known'?1:0;if(c&&c.seen&&!c.due)c.due=plusDays(1)});}}catch(e){console.warn('Local data recovery:',e)}return s}
 let state=load(),question=null,saveTimer=null,revelationLoading=false,revelationError='',bibleAdvanceTimer=null,swipeGesture=null,suppressWordCardClickUntil=0;
 function save(){try{localStorage.setItem(KEY,JSON.stringify(state));if(window.firebaseSync)window.firebaseSync.queue(state)}catch(e){showToast('本机存储空间不足，请先导出备份。')}}
@@ -288,38 +285,50 @@ function updateTypingUI(verse){let pos=typingPosition(verse),total=Array.from(ve
 function typeBibleCharacter(ch){let verse=getVerse(),pos=typingPosition(verse),chars=Array.from(verse.en),expected=chars[pos];if(!expected)return;if(typeNormChar(ch)!==typeNormChar(expected)){typingError=ch;typingErrorCount++;updateTypingUI(verse);return}typingError='';state.bible.drafts[verse.ref]=chars.slice(0,pos+1).join('');if(pos+1>=chars.length)finishBibleVerse(verse);save();updateTypingUI(verse)}
 function backspaceBibleCharacter(){let verse=getVerse();if(typingError){typingError='';updateTypingUI(verse);return}let chars=Array.from(state.bible.drafts[verse.ref]||'');if(chars.length){chars.pop();state.bible.drafts[verse.ref]=chars.join('')}save();updateTypingUI(verse)}
 
+const READER_TERMS=[
+ {zh:'众教会',en:'churches',meaning:'众教会',level:1},{zh:'得胜',en:'overcome',meaning:'得胜；胜过',level:1},
+ {zh:'生命树',en:'tree of life',meaning:'生命树',level:2},{zh:'果子',en:'fruit',meaning:'果子；果实',level:2},
+ {zh:'圣灵',en:'Holy Spirit',meaning:'圣灵',level:3},{zh:'见证',en:'witness',meaning:'见证；见证人',level:3},
+ {zh:'羔羊',en:'Lamb',meaning:'羔羊',level:3},{zh:'宝座',en:'throne',meaning:'宝座',level:3},
+ {zh:'天使',en:'angel',meaning:'天使',level:4},{zh:'国度',en:'kingdom',meaning:'国度；王权',level:4},
+ {zh:'荣耀',en:'glory',meaning:'荣耀',level:4},{zh:'圣洁',en:'holy',meaning:'圣洁的',level:4},
+ {zh:'审判',en:'judgment',meaning:'审判；判断',level:5},{zh:'列国',en:'nations',meaning:'列国；民族',level:5},
+ {zh:'忍耐',en:'perseverance',meaning:'忍耐；坚忍',level:5},{zh:'生命',en:'life',meaning:'生命',level:5},
+ {zh:'死亡',en:'death',meaning:'死亡',level:5},{zh:'龙',en:'dragon',meaning:'龙',level:5},
+ {zh:'兽',en:'beast',meaning:'兽；野兽',level:5},{zh:'新耶路撒冷',en:'New Jerusalem',meaning:'新耶路撒冷',level:5}
+];
 function readerWordProgress(word){
- const key=cleanWord(word),record=allWords().find(w=>cleanWord(w.word)===key),card=record&&state.cards[record.id];
- if(card&&card.seen&&Number(card.stage)>=3)return {status:'mastered',label:'已掌握',record:record};
- if(card&&card.seen)return {status:'learning',label:'学习中',record:record};
- return {status:'unlearned',label:'未学',record:record||null};
+ const saved=state.bible.readerWordLevels||{},rating=saved[word]||'unknown';
+ const map={unknown:{status:'unlearned',label:'陌生'},familiar:{status:'familiar',label:'熟悉'},known:{status:'known',label:'掌握'},fluent:{status:'fluent',label:'熟练'}};
+ return map[rating]||map.unknown;
+}
+const READER_IPA={'churches':'ˈtʃɜːrtʃɪz','overcome':'ˌoʊvərˈkʌm','tree of life':'triː əv laɪf','fruit':'fruːt','Holy Spirit':'ˌhoʊli ˈspɪrɪt','witness':'ˈwɪtnəs','Lamb':'læm','throne':'θroʊn','angel':'ˈeɪndʒəl','kingdom':'ˈkɪŋdəm','glory':'ˈɡlɔːri','holy':'ˈhoʊli','judgment':'ˈdʒʌdʒmənt','nations':'ˈneɪʃənz','perseverance':'ˌpɜːrsəˈvɪrəns','life':'laɪf','death':'deθ','dragon':'ˈdræɡən','beast':'biːst','New Jerusalem':'nuː dʒəˈruːsələm'};
+function readerWordMarkup(term,ref){
+ const p=readerWordProgress(term.en),selected=state.bible.readerWord&&state.bible.readerWord.en===term.en;
+ return '<button type="button" class="reader-word status-'+p.status+' '+(selected?'selected':'')+'" data-action="reader-word" data-word="'+esc(term.en)+'" data-meaning="'+esc(term.meaning)+'" data-phonetic="'+esc(READER_IPA[term.en]||'')+'" data-ref="'+esc(ref)+'" title="'+esc(term.meaning+' · '+p.label)+'">'+esc(term.en)+'</button>';
 }
 function contextReadingView(app){
- if((!Array.isArray(state.bible.revelationVerses)||state.bible.revelationVerses.length<400)&&!revelationLoading)loadRevelation();
- const verses=(state.bible.revelationVerses||[]),chapter=Math.max(1,Math.min(22,Number(state.bible.readerChapter)||1));
- if(verses.length<400){app.innerHTML='<div class="card"><div class="eyebrow">READ IN CONTEXT · BIBLE ENGLISH</div><h2 class="section-title">启示录语境阅读</h2><p class="section-sub">'+(revelationLoading?'正在载入《启示录》1—22章全文，请稍候……':revelationError?'全文载入失败：'+esc(revelationError):'准备载入《启示录》1—22章英文全文。')+'</p><button class="btn primary" data-action="load-revelation" '+(revelationLoading?'disabled':'')+'>'+(revelationLoading?'正在载入…':'载入启示录全文')+'</button></div>';return}
- const rows=verses.filter(v=>{let m=String(v.ref).match(/Revelation\s+(\d+):/i);return m&&Number(m[1])===chapter});
- const stop=new Set('a an the and or but if then than of to in on at by for from with as is are was were be been being it its this that these those he she they them his her their we you your i my our who whom which what when where why how not no so do does did shall will would should can could may might must have has had'.split(' '));
- let vocab=new Map(),article='';
- rows.forEach(v=>{
-  const tokens=String(v.en).match(/\S+/g)||[],cleaned=tokens.map(cleanWord);
-  let html='',idx=0;
-  String(v.en).replace(/\S+|\s+/g,token=>{
-   if(/^\s+$/.test(token)){html+=esc(token);return token}
-   const key=cleanWord(token),gloss=getWordGloss(token,idx,cleaned,v),highlight=!!key&&!stop.has(key)&&gloss&&gloss!=='本词释义暂未收录';
-   if(highlight){
-    if(!vocab.has(key))vocab.set(key,{word:key,meaning:gloss,ref:v.ref,en:v.en});
-    let progress=readerWordProgress(key);
-    html+='<button type="button" class="reader-word status-'+progress.status+' '+(state.bible.readerWord&&state.bible.readerWord.word===key?'selected':'')+'" data-action="reader-word" data-word="'+esc(key)+'" data-meaning="'+esc(gloss)+'" data-ref="'+esc(v.ref)+'" data-en="'+esc(v.en)+'" title="'+esc(gloss+' · '+progress.label)+'" aria-label="'+esc(key+'，'+gloss+'，'+progress.label+'，点击播放发音')+'">'+esc(token)+'</button>';
-   }else html+=esc(token);
-   idx++;return token
-  });
-  article+='<p class="reader-verse"><span class="reader-ref">'+esc(v.ref.replace('Revelation ','启示录 '))+'</span>'+html+'</p>'
- });
- const selected=state.bible.readerWord||null,selectedProgress=selected?readerWordProgress(selected.word):null;
- const detail=selected?'<div class="reader-detail"><strong>'+esc(selected.word)+'</strong><div>'+esc(selected.meaning)+'</div><span class="reader-status status-'+selectedProgress.status+'">'+selectedProgress.label+'</span><small class="muted" style="display:block;margin-top:5px">'+esc(selected.ref||'')+'</small>'+(selectedProgress.record?'':'<div class="actions"><button class="btn primary" data-action="reader-add-word">＋ 加入词库</button></div>')+'</div>':'<div class="reader-detail muted">点击正文中高亮的单词，即可播放发音，并查看释义和学习进度。</div>';
- const vocabHtml=Array.from(vocab.values()).map(x=>{let p=readerWordProgress(x.word);return '<button type="button" class="reader-vocab-item status-'+p.status+'" data-action="reader-word" data-word="'+esc(x.word)+'" data-meaning="'+esc(x.meaning)+'" data-ref="'+esc(x.ref)+'" data-en="'+esc(x.en)+'"><strong>'+esc(x.word)+'</strong><small>'+esc(x.meaning)+'</small><span class="reader-status status-'+p.status+'">'+p.label+'</span></button>'}).join('');
- app.innerHTML='<div class="card"><div class="eyebrow">READ IN CONTEXT · REVELATION</div><div class="row"><div><h2 class="section-title">启示录语境阅读</h2><p class="section-sub" style="margin:3px 0 0">全书22章 · 英文原文 · 词汇学习进度联动</p></div><select id="readerChapter" class="field" aria-label="选择章节"><option value="">选择章节</option>'+Array.from({length:22},(_,i)=>'<option value="'+(i+1)+'" '+(chapter===i+1?'selected':'')+'>第 '+(i+1)+' 章</option>').join('')+'</select></div><div class="progress-wrap"><span>全书</span><div class="progress"><div class="bar" style="width:'+Math.round(chapter/22*100)+'%"></div></div><span>'+chapter+'/22</span></div><div class="reader-controls"><button class="btn quiet" data-action="reader-prev" '+(chapter===1?'disabled':'')+'>← 上一章</button><button class="btn primary" data-action="reader-next" '+(chapter===22?'disabled':'')+'>下一章 →</button></div></div><div class="reader-layout"><aside class="reader-vocab"><h3>本章重点词汇 · '+vocab.size+'</h3><div class="reader-legend"><span class="reader-status status-unlearned">未学</span><span class="reader-status status-learning">学习中</span><span class="reader-status status-mastered">已掌握</span></div>'+(vocabHtml||'<p class="small muted">本章词汇释义暂未收录。</p>')+detail+'</aside><article class="reader-article">'+(article||'<p class="muted">本章暂无内容。</p>')+'</article></div>';
+ const chapter=Math.max(1,Math.min(22,Number(state.bible.readerChapter)||1)),level=Math.max(1,Math.min(5,Number(state.bible.readerLevel)||1));
+ if(!state.bible.cuvChapters)state.bible.cuvChapters={};
+ const cache=state.bible.cuvChapters[chapter];
+ if(!cache){
+  if(!window.readerCuvLoading){window.readerCuvLoading=true;fetch('https://raw.githubusercontent.com/sangchy1972/pd-text-corpus/main/bibles/zh-Hans/books/revelation-of-john/chapters/'+chapter+'.json').then(r=>{if(!r.ok)throw new Error('经文数据加载失败');return r.json()}).then(data=>{state.bible.cuvChapters[chapter]=data.verses||[];save();window.readerCuvLoading=false;if(state.view==='reader')render()}).catch(()=>{window.readerCuvLoading=false;window.readerCuvError=true;if(state.view==='reader')render()})}
+  app.innerHTML='<div class="card"><div class="eyebrow">READ IN CONTEXT · CUV</div><h2 class="section-title">启示录中英渐进阅读</h2><p class="section-sub">'+(window.readerCuvError?'经文载入失败，请检查网络后重试。':'正在载入《启示录》'+chapter+'章和合本经文…')+'</p><button class="btn secondary" data-action="reader-retry">重新载入</button></div>';return;
+ }
+ const terms=READER_TERMS.filter(t=>t.level<=level),rows=cache,allWords=new Set(),counts={unknown:0,familiar:0,known:0,fluent:0};
+ const article=rows.map(v=>{
+  const ref='Revelation '+chapter+':'+v.verse;let remaining=String(v.text),html='';
+  const matches=[];
+  terms.forEach(t=>{let from=0,at;while((at=remaining.indexOf(t.zh,from))>=0){matches.push({at,term:t});from=at+t.zh.length}});
+  matches.sort((a,b)=>a.at-b.at);
+  let cursor=0;matches.forEach(m=>{if(m.at<cursor)return;html+=esc(remaining.slice(cursor,m.at))+readerWordMarkup(m.term,ref);cursor=m.at+m.term.zh.length;allWords.add(m.term.en)});
+  html+=esc(remaining.slice(cursor));
+  return '<p class="reader-verse"><span class="reader-ref">启示录 '+chapter+':'+v.verse+'</span>'+html+'</p>';
+ }).join('');
+ allWords.forEach(w=>{const key=({陌生:'unknown',熟悉:'familiar',掌握:'known',熟练:'fluent'})[readerWordProgress(w).label];counts[key]++});
+ const selected=state.bible.readerWord||null,progress=selected?readerWordProgress(selected.en):null;
+ const detail=selected?'<div class="reader-detail"><div class="row"><strong>'+esc(selected.en)+'</strong><button class="sound" data-action="reader-pronounce" data-word="'+esc(selected.en)+'">🔊</button></div><div class="muted">'+esc(selected.phonetic||'')+'</div><div>'+esc(selected.meaning)+'</div><small class="muted">'+esc(selected.ref||'')+'</small><div class="reader-ratings">'+[['unknown','陌生'],['familiar','熟悉'],['known','掌握'],['fluent','熟练']].map(x=>'<button class="reader-rating '+((state.bible.readerWordLevels||{})[selected.en]===x[0]?'active':'')+'" data-action="reader-rate" data-rating="'+x[0]+'" data-word="'+esc(selected.en)+'">'+x[1]+'</button>').join('')+'</div><div class="actions"><button class="btn secondary" data-action="reader-add-word">＋ 加入我的词库</button></div></div>':'<div class="reader-detail muted">点击正文中的英文单词，可听发音、查看释义，并手动标记熟练度。</div>';
+ app.innerHTML='<div class="card"><div class="eyebrow">READ IN CONTEXT · REVELATION</div><div class="row"><div><h2 class="section-title">启示录语境阅读</h2><p class="section-sub" style="margin:3px 0 0">中文和合本为基础 · 英语比例逐级增加</p></div><select id="readerChapter" class="field" aria-label="选择章节">'+Array.from({length:22},(_,i)=>'<option value="'+(i+1)+'" '+(chapter===i+1?'selected':'')+'>第 '+(i+1)+' 章</option>').join('')+'</select></div><div class="reader-levels">'+[['1','入门 · 少量英文'],['2','初级 · 增加词汇'],['3','中级 · 更多英文'],['4','高级 · 大量英文'],['5','挑战 · 最高比例']].map(x=>'<button class="reader-level '+(level===Number(x[0])?'active':'')+'" data-action="reader-level" data-level="'+x[0]+'">'+x[1]+'</button>').join('')+'</div><div class="reader-stats"><span>本章词汇 '+allWords.size+' 个</span><span>陌生 '+counts.unknown+'</span><span>熟悉 '+counts.familiar+'</span><span>掌握 '+counts.known+'</span><span>熟练 '+counts.fluent+'</span></div><div class="reader-controls"><button class="btn quiet" data-action="reader-prev" '+(chapter===1?'disabled':'')+'>← 上一章</button><button class="btn primary" data-action="reader-next" '+(chapter===22?'disabled':'')+'>下一章 →</button></div></div><div class="reader-layout"><article class="reader-article">'+article+'</article>'+detail+'</div><p class="small muted" style="padding:0 4px">经文：1919 年简体和合本公版文本数据整理版。英文替换为学习辅助，不改变中文原文。数据来源及许可说明见项目说明。</p>';
  const select=document.getElementById('readerChapter');if(select)select.addEventListener('change',e=>{state.bible.readerChapter=Number(e.target.value)||1;state.bible.readerWord=null;save();render()});
 }
 function bibleView(app){let p=getPassage(),v=getVerse();if(!v){let message=revelationLoading?'正在加载启示录 22 章全文……':revelationError?'加载失败：'+esc(revelationError):'正在准备经文库';app.innerHTML='<div class="bible-view"><div class="card"><div class="eyebrow">BIBLE ENGLISH · TYPING TUTOR</div><h2 class="section-title">启示录英文全文练习</h2><p class="section-sub">'+message+'</p><button class="btn primary" data-action="load-revelation" '+(revelationLoading?'disabled':'')+'>'+(revelationLoading?'正在加载…':'加载／重试启示录全文')+'</button></div></div>';return}let pos=typingPosition(v),total=Array.from(v.en).length,done=pos===total,terms=v.v||[],completed=p.verses.filter(x=>state.bible.completed.includes(x.ref)).length,select=allPassages().map(x=>'<option value="'+esc(x.id)+'" '+(x.id===p.id?'selected':'')+'>'+esc(x.title)+'</option>').join('');app.innerHTML='<div class="bible-view">'+(revelationError?'<div class="card"><div class="small muted">启示录全文加载暂时失败：'+esc(revelationError)+'</div><button class="btn secondary" data-action="load-revelation">重新加载启示录全文</button></div>':revelationLoading?'<div class="card"><div class="small muted">正在后台载入启示录全文……</div></div>':'')+'<div class="card"><div class="row"><div><div class="eyebrow">BIBLE ENGLISH · TYPING TUTOR</div><strong>圣经英文跟打</strong></div><select class="field" id="passageSelect" style="max-width:58%;padding:8px;font-size:12px">'+select+'</select></div><div class="progress-wrap"><span>进度</span><div class="progress"><div class="bar" style="width:'+Math.round(completed/Math.max(1,p.verses.length)*100)+'%"></div></div><span>'+completed+'/'+p.verses.length+'</span></div></div><div class="card"><div class="row"><span class="verse-ref">'+esc(v.ref)+'</span><span class="tag">'+(state.bible.verse+1)+' / '+p.verses.length+'</span></div><div class="actions"><button class="btn secondary" data-action="verse-play">🔊 播放本节</button>'+(terms.length?'<button class="btn quiet" data-action="verse-add-words">＋ 收集本节词汇</button>':'')+'</div></div><div class="card"><div class="row"><strong>跟打区域</strong><span class="tag">'+(done?'已完成':'逐字输入')+'</span></div><div class="typing-stage" id="typingStage"><div class="typing-display" id="typingDisplay">'+typingMarkup(v,pos,false)+'</div><input id="typingCapture" class="typing-capture" type="text" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" aria-label="在此输入经文文字" inputmode="text"></div><div class="typing-instruction">每个英文单词下方都显示中文含义；点击单词可播放发音并查看词义提示。个别未收录词汇会标注“本词释义暂未收录”。</div><div class="typing-metrics"><div class="metric"><strong id="typeProgress">'+Math.round(pos/Math.max(1,total)*100)+'%</strong><span>完成</span></div><div class="metric"><strong id="typeAccuracy">'+Math.round(pos/Math.max(1,pos+typingErrorCount)*100)+'%</strong><span>准确率</span></div><div class="metric"><strong id="typeChars">'+pos+'/'+total+'</strong><span>字符</span></div></div><div id="typingFeedback" class="feedback '+(done?'good':'')+'">'+(done?'本节输入完成。':'点击区域后直接键入；输入正确会自动推进。')+'</div><div id="typingTranslation" class="typing-translation '+(done?'':'hidden')+'"><strong>'+esc(v.ref)+(v.zh?' · 中文对照':' · 完成提示')+'</strong><p>'+esc(v.zh||'本节英文已完成。点击单词可听发音并查看词义提示。')+'</p></div><div class="row" style="margin-top:8px"><button class="btn quiet" data-action="restart-typing">重练本节</button><button class="btn quiet" data-action="prev-verse" '+(state.bible.verse===0?'disabled':'')+'>← 上一节</button><button class="btn primary" data-action="next-verse" '+(state.bible.verse>=p.verses.length-1?'disabled':'')+'>下一节 →</button></div></div><div class="card"><strong>本节重点词汇</strong><div class="key-words">'+(terms.length?terms.map(t=>'<button class="key-word" data-action="add-one-word" data-word="'+esc(t[0])+'" data-meaning="'+esc(t[1])+'">'+esc(t[0])+' · '+esc(t[1])+'</button>').join(''):'<span class="small muted">单词释义可悬停或点击经文中的单词查看。</span>')+'</div></div><p class="small muted" style="padding:0 4px">启示录英文采用 World English Bible（WEB，公有领域文本），首次打开时联网载入并保存在本机；当前未提供逐节中文译文，单词词义为学习辅助提示。</p></div>';let stage=document.getElementById('typingStage'),input=document.getElementById('typingCapture');stage.addEventListener('click',e=>{if(!e.target.closest('[data-action="bible-word-play"]'))input.focus()});input.addEventListener('input',()=>{let raw=input.value;input.value='';for(let ch of Array.from(raw)){typeBibleCharacter(ch);if(typingError)break}});input.addEventListener('keydown',e=>{if(e.key==='Backspace'){e.preventDefault();backspaceBibleCharacter()}else if(e.key==='Enter'){e.preventDefault()}});document.getElementById('passageSelect').addEventListener('change',e=>{clearTimeout(bibleAdvanceTimer);state.bible.passage=e.target.value;state.bible.verse=0;typingError='';typingErrorCount=0;save();render()})}
@@ -357,9 +366,13 @@ else if(a==='choose'&&question&&!question.done){let q=question;q.selected=b.data
 else if(a==='check'&&question&&!question.done){let q=question;q.correct=document.getElementById('dictation').value.trim().toLowerCase()===q.word.word.toLowerCase();q.done=true;state.stats.attempts++;if(q.correct)state.stats.correct++;markActivity();render();advanceListenAfterAnswer(q)}
 else if(a==='next')newQuestion()
 else if(a==='bible-word-play'){let word=b.dataset.word,meaning=b.dataset.meaning;say(word);showToast(word+'：'+meaning)}
-else if(a==='reader-word'){state.bible.readerWord={word:b.dataset.word,meaning:b.dataset.meaning,ref:b.dataset.ref,en:b.dataset.en};say(b.dataset.word);render()}
+else if(a==='reader-word'){state.bible.readerWord={word:b.dataset.word,meaning:b.dataset.meaning,phonetic:b.dataset.phonetic||'',ref:b.dataset.ref,en:b.dataset.word,phonetic:b.dataset.phonetic||''};say(b.dataset.word);render()}
+else if(a==='reader-pronounce'){say(b.dataset.word)}
+else if(a==='reader-level'){state.bible.readerLevel=Number(b.dataset.level)||1;state.bible.readerWord=null;save();render()}
+else if(a==='reader-rate'){state.bible.readerWordLevels=Object.assign({},state.bible.readerWordLevels||{},{[b.dataset.word]:b.dataset.rating});save();render();showToast('熟练度已保存')}
+else if(a==='reader-retry'){window.readerCuvError=false;window.readerCuvLoading=false;render()}
 
-else if(a==='reader-add-word'){let x=state.bible.readerWord;if(x){let id='bible-'+x.word.toLowerCase().replace(/[^a-z0-9]+/g,'-');if(!allWords().some(w=>w.id===id)){state.custom.push({id,word:x.word,phonetic:'',meaning:x.meaning,level:state.level,category:'启示录词汇',en:x.en||x.word,zh:'',isCustom:true});save();showToast('已加入个人词库和复习系统')}else showToast('这个词已经在个人词库中');render()}}
+else if(a==='reader-add-word'){let x=state.bible.readerWord;if(x){let id='bible-'+x.en.toLowerCase().replace(/[^a-z0-9]+/g,'-');if(!allWords().some(w=>w.id===id)){state.custom.push({id,word:x.en,phonetic:'',meaning:x.meaning,level:state.level,category:'启示录词汇',en:x.en,zh:'',isCustom:true});save();showToast('已加入个人词库和复习系统')}else showToast('这个词已经在个人词库中');render()}}
 else if(a==='reader-prev'||a==='reader-next'){state.bible.readerChapter=Math.max(1,Math.min(22,(Number(state.bible.readerChapter)||1)+(a==='reader-next'?1:-1)));state.bible.readerWord=null;save();render()}
 
 else if(a==='load-revelation')loadRevelation()
