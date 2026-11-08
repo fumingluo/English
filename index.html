@@ -356,7 +356,7 @@ function contextReadingView(app){
   const ref='Revelation '+chapter+':'+v.verse;let remaining=String(v.text),html='';
   const matches=[];
   terms.forEach(t=>{let from=0,at;while((at=remaining.indexOf(t.zh,from))>=0){matches.push({at,term:t});from=at+t.zh.length}});
-  matches.sort((a,b)=>a.at-b.at);
+  matches.sort((a,b)=>a.at-b.at || b.term.zh.length-a.term.zh.length);
   let cursor=0;matches.forEach(m=>{if(m.at<cursor)return;html+=esc(remaining.slice(cursor,m.at))+readerWordMarkup(m.term,ref);cursor=m.at+m.term.zh.length;allWords.add(m.term.en)});
   html+=esc(remaining.slice(cursor));
   return '<p class="reader-verse"><span class="reader-ref">启示录 '+chapter+':'+v.verse+'</span>'+html+'</p>';
