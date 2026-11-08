@@ -318,7 +318,7 @@ function contextReadingView(app){
  const article=rows.map(v=>{
   const ref='Revelation '+chapter+':'+v.verse;let remaining=String(v.text),html='';
   const matches=[];
-  terms.forEach(t=>{let at=remaining.indexOf(t.zh);if(at>=0)matches.push({at,term:t})});
+  terms.forEach(t=>{let from=0,at;while((at=remaining.indexOf(t.zh,from))>=0){matches.push({at,term:t});from=at+t.zh.length}});
   matches.sort((a,b)=>a.at-b.at);
   let cursor=0;matches.forEach(m=>{if(m.at<cursor)return;html+=esc(remaining.slice(cursor,m.at))+readerWordMarkup(m.term,ref);cursor=m.at+m.term.zh.length;allWords.add(m.term.en)});
   html+=esc(remaining.slice(cursor));
@@ -365,7 +365,11 @@ else if(a==='choose'&&question&&!question.done){let q=question;q.selected=b.data
 else if(a==='check'&&question&&!question.done){let q=question;q.correct=document.getElementById('dictation').value.trim().toLowerCase()===q.word.word.toLowerCase();q.done=true;state.stats.attempts++;if(q.correct)state.stats.correct++;markActivity();render();advanceListenAfterAnswer(q)}
 else if(a==='next')newQuestion()
 else if(a==='bible-word-play'){let word=b.dataset.word,meaning=b.dataset.meaning;say(word);showToast(word+'：'+meaning)}
-else if(a==='reader-word'){state.bible.readerWord={word:b.dataset.word,meaning:b.dataset.meaning,ref:b.dataset.ref,en:b.dataset.word};say(b.dataset.word);render()}\nelse if(a==='reader-pronounce'){say(b.dataset.word)}\nelse if(a==='reader-level'){state.bible.readerLevel=Number(b.dataset.level)||1;state.bible.readerWord=null;save();render()}\nelse if(a==='reader-rate'){state.bible.readerWordLevels=Object.assign({},state.bible.readerWordLevels||{},{[b.dataset.word]:b.dataset.rating});save();render();showToast('熟练度已保存')}\nelse if(a==='reader-retry'){window.readerCuvError=false;window.readerCuvLoading=false;render()}
+else if(a==='reader-word'){state.bible.readerWord={word:b.dataset.word,meaning:b.dataset.meaning,ref:b.dataset.ref,en:b.dataset.word};say(b.dataset.word);render()}
+else if(a==='reader-pronounce'){say(b.dataset.word)}
+else if(a==='reader-level'){state.bible.readerLevel=Number(b.dataset.level)||1;state.bible.readerWord=null;save();render()}
+else if(a==='reader-rate'){state.bible.readerWordLevels=Object.assign({},state.bible.readerWordLevels||{},{[b.dataset.word]:b.dataset.rating});save();render();showToast('熟练度已保存')}
+else if(a==='reader-retry'){window.readerCuvError=false;window.readerCuvLoading=false;render()}
 
 else if(a==='reader-add-word'){let x=state.bible.readerWord;if(x){let id='bible-'+x.en.toLowerCase().replace(/[^a-z0-9]+/g,'-');if(!allWords().some(w=>w.id===id)){state.custom.push({id,word:x.en,phonetic:'',meaning:x.meaning,level:state.level,category:'启示录词汇',en:x.en,zh:'',isCustom:true});save();showToast('已加入个人词库和复习系统')}else showToast('这个词已经在个人词库中');render()}}
 else if(a==='reader-prev'||a==='reader-next'){state.bible.readerChapter=Math.max(1,Math.min(22,(Number(state.bible.readerChapter)||1)+(a==='reader-next'?1:-1)));state.bible.readerWord=null;save();render()}
