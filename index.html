@@ -284,37 +284,79 @@ async function say(text){
  if(currentTtsSource){try{currentTtsSource.stop()}catch(e){}currentTtsSource=null}
  if(currentTtsObjectUrl){URL.revokeObjectURL(currentTtsObjectUrl);currentTtsObjectUrl=null}
  if(window.speechSynthesis)window.speechSynthesis.cancel();
- // iOS Safari requires audio permission to be unlocked during the original tap.
- // Call resume synchronously, before any IndexedDB or network await.
+
+ // Unlock Web Audio synchronously during the user's tap on iOS.
  const audioContext=getTtsAudioContext();
- const unlockPromise=audioContext&&audioContext.state!=='running'?audioContext.resume():Promise.resolve();
+ let unlockPromise=Promise.resolve();
+ if(audioContext&&audioContext.state!=='running'){
+  try{unlockPromise=audioContext.resume()}catch(e){unlockPromise=Promise.reject(e)}
+ }
+
  const key=phrase.toLowerCase();
  try{
-  let blob=await readTtsCache(key);
-  if(!blob){
-   const response=await fetch(TTS_API_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({text:phrase})});
-   if(!response.ok)throw new Error('TTS request failed: '+response.status);
-   blob=await response.blob();
-   if(!blob.type.includes('audio'))throw new Error('Invalid audio response');
-   writeTtsCache(key,blob).catch(()=>{});
+  let blob=null;
+
+  // A local cache failure must never prevent a fresh request to the TTS service.
+  try{blob=await readTtsCache(key)}catch(cacheError){
+   console.warn('TTS local cache unavailable; requesting fresh audio.',cacheError);
   }
+
+  if(!blob){
+   let response;
+   try{
+    response=await fetch(TTS_API_URL,{
+     method:'POST',
+     headers:{'Content-Type':'application/json'},
+     body:JSON.stringify({text:phrase})
+    });
+   }catch(networkError){
+    throw new Error('连接语音服务失败：'+(networkError.message||'网络或跨域错误'));
+   }
+
+   if(!response.ok){
+    const detail=(await response.text()).slice(0,180);
+    throw new Error('语音服务返回 HTTP '+response.status+(detail?'：'+detail:''));
+   }
+
+   const contentType=response.headers.get('Content-Type')||'';
+   if(!contentType.toLowerCase().includes('audio')){
+    const detail=(await response.text()).slice(0,180);
+    throw new Error('服务返回的不是音频（'+(contentType||'无 Content-Type')+'）'+(detail?'：'+detail:''));
+   }
+
+   blob=await response.blob();
+   if(!blob.size)throw new Error('语音服务返回了空音频');
+   writeTtsCache(key,blob).catch(error=>console.warn('TTS cache write failed:',error));
+  }
+
+  if(!blob||!blob.size)throw new Error('本地音频缓存为空');
+
   if(audioContext){
    await unlockPromise;
    if(audioContext.state!=='running')await audioContext.resume();
+   if(audioContext.state!=='running')throw new Error('iPhone 音频通道未解锁（AudioContext: '+audioContext.state+'）');
    const buffer=await audioContext.decodeAudioData(await blob.arrayBuffer());
+   if(!buffer||!buffer.length)throw new Error('音频解码结果为空');
    const source=audioContext.createBufferSource();
-   source.buffer=buffer;source.connect(audioContext.destination);
+   source.buffer=buffer;
+   source.connect(audioContext.destination);
    currentTtsSource=source;
    source.onended=()=>{if(currentTtsSource===source)currentTtsSource=null};
    source.start(0);
   }else{
    const url=URL.createObjectURL(blob),audio=new Audio(url);
-   currentTtsAudio=audio;currentTtsObjectUrl=url;
-   audio.onended=()=>{if(currentTtsAudio===audio)currentTtsAudio=null;if(currentTtsObjectUrl===url){URL.revokeObjectURL(url);currentTtsObjectUrl=null}};
+   currentTtsAudio=audio;
+   currentTtsObjectUrl=url;
+   audio.onended=()=>{
+    if(currentTtsAudio===audio)currentTtsAudio=null;
+    if(currentTtsObjectUrl===url){URL.revokeObjectURL(url);currentTtsObjectUrl=null}
+   };
    await audio.play();
   }
  }catch(error){
-  console.warn('AI voice unavailable; using system voice.',error);
+  const message=error&&error.message?error.message:String(error);
+  console.error('ElevenLabs TTS playback failed:',error);
+  showToast('AI 发音失败：'+message+'；正在尝试系统语音');
   fallbackSay(phrase);
  }
 }
