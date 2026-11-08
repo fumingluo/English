@@ -287,15 +287,51 @@ function backspaceBibleCharacter(){let verse=getVerse();if(typingError){typingEr
 
 const READER_TERMS=[
  {zh:'众教会',en:'churches',meaning:'众教会',level:1},{zh:'得胜',en:'overcome',meaning:'得胜；胜过',level:1},
- {zh:'生命树',en:'tree of life',meaning:'生命树',level:2},{zh:'果子',en:'fruit',meaning:'果子；果实',level:2},
- {zh:'圣灵',en:'Holy Spirit',meaning:'圣灵',level:3},{zh:'见证',en:'witness',meaning:'见证；见证人',level:3},
- {zh:'羔羊',en:'Lamb',meaning:'羔羊',level:3},{zh:'宝座',en:'throne',meaning:'宝座',level:3},
- {zh:'天使',en:'angel',meaning:'天使',level:4},{zh:'国度',en:'kingdom',meaning:'国度；王权',level:4},
- {zh:'荣耀',en:'glory',meaning:'荣耀',level:4},{zh:'圣洁',en:'holy',meaning:'圣洁的',level:4},
- {zh:'审判',en:'judgment',meaning:'审判；判断',level:5},{zh:'列国',en:'nations',meaning:'列国；民族',level:5},
- {zh:'忍耐',en:'perseverance',meaning:'忍耐；坚忍',level:5},{zh:'生命',en:'life',meaning:'生命',level:5},
- {zh:'死亡',en:'death',meaning:'死亡',level:5},{zh:'龙',en:'dragon',meaning:'龙',level:5},
- {zh:'兽',en:'beast',meaning:'兽；野兽',level:5},{zh:'新耶路撒冷',en:'New Jerusalem',meaning:'新耶路撒冷',level:5}
+ {zh:'生命树',en:'tree of life',meaning:'生命树',level:1},{zh:'果子',en:'fruit',meaning:'果子；果实',level:1},
+ {zh:'使者',en:'messenger',meaning:'使者',level:1},{zh:'行为',en:'deeds',meaning:'行为；作为',level:1},
+ {zh:'忍耐',en:'perseverance',meaning:'忍耐；坚忍',level:1},{zh:'爱心',en:'love',meaning:'爱；爱心',level:1},
+ {zh:'信心',en:'faith',meaning:'信心；信仰',level:1},{zh:'悔改',en:'repent',meaning:'悔改',level:1},
+ {zh:'宝座',en:'throne',meaning:'宝座',level:1},{zh:'天使',en:'angel',meaning:'天使',level:1},
+ {zh:'见证',en:'witness',meaning:'见证；见证人',level:1},{zh:'羔羊',en:'Lamb',meaning:'羔羊',level:1},
+ {zh:'圣灵',en:'Holy Spirit',meaning:'圣灵',level:1},{zh:'教会',en:'church',meaning:'教会',level:1},
+ {zh:'生命',en:'life',meaning:'生命',level:2},{zh:'死亡',en:'death',meaning:'死亡',level:2},
+ {zh:'荣耀',en:'glory',meaning:'荣耀',level:2},{zh:'圣洁',en:'holy',meaning:'圣洁的',level:2},
+ {zh:'国度',en:'kingdom',meaning:'国度；王权',level:2},{zh:'列国',en:'nations',meaning:'列国；民族',level:2},
+ {zh:'冠冕',en:'crown',meaning:'冠冕；王冠',level:2},{zh:'灯台',en:'lampstand',meaning:'灯台',level:2},
+ {zh:'金灯台',en:'golden lampstand',meaning:'金灯台',level:2},{zh:'星',en:'star',meaning:'星；星辰',level:2},
+ {zh:'书卷',en:'scroll',meaning:'书卷',level:2},{zh:'印',en:'seal',meaning:'印；印记',level:2},
+ {zh:'号',en:'trumpet',meaning:'号；号角',level:2},{zh:'祷告',en:'prayer',meaning:'祷告',level:2},
+ {zh:'圣殿',en:'temple',meaning:'圣殿',level:2},{zh:'先知',en:'prophet',meaning:'先知',level:2},
+ {zh:'仆人',en:'servant',meaning:'仆人',level:2},{zh:'仇敌',en:'enemy',meaning:'仇敌',level:2},
+ {zh:'审判',en:'judgment',meaning:'审判；判断',level:3},{zh:'龙',en:'dragon',meaning:'龙',level:3},
+ {zh:'兽',en:'beast',meaning:'兽；野兽',level:3},{zh:'撒但',en:'Satan',meaning:'撒但',level:3},
+ {zh:'魔鬼',en:'devil',meaning:'魔鬼',level:3},{zh:'天上',en:'heaven',meaning:'天上；天堂',level:3},
+ {zh:'地上',en:'earth',meaning:'地上；大地',level:3},{zh:'海',en:'sea',meaning:'海洋',level:3},
+ {zh:'火',en:'fire',meaning:'火；火焰',level:3},{zh:'血',en:'blood',meaning:'血',level:3},
+ {zh:'能力',en:'power',meaning:'能力；权能',level:3},{zh:'权柄',en:'authority',meaning:'权柄；权力',level:3},
+ {zh:'救恩',en:'salvation',meaning:'救恩；拯救',level:3},{zh:'福音',en:'gospel',meaning:'福音',level:3},
+ {zh:'圣经',en:'Scripture',meaning:'圣经；经文',level:3},{zh:'真理',en:'truth',meaning:'真理；事实',level:3},
+ {zh:'公义',en:'righteousness',meaning:'公义',level:3},{zh:'罪',en:'sin',meaning:'罪',level:3},
+ {zh:'荣耀归于',en:'glory be to',meaning:'荣耀归于',level:4},{zh:'新耶路撒冷',en:'New Jerusalem',meaning:'新耶路撒冷',level:4},
+ {zh:'生命册',en:'book of life',meaning:'生命册',level:4},{zh:'羔羊的血',en:'blood of the Lamb',meaning:'羔羊的血',level:4},
+ {zh:'大患难',en:'great tribulation',meaning:'大患难',level:4},{zh:'永永远远',en:'forever and ever',meaning:'直到永永远远',level:4},
+ {zh:'见证人',en:'witness',meaning:'见证人',level:4},{zh:'圣洁的',en:'holy',meaning:'圣洁的',level:4},
+ {zh:'全能者',en:'Almighty',meaning:'全能者',level:4},{zh:'创造',en:'create',meaning:'创造',level:4},
+ {zh:'得胜的',en:'the one who overcomes',meaning:'得胜的人',level:4},{zh:'敬拜',en:'worship',meaning:'敬拜',level:4},
+ {zh:'赞美',en:'praise',meaning:'赞美',level:4},{zh:'荣耀',en:'glory',meaning:'荣耀',level:4},
+ {zh:'慈爱',en:'mercy',meaning:'慈爱；怜悯',level:4},{zh:'愤怒',en:'wrath',meaning:'愤怒；震怒',level:4},
+ {zh:'灾殃',en:'plague',meaning:'灾殃；灾祸',level:4},{zh:'异象',en:'vision',meaning:'异象；景象',level:4},
+ {zh:'预言',en:'prophecy',meaning:'预言',level:4},{zh:'见证',en:'testimony',meaning:'见证；证词',level:5},
+ {zh:'应许',en:'promise',meaning:'应许；承诺',level:5},{zh:'盼望',en:'hope',meaning:'盼望；希望',level:5},
+ {zh:'信实',en:'faithful',meaning:'信实的；忠心的',level:5},{zh:'真实',en:'true',meaning:'真实的',level:5},
+ {zh:'永生',en:'eternal life',meaning:'永恒的生命',level:5},{zh:'永远',en:'eternal',meaning:'永恒的',level:5},
+ {zh:'洁白',en:'white',meaning:'洁白的',level:5},{zh:'宝石',en:'precious stone',meaning:'宝石',level:5},
+ {zh:'珍珠',en:'pearl',meaning:'珍珠',level:5},{zh:'金子',en:'gold',meaning:'黄金',level:5},
+ {zh:'铜',en:'bronze',meaning:'铜',level:5},{zh:'铁',en:'iron',meaning:'铁',level:5},
+ {zh:'日头',en:'sun',meaning:'太阳',level:5},{zh:'月亮',en:'moon',meaning:'月亮',level:5},
+ {zh:'晨星',en:'morning star',meaning:'晨星',level:5},{zh:'阴间',en:'Hades',meaning:'阴间',level:5},
+ {zh:'死亡和阴间',en:'Death and Hades',meaning:'死亡和阴间',level:5},{zh:'圣城',en:'holy city',meaning:'圣城',level:5},
+ {zh:'生命水',en:'water of life',meaning:'生命水',level:5},{zh:'生命河',en:'river of life',meaning:'生命河',level:5}
 ];
 function readerWordProgress(word){
  const saved=state.bible.readerWordLevels||{},rating=saved[word]||'unknown';
@@ -320,7 +356,7 @@ function contextReadingView(app){
   const ref='Revelation '+chapter+':'+v.verse;let remaining=String(v.text),html='';
   const matches=[];
   terms.forEach(t=>{let from=0,at;while((at=remaining.indexOf(t.zh,from))>=0){matches.push({at,term:t});from=at+t.zh.length}});
-  matches.sort((a,b)=>a.at-b.at);
+  matches.sort((a,b)=>a.at-b.at || b.term.zh.length-a.term.zh.length);
   let cursor=0;matches.forEach(m=>{if(m.at<cursor)return;html+=esc(remaining.slice(cursor,m.at))+readerWordMarkup(m.term,ref);cursor=m.at+m.term.zh.length;allWords.add(m.term.en)});
   html+=esc(remaining.slice(cursor));
   return '<p class="reader-verse"><span class="reader-ref">启示录 '+chapter+':'+v.verse+'</span>'+html+'</p>';
@@ -328,7 +364,7 @@ function contextReadingView(app){
  allWords.forEach(w=>{const key=({陌生:'unknown',熟悉:'familiar',掌握:'known',熟练:'fluent'})[readerWordProgress(w).label];counts[key]++});
  const selected=state.bible.readerWord||null,progress=selected?readerWordProgress(selected.en):null;
  const detail=selected?'<div class="reader-detail"><div class="row"><strong>'+esc(selected.en)+'</strong><button class="sound" data-action="reader-pronounce" data-word="'+esc(selected.en)+'">🔊</button></div><div class="muted">'+esc(selected.phonetic||'')+'</div><div>'+esc(selected.meaning)+'</div><small class="muted">'+esc(selected.ref||'')+'</small><div class="reader-ratings">'+[['unknown','陌生'],['familiar','熟悉'],['known','掌握'],['fluent','熟练']].map(x=>'<button class="reader-rating '+((state.bible.readerWordLevels||{})[selected.en]===x[0]?'active':'')+'" data-action="reader-rate" data-rating="'+x[0]+'" data-word="'+esc(selected.en)+'">'+x[1]+'</button>').join('')+'</div><div class="actions"><button class="btn secondary" data-action="reader-add-word">＋ 加入我的词库</button></div></div>':'<div class="reader-detail muted">点击正文中的英文单词，可听发音、查看释义，并手动标记熟练度。</div>';
- app.innerHTML='<div class="card"><div class="eyebrow">READ IN CONTEXT · REVELATION</div><div class="row"><div><h2 class="section-title">启示录语境阅读</h2><p class="section-sub" style="margin:3px 0 0">中文和合本为基础 · 英语比例逐级增加</p></div><select id="readerChapter" class="field" aria-label="选择章节">'+Array.from({length:22},(_,i)=>'<option value="'+(i+1)+'" '+(chapter===i+1?'selected':'')+'>第 '+(i+1)+' 章</option>').join('')+'</select></div><div class="reader-levels">'+[['1','入门 · 少量英文'],['2','初级 · 增加词汇'],['3','中级 · 更多英文'],['4','高级 · 大量英文'],['5','挑战 · 最高比例']].map(x=>'<button class="reader-level '+(level===Number(x[0])?'active':'')+'" data-action="reader-level" data-level="'+x[0]+'">'+x[1]+'</button>').join('')+'</div><div class="reader-stats"><span>本章词汇 '+allWords.size+' 个</span><span>陌生 '+counts.unknown+'</span><span>熟悉 '+counts.familiar+'</span><span>掌握 '+counts.known+'</span><span>熟练 '+counts.fluent+'</span></div><div class="reader-controls"><button class="btn quiet" data-action="reader-prev" '+(chapter===1?'disabled':'')+'>← 上一章</button><button class="btn primary" data-action="reader-next" '+(chapter===22?'disabled':'')+'>下一章 →</button></div></div><div class="reader-layout"><article class="reader-article">'+article+'</article>'+detail+'</div><p class="small muted" style="padding:0 4px">经文：1919 年简体和合本公版文本数据整理版。英文替换为学习辅助，不改变中文原文。数据来源及许可说明见项目说明。</p>';
+ app.innerHTML='<div class="card"><div class="eyebrow">READ IN CONTEXT · REVELATION</div><div class="row"><div><h2 class="section-title">启示录语境阅读</h2><p class="section-sub" style="margin:3px 0 0">中文和合本为基础 · 英语比例逐级增加</p></div><select id="readerChapter" class="field" aria-label="选择章节">'+Array.from({length:22},(_,i)=>'<option value="'+(i+1)+'" '+(chapter===i+1?'selected':'')+'>第 '+(i+1)+' 章</option>').join('')+'</select></div><div class="reader-levels">'+[['1','入门 · 更多基础词'],['2','初级 · 基础+进阶'],['3','中级 · 大量关键词'],['4','高级 · 高英语比例'],['5','挑战 · 最大英语比例']].map(x=>'<button class="reader-level '+(level===Number(x[0])?'active':'')+'" data-action="reader-level" data-level="'+x[0]+'">'+x[1]+'</button>').join('')+'</div><div class="reader-stats"><span>本章词汇 '+allWords.size+' 个</span><span>陌生 '+counts.unknown+'</span><span>熟悉 '+counts.familiar+'</span><span>掌握 '+counts.known+'</span><span>熟练 '+counts.fluent+'</span></div><div class="reader-controls"><button class="btn quiet" data-action="reader-prev" '+(chapter===1?'disabled':'')+'>← 上一章</button><button class="btn primary" data-action="reader-next" '+(chapter===22?'disabled':'')+'>下一章 →</button></div></div><div class="reader-layout"><article class="reader-article">'+article+'</article>'+detail+'</div><p class="small muted" style="padding:0 4px">经文：1919 年简体和合本公版文本数据整理版。英文替换为学习辅助，不改变中文原文。数据来源及许可说明见项目说明。</p>';
  const select=document.getElementById('readerChapter');if(select)select.addEventListener('change',e=>{state.bible.readerChapter=Number(e.target.value)||1;state.bible.readerWord=null;save();render()});
 }
 function bibleView(app){let p=getPassage(),v=getVerse();if(!v){let message=revelationLoading?'正在加载启示录 22 章全文……':revelationError?'加载失败：'+esc(revelationError):'正在准备经文库';app.innerHTML='<div class="bible-view"><div class="card"><div class="eyebrow">BIBLE ENGLISH · TYPING TUTOR</div><h2 class="section-title">启示录英文全文练习</h2><p class="section-sub">'+message+'</p><button class="btn primary" data-action="load-revelation" '+(revelationLoading?'disabled':'')+'>'+(revelationLoading?'正在加载…':'加载／重试启示录全文')+'</button></div></div>';return}let pos=typingPosition(v),total=Array.from(v.en).length,done=pos===total,terms=v.v||[],completed=p.verses.filter(x=>state.bible.completed.includes(x.ref)).length,select=allPassages().map(x=>'<option value="'+esc(x.id)+'" '+(x.id===p.id?'selected':'')+'>'+esc(x.title)+'</option>').join('');app.innerHTML='<div class="bible-view">'+(revelationError?'<div class="card"><div class="small muted">启示录全文加载暂时失败：'+esc(revelationError)+'</div><button class="btn secondary" data-action="load-revelation">重新加载启示录全文</button></div>':revelationLoading?'<div class="card"><div class="small muted">正在后台载入启示录全文……</div></div>':'')+'<div class="card"><div class="row"><div><div class="eyebrow">BIBLE ENGLISH · TYPING TUTOR</div><strong>圣经英文跟打</strong></div><select class="field" id="passageSelect" style="max-width:58%;padding:8px;font-size:12px">'+select+'</select></div><div class="progress-wrap"><span>进度</span><div class="progress"><div class="bar" style="width:'+Math.round(completed/Math.max(1,p.verses.length)*100)+'%"></div></div><span>'+completed+'/'+p.verses.length+'</span></div></div><div class="card"><div class="row"><span class="verse-ref">'+esc(v.ref)+'</span><span class="tag">'+(state.bible.verse+1)+' / '+p.verses.length+'</span></div><div class="actions"><button class="btn secondary" data-action="verse-play">🔊 播放本节</button>'+(terms.length?'<button class="btn quiet" data-action="verse-add-words">＋ 收集本节词汇</button>':'')+'</div></div><div class="card"><div class="row"><strong>跟打区域</strong><span class="tag">'+(done?'已完成':'逐字输入')+'</span></div><div class="typing-stage" id="typingStage"><div class="typing-display" id="typingDisplay">'+typingMarkup(v,pos,false)+'</div><input id="typingCapture" class="typing-capture" type="text" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" aria-label="在此输入经文文字" inputmode="text"></div><div class="typing-instruction">每个英文单词下方都显示中文含义；点击单词可播放发音并查看词义提示。个别未收录词汇会标注“本词释义暂未收录”。</div><div class="typing-metrics"><div class="metric"><strong id="typeProgress">'+Math.round(pos/Math.max(1,total)*100)+'%</strong><span>完成</span></div><div class="metric"><strong id="typeAccuracy">'+Math.round(pos/Math.max(1,pos+typingErrorCount)*100)+'%</strong><span>准确率</span></div><div class="metric"><strong id="typeChars">'+pos+'/'+total+'</strong><span>字符</span></div></div><div id="typingFeedback" class="feedback '+(done?'good':'')+'">'+(done?'本节输入完成。':'点击区域后直接键入；输入正确会自动推进。')+'</div><div id="typingTranslation" class="typing-translation '+(done?'':'hidden')+'"><strong>'+esc(v.ref)+(v.zh?' · 中文对照':' · 完成提示')+'</strong><p>'+esc(v.zh||'本节英文已完成。点击单词可听发音并查看词义提示。')+'</p></div><div class="row" style="margin-top:8px"><button class="btn quiet" data-action="restart-typing">重练本节</button><button class="btn quiet" data-action="prev-verse" '+(state.bible.verse===0?'disabled':'')+'>← 上一节</button><button class="btn primary" data-action="next-verse" '+(state.bible.verse>=p.verses.length-1?'disabled':'')+'>下一节 →</button></div></div><div class="card"><strong>本节重点词汇</strong><div class="key-words">'+(terms.length?terms.map(t=>'<button class="key-word" data-action="add-one-word" data-word="'+esc(t[0])+'" data-meaning="'+esc(t[1])+'">'+esc(t[0])+' · '+esc(t[1])+'</button>').join(''):'<span class="small muted">单词释义可悬停或点击经文中的单词查看。</span>')+'</div></div><p class="small muted" style="padding:0 4px">启示录英文采用 World English Bible（WEB，公有领域文本），首次打开时联网载入并保存在本机；当前未提供逐节中文译文，单词词义为学习辅助提示。</p></div>';let stage=document.getElementById('typingStage'),input=document.getElementById('typingCapture');stage.addEventListener('click',e=>{if(!e.target.closest('[data-action="bible-word-play"]'))input.focus()});input.addEventListener('input',()=>{let raw=input.value;input.value='';for(let ch of Array.from(raw)){typeBibleCharacter(ch);if(typingError)break}});input.addEventListener('keydown',e=>{if(e.key==='Backspace'){e.preventDefault();backspaceBibleCharacter()}else if(e.key==='Enter'){e.preventDefault()}});document.getElementById('passageSelect').addEventListener('change',e=>{clearTimeout(bibleAdvanceTimer);state.bible.passage=e.target.value;state.bible.verse=0;typingError='';typingErrorCount=0;save();render()})}
