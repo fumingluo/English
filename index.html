@@ -441,7 +441,7 @@ else if(a==='reset-data'){if(confirm('确定清空本机学习数据、复习记
 }
 document.getElementById('nav').addEventListener('click',e=>{let b=e.target.closest('[data-view]');if(!b)return;state.view=b.dataset.view;question=null;save();render()});
 document.getElementById('app').addEventListener('click',e=>{let b=e.target.closest('[data-action]');if(b){action(b);return}let card=e.target.closest('.minimal-word-card[data-swipe-card]');if(card&&Date.now()>suppressWordCardClickUntil){let w=wordById(card.dataset.swipeId);if(w)say(w.word)}});
-document.addEventListener('click',e=>{if(!state.bible.readerWord||state.view!=='reader')return;if(e.target.closest('.reader-word-wrap'))return;state.bible.readerWord=null;renderPreservingScroll()});
+document.addEventListener('click',e=>{if(!state.bible.readerWord||state.view!=='reader')return;if(e.target.closest('.reader-word-wrap')||e.target.closest('[data-action="reader-word"]'))return;state.bible.readerWord=null;renderPreservingScroll()});
 function swipeDirection(dx,dy){return Math.abs(dx)>Math.abs(dy)?(dx>0?'right':'left'):(dy<0?'up':'down')}
 function paintSwipe(g,dx,dy){let card=g.area,dir=swipeDirection(dx,dy),angle=Math.max(-11,Math.min(11,dx*.04));if(g.lastDir!==dir){card.classList.remove('drag-right','drag-left','drag-up','drag-down');card.classList.add('drag-'+dir);g.lastDir=dir}card.style.transform='translate3d('+dx+'px,'+dy+'px,0) rotate('+angle+'deg)'}
 function resetSwipe(g){let card=g.area;if(!card||!card.isConnected)return;card.classList.remove('is-dragging','drag-right','drag-left','drag-up','drag-down');card.classList.add('is-returning');card.style.transform='translate3d(0,0,0) rotate(0deg)';card.style.opacity='1';setTimeout(()=>card.classList.remove('is-returning'),220)}
