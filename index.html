@@ -302,9 +302,10 @@ function readerWordProgress(word){
  const map={unknown:{status:'unlearned',label:'陌生'},familiar:{status:'familiar',label:'熟悉'},known:{status:'known',label:'掌握'},fluent:{status:'fluent',label:'熟练'}};
  return map[rating]||map.unknown;
 }
+const READER_IPA={'churches':'ˈtʃɜːrtʃɪz','overcome':'ˌoʊvərˈkʌm','tree of life':'triː əv laɪf','fruit':'fruːt','Holy Spirit':'ˌhoʊli ˈspɪrɪt','witness':'ˈwɪtnəs','Lamb':'læm','throne':'θroʊn','angel':'ˈeɪndʒəl','kingdom':'ˈkɪŋdəm','glory':'ˈɡlɔːri','holy':'ˈhoʊli','judgment':'ˈdʒʌdʒmənt','nations':'ˈneɪʃənz','perseverance':'ˌpɜːrsəˈvɪrəns','life':'laɪf','death':'deθ','dragon':'ˈdræɡən','beast':'biːst','New Jerusalem':'nuː dʒəˈruːsələm'};
 function readerWordMarkup(term,ref){
  const p=readerWordProgress(term.en),selected=state.bible.readerWord&&state.bible.readerWord.en===term.en;
- return '<button type="button" class="reader-word status-'+p.status+' '+(selected?'selected':'')+'" data-action="reader-word" data-word="'+esc(term.en)+'" data-meaning="'+esc(term.meaning)+'" data-ref="'+esc(ref)+'" title="'+esc(term.meaning+' · '+p.label)+'">'+esc(term.en)+'</button>';
+ return '<button type="button" class="reader-word status-'+p.status+' '+(selected?'selected':'')+'" data-action="reader-word" data-word="'+esc(term.en)+'" data-meaning="'+esc(term.meaning)+'" data-phonetic="'+esc(READER_IPA[term.en]||'')+'" data-ref="'+esc(ref)+'" title="'+esc(term.meaning+' · '+p.label)+'">'+esc(term.en)+'</button>';
 }
 function contextReadingView(app){
  const chapter=Math.max(1,Math.min(22,Number(state.bible.readerChapter)||1)),level=Math.max(1,Math.min(5,Number(state.bible.readerLevel)||1));
@@ -365,7 +366,7 @@ else if(a==='choose'&&question&&!question.done){let q=question;q.selected=b.data
 else if(a==='check'&&question&&!question.done){let q=question;q.correct=document.getElementById('dictation').value.trim().toLowerCase()===q.word.word.toLowerCase();q.done=true;state.stats.attempts++;if(q.correct)state.stats.correct++;markActivity();render();advanceListenAfterAnswer(q)}
 else if(a==='next')newQuestion()
 else if(a==='bible-word-play'){let word=b.dataset.word,meaning=b.dataset.meaning;say(word);showToast(word+'：'+meaning)}
-else if(a==='reader-word'){state.bible.readerWord={word:b.dataset.word,meaning:b.dataset.meaning,phonetic:b.dataset.phonetic||'',ref:b.dataset.ref,en:b.dataset.word};say(b.dataset.word);render()}
+else if(a==='reader-word'){state.bible.readerWord={word:b.dataset.word,meaning:b.dataset.meaning,phonetic:b.dataset.phonetic||'',ref:b.dataset.ref,en:b.dataset.word,phonetic:b.dataset.phonetic||''};say(b.dataset.word);render()}
 else if(a==='reader-pronounce'){say(b.dataset.word)}
 else if(a==='reader-level'){state.bible.readerLevel=Number(b.dataset.level)||1;state.bible.readerWord=null;save();render()}
 else if(a==='reader-rate'){state.bible.readerWordLevels=Object.assign({},state.bible.readerWordLevels||{},{[b.dataset.word]:b.dataset.rating});save();render();showToast('熟练度已保存')}
