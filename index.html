@@ -221,7 +221,13 @@ function injectDueRelearn(){if(!Array.isArray(state.daily.relearnQueue))state.da
 function showToast(t){let e=document.getElementById('toast');e.textContent=t;e.classList.remove('hidden');clearTimeout(saveTimer);saveTimer=setTimeout(()=>e.classList.add('hidden'),2100)}
 function markActivity(){let t=today(),y=new Date();y.setDate(y.getDate()-1);let yesterday=y.getFullYear()+'-'+String(y.getMonth()+1).padStart(2,'0')+'-'+String(y.getDate()).padStart(2,'0');if(state.stats.lastStudy!==t){state.stats.streak=state.stats.lastStudy===yesterday?(state.stats.streak||0)+1:1;state.stats.lastStudy=t}if(!state.stats.studyDays.includes(t))state.stats.studyDays.push(t);save()}
 const TTS_API_URL='https://daily-english-tts.fumingluo06.workers.dev/';
-let currentTtsAudio=null,currentTtsObjectUrl=null;
+let currentTtsAudio=null,currentTtsObjectUrl=null,currentTtsSource=null,ttsAudioContext=null;
+function getTtsAudioContext(){
+ const Ctx=window.AudioContext||window.webkitAudioContext;
+ if(!Ctx)return null;
+ if(!ttsAudioContext)ttsAudioContext=new Ctx();
+ return ttsAudioContext;
+}
 function fallbackSay(text){
  if(!window.speechSynthesis){showToast('当前浏览器不支持语音播放');return}
  window.speechSynthesis.cancel();
@@ -275,8 +281,13 @@ async function say(text){
  const phrase=String(text||'').trim();
  if(!phrase)return;
  if(currentTtsAudio){currentTtsAudio.pause();currentTtsAudio=null}
+ if(currentTtsSource){try{currentTtsSource.stop()}catch(e){}currentTtsSource=null}
  if(currentTtsObjectUrl){URL.revokeObjectURL(currentTtsObjectUrl);currentTtsObjectUrl=null}
  if(window.speechSynthesis)window.speechSynthesis.cancel();
+ // iOS Safari requires audio permission to be unlocked during the original tap.
+ // Call resume synchronously, before any IndexedDB or network await.
+ const audioContext=getTtsAudioContext();
+ const unlockPromise=audioContext&&audioContext.state!=='running'?audioContext.resume():Promise.resolve();
  const key=phrase.toLowerCase();
  try{
   let blob=await readTtsCache(key);
@@ -287,11 +298,21 @@ async function say(text){
    if(!blob.type.includes('audio'))throw new Error('Invalid audio response');
    writeTtsCache(key,blob).catch(()=>{});
   }
-  const url=URL.createObjectURL(blob),audio=new Audio(url);
-  currentTtsAudio=audio;currentTtsObjectUrl=url;
-  audio.onended=()=>{if(currentTtsAudio===audio)currentTtsAudio=null;if(currentTtsObjectUrl===url){URL.revokeObjectURL(url);currentTtsObjectUrl=null}};
-  audio.onerror=()=>{if(currentTtsAudio===audio){currentTtsAudio=null;fallbackSay(phrase)}if(currentTtsObjectUrl===url){URL.revokeObjectURL(url);currentTtsObjectUrl=null}};
-  await audio.play();
+  if(audioContext){
+   await unlockPromise;
+   if(audioContext.state!=='running')await audioContext.resume();
+   const buffer=await audioContext.decodeAudioData(await blob.arrayBuffer());
+   const source=audioContext.createBufferSource();
+   source.buffer=buffer;source.connect(audioContext.destination);
+   currentTtsSource=source;
+   source.onended=()=>{if(currentTtsSource===source)currentTtsSource=null};
+   source.start(0);
+  }else{
+   const url=URL.createObjectURL(blob),audio=new Audio(url);
+   currentTtsAudio=audio;currentTtsObjectUrl=url;
+   audio.onended=()=>{if(currentTtsAudio===audio)currentTtsAudio=null;if(currentTtsObjectUrl===url){URL.revokeObjectURL(url);currentTtsObjectUrl=null}};
+   await audio.play();
+  }
  }catch(error){
   console.warn('AI voice unavailable; using system voice.',error);
   fallbackSay(phrase);
