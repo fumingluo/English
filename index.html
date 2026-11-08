@@ -350,9 +350,9 @@ function readerWordProgress(word){
  return map[rating]||map.unknown;
 }
 const READER_IPA={'churches':'ˈtʃɜːrtʃɪz','overcome':'ˌoʊvərˈkʌm','tree of life':'triː əv laɪf','fruit':'fruːt','Holy Spirit':'ˌhoʊli ˈspɪrɪt','witness':'ˈwɪtnəs','Lamb':'læm','throne':'θroʊn','angel':'ˈeɪndʒəl','kingdom':'ˈkɪŋdəm','glory':'ˈɡlɔːri','holy':'ˈhoʊli','judgment':'ˈdʒʌdʒmənt','nations':'ˈneɪʃənz','perseverance':'ˌpɜːrsəˈvɪrəns','life':'laɪf','death':'deθ','dragon':'ˈdræɡən','beast':'biːst','New Jerusalem':'nuː dʒəˈruːsələm'};
-function readerWordMarkup(term,ref){
- const p=readerWordProgress(term.en),selected=state.bible.readerWord&&state.bible.readerWord.en===term.en;
- const button='<button type="button" class="reader-word status-'+p.status+' '+(selected?'selected':'')+'" data-action="reader-word" data-word="'+esc(term.en)+'" data-meaning="'+esc(term.meaning)+'" data-phonetic="'+esc(READER_IPA[term.en]||'')+'" data-ref="'+esc(ref)+'" title="'+esc(term.meaning+' · '+p.label)+'">'+esc(term.en)+'</button>';
+function readerWordMarkup(term,ref,wordKey){
+ const p=readerWordProgress(term.en),selected=state.bible.readerWord&&state.bible.readerWord.key===wordKey;
+ const button='<button type="button" class="reader-word status-'+p.status+' '+(selected?'selected':'')+'" data-action="reader-word" data-word-key="'+esc(wordKey)+'" data-word="'+esc(term.en)+'" data-meaning="'+esc(term.meaning)+'" data-phonetic="'+esc(READER_IPA[term.en]||'')+'" data-ref="'+esc(ref)+'" title="'+esc(term.meaning+' · '+p.label)+'">'+esc(term.en)+'</button>';
  if(!selected)return button;
  const ratings=[['unknown','陌生'],['familiar','熟悉'],['known','掌握'],['fluent','熟练']];
  const panel='<span class="reader-inline-detail" role="group" aria-label="'+esc(term.en)+' 单词释义"><span class="reader-inline-top"><strong>'+esc(term.en)+'</strong><button class="sound" data-action="reader-pronounce" data-word="'+esc(term.en)+'" aria-label="播放发音">🔊</button></span><span class="reader-inline-phonetic">'+esc(READER_IPA[term.en]?' /'+READER_IPA[term.en]+'/':'')+'</span><span class="reader-inline-meaning">'+esc(term.meaning)+'</span><span class="reader-inline-ref">'+esc(ref)+'</span><span class="reader-ratings">'+ratings.map(x=>'<button class="reader-rating '+((state.bible.readerWordLevels||{})[term.en]===x[0]?'active':'')+'" data-action="reader-rate" data-rating="'+x[0]+'" data-word="'+esc(term.en)+'">'+x[1]+'</button>').join('')+'</span><span class="reader-inline-actions"><button class="btn secondary" data-action="reader-add-word">＋ 加入我的词库</button></span></span>';
@@ -372,7 +372,7 @@ function contextReadingView(app){
   const matches=[];
   terms.forEach(t=>{let from=0,at;while((at=remaining.indexOf(t.zh,from))>=0){matches.push({at,term:t});from=at+t.zh.length}});
   matches.sort((a,b)=>a.at-b.at || b.term.zh.length-a.term.zh.length);
-  let cursor=0;matches.forEach(m=>{if(m.at<cursor)return;html+=esc(remaining.slice(cursor,m.at))+readerWordMarkup(m.term,ref);cursor=m.at+m.term.zh.length;allWords.add(m.term.en)});
+  let cursor=0;matches.forEach(m=>{if(m.at<cursor)return;html+=esc(remaining.slice(cursor,m.at))+readerWordMarkup(m.term,ref,ref+'|'+m.at+'|'+m.term.en);cursor=m.at+m.term.zh.length;allWords.add(m.term.en)});
   html+=esc(remaining.slice(cursor));
   return '<p class="reader-verse"><span class="reader-ref">启示录 '+chapter+':'+v.verse+'</span>'+html+'</p>';
  }).join('');
@@ -417,7 +417,7 @@ else if(a==='choose'&&question&&!question.done){let q=question;q.selected=b.data
 else if(a==='check'&&question&&!question.done){let q=question;q.correct=document.getElementById('dictation').value.trim().toLowerCase()===q.word.word.toLowerCase();q.done=true;state.stats.attempts++;if(q.correct)state.stats.correct++;markActivity();render();advanceListenAfterAnswer(q)}
 else if(a==='next')newQuestion()
 else if(a==='bible-word-play'){let word=b.dataset.word,meaning=b.dataset.meaning;say(word);showToast(word+'：'+meaning)}
-else if(a==='reader-word'){const same=state.bible.readerWord&&state.bible.readerWord.en===b.dataset.word;state.bible.readerWord=same?null:{word:b.dataset.word,meaning:b.dataset.meaning,phonetic:b.dataset.phonetic||'',ref:b.dataset.ref,en:b.dataset.word};if(!same)say(b.dataset.word);renderPreservingScroll()}
+else if(a==='reader-word'){const key=b.dataset.wordKey||b.dataset.ref+'|'+b.dataset.word;const same=state.bible.readerWord&&state.bible.readerWord.key===key;state.bible.readerWord=same?null:{key,word:b.dataset.word,meaning:b.dataset.meaning,phonetic:b.dataset.phonetic||'',ref:b.dataset.ref,en:b.dataset.word};if(!same)say(b.dataset.word);renderPreservingScroll()}
 else if(a==='reader-pronounce'){say(b.dataset.word)}
 else if(a==='reader-level'){state.bible.readerLevel=Number(b.dataset.level)||1;state.bible.readerWord=null;save();renderPreservingScroll()}
 else if(a==='reader-rate'){state.bible.readerWordLevels=Object.assign({},state.bible.readerWordLevels||{},{[b.dataset.word]:b.dataset.rating});save();renderPreservingScroll();showToast('熟练度已保存')}
@@ -441,6 +441,7 @@ else if(a==='reset-data'){if(confirm('确定清空本机学习数据、复习记
 }
 document.getElementById('nav').addEventListener('click',e=>{let b=e.target.closest('[data-view]');if(!b)return;state.view=b.dataset.view;question=null;save();render()});
 document.getElementById('app').addEventListener('click',e=>{let b=e.target.closest('[data-action]');if(b){action(b);return}let card=e.target.closest('.minimal-word-card[data-swipe-card]');if(card&&Date.now()>suppressWordCardClickUntil){let w=wordById(card.dataset.swipeId);if(w)say(w.word)}});
+document.addEventListener('click',e=>{if(!state.bible.readerWord||state.view!=='reader')return;if(e.target.closest('.reader-word-wrap'))return;state.bible.readerWord=null;renderPreservingScroll()});
 function swipeDirection(dx,dy){return Math.abs(dx)>Math.abs(dy)?(dx>0?'right':'left'):(dy<0?'up':'down')}
 function paintSwipe(g,dx,dy){let card=g.area,dir=swipeDirection(dx,dy),angle=Math.max(-11,Math.min(11,dx*.04));if(g.lastDir!==dir){card.classList.remove('drag-right','drag-left','drag-up','drag-down');card.classList.add('drag-'+dir);g.lastDir=dir}card.style.transform='translate3d('+dx+'px,'+dy+'px,0) rotate('+angle+'deg)'}
 function resetSwipe(g){let card=g.area;if(!card||!card.isConnected)return;card.classList.remove('is-dragging','drag-right','drag-left','drag-up','drag-down');card.classList.add('is-returning');card.style.transform='translate3d(0,0,0) rotate(0deg)';card.style.opacity='1';setTimeout(()=>card.classList.remove('is-returning'),220)}
