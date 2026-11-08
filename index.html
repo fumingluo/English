@@ -220,7 +220,83 @@ function getDaily(){if(state.daily.date!==today()||!Array.isArray(state.daily.id
 function injectDueRelearn(){if(!Array.isArray(state.daily.relearnQueue))state.daily.relearnQueue=[];let now=Date.now(),q=state.daily.relearnQueue,index=q.findIndex(x=>x&&Number(x.dueAt)<=now&&wordById(x.id));if(index<0)return;let item=q.splice(index,1)[0],at=Math.max(0,Math.min(Number(state.daily.index)||0,state.daily.ids.length));state.daily.ids.splice(at,0,item.id);save()}
 function showToast(t){let e=document.getElementById('toast');e.textContent=t;e.classList.remove('hidden');clearTimeout(saveTimer);saveTimer=setTimeout(()=>e.classList.add('hidden'),2100)}
 function markActivity(){let t=today(),y=new Date();y.setDate(y.getDate()-1);let yesterday=y.getFullYear()+'-'+String(y.getMonth()+1).padStart(2,'0')+'-'+String(y.getDate()).padStart(2,'0');if(state.stats.lastStudy!==t){state.stats.streak=state.stats.lastStudy===yesterday?(state.stats.streak||0)+1:1;state.stats.lastStudy=t}if(!state.stats.studyDays.includes(t))state.stats.studyDays.push(t);save()}
-function say(text){if(!window.speechSynthesis){showToast('当前浏览器不支持语音播放');return}window.speechSynthesis.cancel();let u=new SpeechSynthesisUtterance(text);u.lang='en-US';u.rate=.88;let vs=window.speechSynthesis.getVoices();let v=vs.find(x=>x.lang==='en-US'&&/Samantha|Google US English|Aria|Jenny/i.test(x.name))||vs.find(x=>x.lang==='en-US');if(v)u.voice=v;window.speechSynthesis.speak(u)}
+const TTS_API_URL='https://daily-english-tts.fumingluo06.workers.dev/';
+let currentTtsAudio=null,currentTtsObjectUrl=null;
+function fallbackSay(text){
+ if(!window.speechSynthesis){showToast('当前浏览器不支持语音播放');return}
+ window.speechSynthesis.cancel();
+ let u=new SpeechSynthesisUtterance(text);u.lang='en-US';u.rate=.88;
+ let vs=window.speechSynthesis.getVoices();
+ let v=vs.find(x=>x.lang==='en-US'&&/Samantha|Google US English|Aria|Jenny/i.test(x.name))||vs.find(x=>x.lang==='en-US');
+ if(v)u.voice=v;window.speechSynthesis.speak(u);
+}
+function openTtsCache(){
+ return new Promise((resolve,reject)=>{
+  if(!('indexedDB' in window)){reject(new Error('IndexedDB unavailable'));return}
+  const req=indexedDB.open('dailyEnglishAudioCache',1);
+  req.onupgradeneeded=()=>{const db=req.result;if(!db.objectStoreNames.contains('audio'))db.createObjectStore('audio',{keyPath:'key'})};
+  req.onsuccess=()=>resolve(req.result);req.onerror=()=>reject(req.error);
+ });
+}
+async function readTtsCache(key){
+ const db=await openTtsCache();
+ return new Promise((resolve,reject)=>{
+  const tx=db.transaction('audio','readonly'),req=tx.objectStore('audio').get(key);
+  req.onsuccess=()=>{const item=req.result;resolve(item?.blob||null);db.close()};
+  req.onerror=()=>{db.close();reject(req.error)};
+ });
+}
+async function writeTtsCache(key,blob){
+ const db=await openTtsCache();
+ return new Promise((resolve,reject)=>{
+  const tx=db.transaction('audio','readwrite'),store=tx.objectStore('audio');
+  store.put({key,blob,used:Date.now()});
+  tx.oncomplete=()=>{
+   db.close();
+   trimTtsCache().catch(()=>{});
+   resolve();
+  };
+  tx.onerror=()=>{db.close();reject(tx.error)};
+ });
+}
+async function trimTtsCache(){
+ const db=await openTtsCache();
+ return new Promise((resolve,reject)=>{
+  const tx=db.transaction('audio','readwrite'),store=tx.objectStore('audio'),items=[];
+  const req=store.openCursor();
+  req.onsuccess=()=>{const cursor=req.result;if(cursor){items.push({key:cursor.key,used:cursor.value.used||0});cursor.continue()}else{
+   items.sort((a,b)=>b.used-a.used);items.slice(80).forEach(x=>store.delete(x.key));
+  }};
+  tx.oncomplete=()=>{db.close();resolve()};
+  tx.onerror=()=>{db.close();reject(tx.error)};
+ });
+}
+async function say(text){
+ const phrase=String(text||'').trim();
+ if(!phrase)return;
+ if(currentTtsAudio){currentTtsAudio.pause();currentTtsAudio=null}
+ if(currentTtsObjectUrl){URL.revokeObjectURL(currentTtsObjectUrl);currentTtsObjectUrl=null}
+ if(window.speechSynthesis)window.speechSynthesis.cancel();
+ const key=phrase.toLowerCase();
+ try{
+  let blob=await readTtsCache(key);
+  if(!blob){
+   const response=await fetch(TTS_API_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({text:phrase})});
+   if(!response.ok)throw new Error('TTS request failed: '+response.status);
+   blob=await response.blob();
+   if(!blob.type.includes('audio'))throw new Error('Invalid audio response');
+   writeTtsCache(key,blob).catch(()=>{});
+  }
+  const url=URL.createObjectURL(blob),audio=new Audio(url);
+  currentTtsAudio=audio;currentTtsObjectUrl=url;
+  audio.onended=()=>{if(currentTtsAudio===audio)currentTtsAudio=null;if(currentTtsObjectUrl===url){URL.revokeObjectURL(url);currentTtsObjectUrl=null}};
+  audio.onerror=()=>{if(currentTtsAudio===audio){currentTtsAudio=null;fallbackSay(phrase)}if(currentTtsObjectUrl===url){URL.revokeObjectURL(url);currentTtsObjectUrl=null}};
+  await audio.play();
+ }catch(error){
+  console.warn('AI voice unavailable; using system voice.',error);
+  fallbackSay(phrase);
+ }
+}
 function updateHeader(){document.getElementById('dateLabel').textContent=new Date().toLocaleDateString('zh-CN',{month:'long',day:'numeric',weekday:'short'});let learned=Object.keys(state.cards).filter(k=>state.cards[k]&&state.cards[k].seen).length,acc=state.stats.attempts?Math.round(state.stats.correct/state.stats.attempts*100):0;document.getElementById('summaryStats').innerHTML='<div class="stat"><strong>🔥 '+(state.stats.streak||0)+'</strong><span>连续学习天数</span></div><div class="stat"><strong>📚 '+learned+'</strong><span>累计学习词条</span></div><div class="stat"><strong>🎯 '+acc+'%</strong><span>练习正确率</span></div>';document.getElementById('planLine').textContent=state.level+'计划 · 今日待复习 '+dueWords().length+' 个 · 新词目标 20 个';document.querySelector('.shell').classList.toggle('compact-page',state.view!=='learn')}
 function render(){if(state.view==='speak')state.view='learn';updateHeader();document.querySelectorAll('#nav button').forEach(b=>b.classList.toggle('active',b.dataset.view===state.view));let views={learn:learnView,review:reviewView,listen:listenView,bible:bibleView,reader:contextReadingView,explore:exploreView,mine:mineView};(views[state.view]||learnView)(document.getElementById('app'))}
 window.getAppState=function(){return state};
