@@ -187,6 +187,17 @@ const WORDS=[
 {id:'efficient',word:'Efficient',phonetic:'/ɪˈfɪʃ.ənt/',meaning:'效率高的；高效的',level:'高级',category:'词缀：-ent',en:'The new system saves us a lot of time.',zh:'新系统帮我们节省了很多时间。'},
 {id:'negotiate',word:'Negotiate',phonetic:'/nɪˈɡoʊ.ʃi.eɪt/',meaning:'协商；谈判',level:'高级',category:'常见词',en:'Could we talk about a better price?',zh:'我们能谈谈更合适的价格吗？'},
 {id:'substantial',word:'Substantial',phonetic:'/səbˈstæn.ʃəl/',meaning:'大量的；可观的；重要的',level:'高级',category:'词缀：-ial',en:'The project needs a substantial investment.',zh:'这个项目需要大量投资。'}
+,{id:'faith',word:'Faith',phonetic:'/feɪθ/',meaning:'信心；信仰',level:'初级',category:'圣经常见词',en:'Faith gives us strength in difficult times.',zh:'信心使我们在困难的时候有力量。'},
+{id:'faithful',word:'Faithful',phonetic:'/ˈfeɪθ.fəl/',meaning:'忠心的；忠实的',level:'初级',category:'词缀：-ful',en:'She has been a faithful friend for years.',zh:'多年来，她一直是一位忠实的朋友。'},
+{id:'unfaithful',word:'Unfaithful',phonetic:'/ʌnˈfeɪθ.fəl/',meaning:'不忠诚的；不忠心的',level:'初级',category:'词缀：un- + -ful',en:'He was unfaithful to his promise.',zh:'他没有信守自己的承诺。'},
+{id:'kindness',word:'Kindness',phonetic:'/ˈkaɪnd.nəs/',meaning:'善良；仁慈',level:'初级',category:'词缀：-ness',en:'A little kindness can make a big difference.',zh:'一点善意就能带来很大的改变。'},
+{id:'darkness',word:'Darkness',phonetic:'/ˈdɑːrk.nəs/',meaning:'黑暗；黑暗状态',level:'初级',category:'词缀：-ness',en:'Light shines in the darkness.',zh:'光照在黑暗里。'},
+{id:'hopeful',word:'Hopeful',phonetic:'/ˈhoʊp.fəl/',meaning:'充满希望的',level:'初级',category:'词缀：-ful',en:'I feel hopeful about the future.',zh:'我对未来充满希望。'},
+{id:'hopeless',word:'Hopeless',phonetic:'/ˈhoʊp.ləs/',meaning:'没有希望的；绝望的',level:'初级',category:'词缀：-less',en:'The situation is difficult, but not hopeless.',zh:'情况很困难，但并非毫无希望。'},
+{id:'reappear',word:'Reappear',phonetic:'/ˌriː.əˈpɪr/',meaning:'再次出现；重新显现',level:'初级',category:'词缀：re-',en:'The sun will reappear after the rain.',zh:'雨后太阳会再次出现。'},
+{id:'overcome',word:'Overcome',phonetic:'/ˌoʊ.vɚˈkʌm/',meaning:'克服；战胜；胜过',level:'初级',category:'圣经常见词 · 词缀：over-',en:'We can overcome our fears.',zh:'我们能够克服自己的恐惧。'},
+{id:'endure',word:'Endure',phonetic:'/ɪnˈdʊr/',meaning:'忍受；忍耐；持久',level:'初级',category:'圣经常见词',en:'Love can endure through hard times.',zh:'爱能够在艰难时期持久不变。'}
+
 ];
 
 
@@ -257,7 +268,7 @@ const MORPH_ROOTS={
  friend:'朋友',teach:'教',read:'阅读',play:'玩；演奏',work:'工作',create:'创造',
  form:'形成；形状',agree:'同意',appear:'出现',connect:'连接',develop:'发展',
  employ:'雇用',govern:'管理',nation:'国家',predict:'预测',clear:'清楚的',
- bright:'明亮的',great:'伟大的',possible:'可能的',probable:'可能的',avail:'有用；有空；可获得'
+ bright:'明亮的',great:'伟大的',possible:'可能的',probable:'可能的',avail:'有用；有空；可获得',faith:'信心；信仰',appear:'出现',help:'帮助',hope:'希望',come:'来；到达'
 };
 const MORPH_PREFIXES=[
  ['un','表示否定'],['re','表示再次、重新'],['pre','表示在……之前'],
@@ -370,7 +381,7 @@ function allWords(){return WORDS.concat(state.custom||[])}function wordById(id){
 function dueWords(){const now=Date.now();return allWords().filter(w=>{let c=state.cards[w.id];if(!c||!c.seen)return false;let dueAt=Number(c.dueAt);if(Number.isFinite(dueAt)&&dueAt>0)return dueAt<=now;if(!c.due)return false;let legacy=String(c.due);let dueTime=legacy.includes('T')?new Date(legacy).getTime():new Date(legacy+'T00:00:00').getTime();return Number.isFinite(dueTime)&&dueTime<=now})}
 function dueLabel(c){if(!c)return'—';let t=Number(c.dueAt);if(!Number.isFinite(t)||t<=0){if(!c.due)return'—';t=String(c.due).includes('T')?new Date(c.due).getTime():new Date(c.due+'T00:00:00').getTime()}if(!Number.isFinite(t))return String(c.due||'—');let d=new Date(t);return d.toLocaleString('zh-CN',{month:'numeric',day:'numeric',hour:'2-digit',minute:'2-digit'})}
 function newWords(){return allWords().filter(w=>w.level===state.level&&(!state.cards[w.id]||!state.cards[w.id].seen))}
-function getDaily(){if(state.daily.date!==today()||!Array.isArray(state.daily.ids)){let due=dueWords().map(w=>w.id),fresh=newWords().map(w=>w.id),ids=due.concat(fresh.filter(id=>!due.includes(id))).slice(0,Math.max(20,due.length));state.daily={date:today(),ids,index:0,relearnQueue:[]};save()}else{let pending=dueWords().map(w=>w.id).filter(id=>!state.daily.ids.includes(id));let customPending=(state.custom||[]).filter(w=>(!state.cards[w.id]||!state.cards[w.id].seen)&&!state.daily.ids.includes(w.id)).map(w=>w.id);let additions=pending.concat(customPending.filter(id=>!pending.includes(id)));if(additions.length){state.daily.ids.splice(state.daily.index||0,0,...additions);save()}}return state.daily.ids.map(wordById).filter(Boolean)}
+function getDaily(){if(state.daily.date!==today()||!Array.isArray(state.daily.ids)){let due=dueWords().map(w=>w.id),fresh=newWords().map(w=>w.id),ids=due.concat(fresh.filter(id=>!due.includes(id))).slice(0,Math.max(20,due.length));state.daily={date:today(),ids,index:0,relearnQueue:[]};save()}else{let pending=dueWords().map(w=>w.id).filter(id=>!state.daily.ids.includes(id));let customPending=(state.custom||[]).filter(w=>(!state.cards[w.id]||!state.cards[w.id].seen)&&!state.daily.ids.includes(w.id)).map(w=>w.id);let builtinPending=WORDS.filter(w=>w.level===state.level&&(!state.cards[w.id]||!state.cards[w.id].seen)&&!state.daily.ids.includes(w.id)).map(w=>w.id);let additions=pending.concat(builtinPending.filter(id=>!pending.includes(id)),customPending.filter(id=>!pending.includes(id)&&!builtinPending.includes(id)));if(additions.length){state.daily.ids.splice(state.daily.index||0,0,...additions);save()}}return state.daily.ids.map(wordById).filter(Boolean)}
 function injectDueRelearn(){if(!Array.isArray(state.daily.relearnQueue))state.daily.relearnQueue=[];let now=Date.now(),q=state.daily.relearnQueue,index=q.findIndex(x=>x&&Number(x.dueAt)<=now&&wordById(x.id));if(index<0)return;let item=q.splice(index,1)[0],at=Math.max(0,Math.min(Number(state.daily.index)||0,state.daily.ids.length));state.daily.ids.splice(at,0,item.id);save()}
 function showToast(t){let e=document.getElementById('toast');e.textContent=t;e.classList.remove('hidden');clearTimeout(saveTimer);saveTimer=setTimeout(()=>e.classList.add('hidden'),2100)}
 function markActivity(){let t=today(),y=new Date();y.setDate(y.getDate()-1);let yesterday=y.getFullYear()+'-'+String(y.getMonth()+1).padStart(2,'0')+'-'+String(y.getDate()).padStart(2,'0');if(state.stats.lastStudy!==t){state.stats.streak=state.stats.lastStudy===yesterday?(state.stats.streak||0)+1:1;state.stats.lastStudy=t}if(!state.stats.studyDays.includes(t))state.stats.studyDays.push(t);save()}
