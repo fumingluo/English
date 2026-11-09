@@ -218,6 +218,7 @@ function save(){try{localStorage.setItem(KEY,JSON.stringify(state));if(window.fi
 
 // Curated, transparent word-building notes. Unknown words stay unsegmented rather than being guessed.
 const MORPHOLOGY={
+ darkness:{parts:[['dark','root','黑暗的；昏暗的'],['-ness','suffix','把形容词变成名词，表示某种状态或性质']],note:'dark + -ness：由“黑暗的”变成“黑暗”这一状态或性质。',family:[['dark','黑暗的',[['dark','root']]],['darken','使变暗',[['dark','root'],['en','suffix']]],['darkness','黑暗',[['dark','root'],['ness','suffix']]],['darkly','阴暗地；忧郁地',[['dark','root'],['ly','suffix']]]]},
  comfortable:{parts:[['comfort','root','舒适；安慰'],['-able','suffix','构成形容词，表示“具有……性质的”']],note:'comfort + -able：表示让人感到舒适的。',family:[['comfort','舒适；安慰',[['comfort','root']]],['comfortable','舒适的',[['comfort','root'],['able','suffix']]],['uncomfortable','不舒服的',[['un','prefix'],['comfort','root'],['able','suffix']]]]},
  uncomfortable:{parts:[['un-','prefix','表示否定'],['comfort','root','舒适；安慰'],['-able','suffix','构成形容词']],note:'un- + comfort + -able：不舒适的。',family:[['comfort','舒适；安慰',[['comfort','root']]],['comfortable','舒适的',[['comfort','root'],['able','suffix']]],['uncomfortable','不舒服的',[['un','prefix'],['comfort','root'],['able','suffix']]]]},
  preview:{parts:[['pre-','prefix','表示“在……之前”'],['view','root','看；查看']],note:'pre- + view：提前查看，即预览。',family:[['view','看；视野',[['view','root']]],['preview','预览',[['pre','prefix'],['view','root']]],['review','复习；回顾',[['re','prefix'],['view','root']]]]},
