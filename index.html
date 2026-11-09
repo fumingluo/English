@@ -276,6 +276,8 @@ function automaticMorphology(word){
   let stem=w.slice(0,-suffix.length),root=stem,displayRoot=stem,spellingNote='';
   if(suffix==='ness'&&stem.endsWith('i')&&MORPH_ROOTS[stem.slice(0,-1)+'y']){
    root=stem.slice(0,-1)+'y';spellingNote='：词尾 y 变为 i 后再加 -ness';
+  } else if(suffix==='ly'&&w.endsWith('ably')&&MORPH_ROOTS[w.slice(0,-3)+'able']){
+   root=w.slice(0,-3)+'able';displayRoot=stem;spellingNote='：基础词词尾 -le 变为 -ly';
   } else if((suffix==='er'||suffix==='ly')&&MORPH_ROOTS[stem+'e']){
    root=stem+'e';displayRoot=stem;spellingNote='：基础词词尾 e 省略后再加 -'+suffix;
   }
