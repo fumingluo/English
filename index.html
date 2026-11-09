@@ -307,7 +307,8 @@ function automaticMorphology(word){
    for(const [prefix,prefixMeaning] of MORPH_PREFIXES){
     if(!root.startsWith(prefix)||root.length<=prefix.length+1)continue;
     let candidate=root.slice(prefix.length),candidateRoot=candidate;
-    if(!MORPH_ROOTS[candidateRoot]&&MORPH_ROOTS[candidate+'e']){candidateRoot=candidate+'e';baseDisplay=candidate;baseNote='；基础词词尾 e 在加后缀时省略'}
+    baseDisplay=candidate;
+    if(!MORPH_ROOTS[candidateRoot]&&MORPH_ROOTS[candidate+'e']){candidateRoot=candidate+'e';baseNote='；基础词词尾 e 在加后缀时省略'}
     if(MORPH_ROOTS[candidateRoot]){matchedPrefix=[prefix,prefixMeaning];base=candidateRoot;break}
    }
    if(!matchedPrefix)continue;
