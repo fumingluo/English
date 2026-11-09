@@ -229,7 +229,73 @@ const MORPHOLOGY={
  careless:{parts:[['care','root','关心；小心'],['-less','suffix','表示“没有；缺乏”']],note:'care + -less：缺乏小心，即粗心的。',family:[['care','关心；小心',[['care','root']]],['careful','仔细的',[['care','root'],['ful','suffix']]],['careless','粗心的',[['care','root'],['less','suffix']]]]},
  flexible:{parts:[['flex','root','弯曲'],['-ible','suffix','构成形容词，表示“能够……的”']],note:'flex + -ible：能够弯曲或灵活变化的。',family:[['flex','弯曲',[['flex','root']]],['flexible','灵活的',[['flex','root'],['ible','suffix']]],['flexibility','灵活性',[['flex','root'],['ibility','suffix']]]]},
 };
-function morphologyFor(word){return MORPHOLOGY[String(word||'').toLowerCase()]||null}
+/* Automatic morphology: conservative local rules + a vetted base-word list.
+   Unknown or ambiguous words stay uncolored rather than being split incorrectly. */
+const MORPH_ROOTS={
+ dark:'黑暗的；昏暗的',comfort:'舒适；安慰',view:'看；查看',write:'写',writ:'write（写；去掉词尾 e）',
+ port:'携带；运送',dict:'说；讲',effect:'效果；影响',care:'关心；小心',flex:'弯曲',
+ kind:'友善的',happy:'快乐的',actual:'实际的',hope:'希望',help:'帮助',use:'使用',
+ move:'移动',act:'行动',quick:'快的',slow:'慢的',weak:'虚弱的',strong:'强壮的',
+ friend:'朋友',teach:'教',read:'阅读',play:'玩；演奏',work:'工作',create:'创造',
+ form:'形成；形状',agree:'同意',appear:'出现',connect:'连接',develop:'发展',
+ employ:'雇用',govern:'管理',nation:'国家',predict:'预测',clear:'清楚的',
+ bright:'明亮的',great:'伟大的',possible:'可能的',comfortab:'comfort（拼写变化）'
+};
+const MORPH_PREFIXES=[
+ ['un','表示否定'],['re','表示再次、重新'],['pre','表示在……之前'],
+ ['dis','表示相反或否定'],['mis','表示错误地'],['over','表示过度或在上方'],
+ ['under','表示不足或在下方'],['trans','表示横过、转移'],['sub','表示在下方'],
+ ['inter','表示相互、在……之间'],['non','表示非、无']
+];
+const MORPH_SUFFIXES=[
+ ['ness','把形容词变成名词，表示状态或性质'],
+ ['less','表示缺乏、没有'],
+ ['ful','表示充满……的'],
+ ['able','表示能够……的或具有……性质的'],
+ ['ible','表示能够……的'],
+ ['ive','构成形容词，表示具有某种性质或作用'],
+ ['ment','构成表示行为、结果或状态的名词'],
+ ['er','构成表示人物或事物的名词'],
+ ['ly','常构成副词，表示……地']
+];
+const MORPH_FAMILIES={
+ dark:[['dark','黑暗的',[['dark','root']]],['darken','使变暗',[['dark','root'],['en','suffix']]],['darkness','黑暗',[['dark','root'],['ness','suffix']]],['darkly','阴暗地',[['dark','root'],['ly','suffix']]]],
+ care:[['care','关心；小心',[['care','root']]],['careful','仔细的',[['care','root'],['ful','suffix']]],['careless','粗心的',[['care','root'],['less','suffix']]]],
+ comfort:[['comfort','舒适；安慰',[['comfort','root']]],['comfortable','舒适的',[['comfort','root'],['able','suffix']]],['uncomfortable','不舒服的',[['un','prefix'],['comfort','root'],['able','suffix']]]],
+ write:[['write','写',[['write','root']]],['rewrite','重写',[['re','prefix'],['write','root']]],['writer','作者',[['writ','root'],['er','suffix']]]],
+ effect:[['effect','效果',[['effect','root']]],['effective','有效的',[['effect','root'],['ive','suffix']]],['effectively','有效地',[['effect','root'],['ive','suffix'],['ly','suffix']]]],
+ flex:[['flex','弯曲',[['flex','root']]],['flexible','灵活的',[['flex','root'],['ible','suffix']]],['flexibility','灵活性',[['flex','root'],['ibility','suffix']]]],
+ view:[['view','看；视野',[['view','root']]],['preview','预览',[['pre','prefix'],['view','root']]],['review','复习；回顾',[['re','prefix'],['view','root']]]]
+};
+function automaticMorphology(word){
+ const w=String(word||'').toLowerCase().trim();
+ if(!/^[a-z]+$/.test(w))return null;
+ // Prefer a validated suffix + known base; allow common spelling changes.
+ for(const [suffix,meaning] of MORPH_SUFFIXES){
+  if(!w.endsWith(suffix)||w.length<=suffix.length+2)continue;
+  let stem=w.slice(0,-suffix.length),root=stem,displayRoot=stem,spellingNote='';
+  if(suffix==='ness'&&stem.endsWith('i')&&MORPH_ROOTS[stem.slice(0,-1)+'y']){
+   root=stem.slice(0,-1)+'y';spellingNote='：词尾 y 变为 i 后再加 -ness';
+  } else if(suffix==='er'&&MORPH_ROOTS[stem+'e']){
+   root=stem+'e';displayRoot=stem;spellingNote='：基础词词尾 e 省略后再加 -er';
+  }
+  if(!MORPH_ROOTS[root])continue;
+  const rootMeaning=MORPH_ROOTS[root];
+  const parts=[[displayRoot,'root',rootMeaning],[suffix,'suffix',meaning]];
+  const family=MORPH_FAMILIES[root]||[];
+  return {parts,note:root+(spellingNote||'')+' + -'+suffix+'：'+meaning+'。',family,auto:true};
+ }
+ // Prefixes are only recognized when the remaining form is a known word/root.
+ for(const [prefix,meaning] of MORPH_PREFIXES){
+  if(!w.startsWith(prefix)||w.length<=prefix.length+2)continue;
+  const root=w.slice(prefix.length);
+  if(!MORPH_ROOTS[root])continue;
+  return {parts:[[prefix,'prefix',meaning],[root,'root',MORPH_ROOTS[root]]],
+   note:prefix+'- + '+root+'：'+meaning+'。',family:MORPH_FAMILIES[root]||[],auto:true};
+ }
+ return null;
+}
+function morphologyFor(word){return MORPHOLOGY[String(word||'').toLowerCase()]||automaticMorphology(word)}
 function coloredWordHTML(word,parts){
  if(!parts||!parts.length)return esc(word);
  return parts.map(p=>'<span class="morph-part morph-'+p[1]+'">'+esc(p[0])+'</span>').join('');
