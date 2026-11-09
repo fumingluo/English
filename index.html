@@ -311,7 +311,7 @@ function automaticMorphology(word){
     if(MORPH_ROOTS[candidateRoot]){matchedPrefix=[prefix,prefixMeaning];base=candidateRoot;break}
    }
    if(!matchedPrefix)continue;
-   const parts=[[matchedPrefix[0],'prefix',matchedPrefix[1]],[baseDisplay,'root',MORPH_ROOTS[base]],['-'+suffix,'suffix',meaning]];
+   const parts=[[matchedPrefix[0]+'-','prefix',matchedPrefix[1]],[baseDisplay,'root',MORPH_ROOTS[base]],['-'+suffix,'suffix',meaning]];
    const family=MORPH_FAMILIES[base]||[];
    const note=matchedPrefix[0]+'- + '+base+(baseNote||'')+' + -'+suffix+'：在基础词前加前缀、后加后缀构成该词。';
    return {parts,note,family,auto:true,spelling:baseNote?baseNote.slice(2):''};
@@ -329,7 +329,7 @@ function automaticMorphology(word){
   let base=root,baseDisplay=root,spelling='';
   if(!MORPH_ROOTS[base]&&MORPH_ROOTS[base+'e']){base=base+'e';spelling='基础词词尾 e 在构词时省略'}
   if(!MORPH_ROOTS[base])continue;
-  return {parts:[[prefix,'prefix',meaning],[baseDisplay,'root',MORPH_ROOTS[base]]],
+  return {parts:[[prefix+'-','prefix',meaning],[baseDisplay,'root',MORPH_ROOTS[base]]],
    note:prefix+'- + '+base+'：'+meaning+'。'+spelling,
    spelling,family:MORPH_FAMILIES[base]||[],auto:true};
  }
