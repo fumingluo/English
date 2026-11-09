@@ -274,6 +274,7 @@ const MORPH_SUFFIXES=[
  ['ive','构成形容词，表示具有某种性质或作用'],
  ['ment','构成表示行为、结果或状态的名词'],
  ['er','构成表示人物或事物的名词'],
+ ['en','常构成动词，表示使……变成某种状态'],
  ['ly','常构成副词，表示……地']
 ];
 const MORPH_FAMILIES={
@@ -299,7 +300,22 @@ function automaticMorphology(word){
   } else if((suffix==='er'||suffix==='ly')&&MORPH_ROOTS[stem+'e']){
    root=stem+'e';displayRoot=stem;spellingNote='：基础词词尾 e 省略后再加 -'+suffix;
   }
-  if(!MORPH_ROOTS[root])continue;
+  // If the suffix leaves a known prefixed base (e.g. un + help + ful),
+  // split all three parts only when the remaining base is explicitly vetted.
+  if(!MORPH_ROOTS[root]){
+   let matchedPrefix=null,base=root,baseDisplay=root,baseNote='';
+   for(const [prefix,prefixMeaning] of MORPH_PREFIXES){
+    if(!root.startsWith(prefix)||root.length<=prefix.length+1)continue;
+    let candidate=root.slice(prefix.length),candidateRoot=candidate;
+    if(!MORPH_ROOTS[candidateRoot]&&MORPH_ROOTS[candidate+'e']){candidateRoot=candidate+'e';baseDisplay=candidate;baseNote='；基础词词尾 e 在加后缀时省略'}
+    if(MORPH_ROOTS[candidateRoot]){matchedPrefix=[prefix,prefixMeaning];base=candidateRoot;break}
+   }
+   if(!matchedPrefix)continue;
+   const parts=[[matchedPrefix[0],'prefix',matchedPrefix[1]],[baseDisplay,'root',MORPH_ROOTS[base]],['-'+suffix,'suffix',meaning]];
+   const family=MORPH_FAMILIES[base]||[];
+   const note=matchedPrefix[0]+'- + '+base+(baseNote||'')+' + -'+suffix+'：在基础词前加前缀、后加后缀构成该词。';
+   return {parts,note,family,auto:true,spelling:baseNote?baseNote.slice(2):''};
+  }
   const rootMeaning=MORPH_ROOTS[root];
   const parts=[[displayRoot,'root',rootMeaning],['-'+suffix,'suffix',meaning]];
   const family=MORPH_FAMILIES[root]||[];
@@ -310,13 +326,23 @@ function automaticMorphology(word){
  for(const [prefix,meaning] of MORPH_PREFIXES){
   if(!w.startsWith(prefix)||w.length<=prefix.length+2)continue;
   const root=w.slice(prefix.length);
-  if(!MORPH_ROOTS[root])continue;
-  return {parts:[[prefix,'prefix',meaning],[root,'root',MORPH_ROOTS[root]]],
-   note:prefix+'- + '+root+'：'+meaning+'。',family:MORPH_FAMILIES[root]||[],auto:true};
+  let base=root,baseDisplay=root,spelling='';
+  if(!MORPH_ROOTS[base]&&MORPH_ROOTS[base+'e']){base=base+'e';spelling='基础词词尾 e 在构词时省略'}
+  if(!MORPH_ROOTS[base])continue;
+  return {parts:[[prefix,'prefix',meaning],[baseDisplay,'root',MORPH_ROOTS[base]]],
+   note:prefix+'- + '+base+'：'+meaning+'。'+spelling,
+   spelling,family:MORPH_FAMILIES[base]||[],auto:true};
  }
  return null;
 }
-function morphologyFor(word){return MORPHOLOGY[String(word||'').toLowerCase()]||automaticMorphology(word)}
+function morphologyFor(word){
+ const w=String(word||'').toLowerCase().trim();
+ const m=MORPHOLOGY[w]||automaticMorphology(w);
+ if(!m||!Array.isArray(m.parts)||!m.parts.length)return null;
+ // Safety check: colored fragments must reproduce the exact written word.
+ const rebuilt=m.parts.map(p=>String(p[0]||'').replace(/-/g,'')).join('').toLowerCase();
+ return rebuilt===w?m:null;
+}
 function coloredWordHTML(word,parts){
  if(!parts||!parts.length)return esc(word);
  return parts.map(p=>'<span class="morph-part morph-'+p[1]+'">'+esc(p[0])+'</span>').join('');
