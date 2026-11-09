@@ -103,6 +103,28 @@
 .reader-stats{display:flex;gap:12px;flex-wrap:wrap;color:var(--muted);font-size:11px;margin:8px 0}
 @media(max-width:620px){.reader-verse{font-size:16px;line-height:2.05}.reader-article{padding:17px 14px}}
 .review-session-track{height:5px;border-radius:99px;background:var(--line);overflow:hidden;margin-top:10px}.review-session-track span{display:block;height:100%;background:var(--green);border-radius:99px;transition:width .2s}
+
+/* Word morphology colors: prefix / root / suffix / inflection */
+.morph-part{display:inline-block;white-space:pre}
+.morph-prefix{color:#8B5CC7}
+.morph-root{color:#3285C8}
+.morph-suffix{color:#D88943}
+.morph-ending{color:#16845B}
+.morphology-details{width:100%;margin-top:13px;text-align:left;border-top:1px solid var(--line);padding-top:10px;color:var(--ink)}
+.morphology-details summary{cursor:pointer;list-style:none;font-size:12px;font-weight:750;color:var(--green2);padding:5px 0;user-select:none}
+.morphology-details summary::-webkit-details-marker{display:none}
+.morphology-details summary:after{content:'＋';float:right;color:var(--muted)}
+.morphology-details[open] summary:after{content:'－'}
+.morphology-parts{display:grid;gap:7px;margin-top:10px}
+.morphology-part{display:flex;align-items:baseline;gap:8px;font-size:12px;line-height:1.5}
+.morphology-part strong{font-size:14px;min-width:76px}
+.morphology-note{font-size:12px;line-height:1.65;color:var(--muted);margin:9px 0 0}
+.morphology-family{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.morphology-family-item{background:#f6f8f4;border:1px solid #edf0e9;border-radius:10px;padding:8px 10px;min-width:calc(50% - 4px);flex:1}
+.morphology-family-word{font-size:15px;font-weight:750;overflow-wrap:anywhere}
+.morphology-family-meaning{font-size:10px;color:var(--muted);margin-top:3px}
+.morphology-legend{display:flex;flex-wrap:wrap;gap:10px;margin-top:10px;font-size:10px;color:var(--muted)}
+.morphology-legend span:before{content:'';display:inline-block;width:7px;height:7px;border-radius:50%;margin-right:4px;background:currentColor}
 </style>
 </head>
 <body>
@@ -193,6 +215,33 @@ function blank(){return {level:'初级',autoPlay:false,view:'learn',cards:{},cus
 function load(){let s=blank();try{let raw=localStorage.getItem(KEY);if(!raw)raw=localStorage.getItem(OLD_KEY);if(raw){let old=JSON.parse(raw);s=Object.assign(s,old);s.stats=Object.assign(blank().stats,old.stats||{});s.daily=Object.assign(blank().daily,old.daily||{});s.review=Object.assign(blank().review,old.review||{});s.bible=Object.assign(blank().bible,old.bible||{});s.cards=old.cards&&typeof old.cards==='object'?old.cards:{};s.custom=Array.isArray(old.custom)?old.custom:[];if(!Array.isArray(s.stats.studyDays))s.stats.studyDays=[];if(!Array.isArray(s.stats.unique))s.stats.unique=[];if(!Array.isArray(s.bible.completed))s.bible.completed=[];if(!Array.isArray(s.bible.revelationVerses))s.bible.revelationVerses=[];Object.keys(s.cards).forEach(k=>{let c=s.cards[k];if(c&&c.stage==null)c.stage=c.rating==='known'?1:0;if(c&&c.seen&&!c.due)c.due=plusDays(1)});}}catch(e){console.warn('Local data recovery:',e)}return s}
 let state=load(),question=null,saveTimer=null,revelationLoading=false,revelationError='',bibleAdvanceTimer=null,swipeGesture=null,suppressWordCardClickUntil=0;
 function save(){try{localStorage.setItem(KEY,JSON.stringify(state));if(window.firebaseSync)window.firebaseSync.queue(state)}catch(e){showToast('本机存储空间不足，请先导出备份。')}}
+
+// Curated, transparent word-building notes. Unknown words stay unsegmented rather than being guessed.
+const MORPHOLOGY={
+ comfortable:{parts:[['comfort','root','舒适；安慰'],['-able','suffix','构成形容词，表示“具有……性质的”']],note:'comfort + -able：表示让人感到舒适的。',family:[['comfort','舒适；安慰',[['comfort','root']]],['comfortable','舒适的',[['comfort','root'],['able','suffix']]],['uncomfortable','不舒服的',[['un','prefix'],['comfort','root'],['able','suffix']]]]},
+ uncomfortable:{parts:[['un-','prefix','表示否定'],['comfort','root','舒适；安慰'],['-able','suffix','构成形容词']],note:'un- + comfort + -able：不舒适的。',family:[['comfort','舒适；安慰',[['comfort','root']]],['comfortable','舒适的',[['comfort','root'],['able','suffix']]],['uncomfortable','不舒服的',[['un','prefix'],['comfort','root'],['able','suffix']]]]},
+ preview:{parts:[['pre-','prefix','表示“在……之前”'],['view','root','看；查看']],note:'pre- + view：提前查看，即预览。',family:[['view','看；视野',[['view','root']]],['preview','预览',[['pre','prefix'],['view','root']]],['review','复习；回顾',[['re','prefix'],['view','root']]]]},
+ rewrite:{parts:[['re-','prefix','表示“再次；重新”'],['write','root','写']],note:'re- + write：重新写，即重写、改写。',family:[['write','写',[['write','root']]],['rewrite','重写',[['re','prefix'],['write','root']]],['writer','作者',[['write','root'],['er','suffix']]]]},
+ transport:{parts:[['trans-','prefix','表示“横过；从一处到另一处”'],['port','root','携带；运送']],note:'trans- + port：把人或物从一处运到另一处。',family:[['portable','便携的',[['port','root'],['able','suffix']]],['transport','运输；运送',[['trans','prefix'],['port','root']]],['transportation','运输；交通',[['trans','prefix'],['port','root'],['ation','suffix']]]]},
+ predict:{parts:[['pre-','prefix','表示“在……之前”'],['dict','root','说；讲']],note:'pre- + dict：提前说出可能发生的事，即预测。',family:[['dictate','口述；命令',[['dict','root'],['ate','suffix']]],['predict','预测',[['pre','prefix'],['dict','root']]],['prediction','预测；预言',[['pre','prefix'],['dict','root'],['ion','suffix']]]]},
+ effective:{parts:[['effect','root','效果；影响'],['-ive','suffix','构成形容词，表示“具有……性质的”']],note:'effect + -ive：能够产生预期效果的，即有效的。',family:[['effect','效果',[['effect','root']]],['effective','有效的',[['effect','root'],['ive','suffix']]],['effectively','有效地',[['effect','root'],['ive','suffix'],['ly','suffix']]]]},
+ careless:{parts:[['care','root','关心；小心'],['-less','suffix','表示“没有；缺乏”']],note:'care + -less：缺乏小心，即粗心的。',family:[['care','关心；小心',[['care','root']]],['careful','仔细的',[['care','root'],['ful','suffix']]],['careless','粗心的',[['care','root'],['less','suffix']]]]},
+ flexible:{parts:[['flex','root','弯曲'],['-ible','suffix','构成形容词，表示“能够……的”']],note:'flex + -ible：能够弯曲或灵活变化的。',family:[['flex','弯曲',[['flex','root']]],['flexible','灵活的',[['flex','root'],['ible','suffix']]],['flexibility','灵活性',[['flex','root'],['ibility','suffix']]]]},
+};
+function morphologyFor(word){return MORPHOLOGY[String(word||'').toLowerCase()]||null}
+function coloredWordHTML(word,parts){
+ if(!parts||!parts.length)return esc(word);
+ return parts.map(p=>'<span class="morph-part morph-'+p[1]+'">'+esc(p[0])+'</span>').join('');
+}
+function wordDisplayHTML(word){const m=morphologyFor(word);return coloredWordHTML(word,m&&m.parts.map(p=>[p[0].replace(/^-|-$/g,''),p[1]]))}
+function morphologyHTML(word){
+ const m=morphologyFor(word);if(!m)return '';
+ const labels={prefix:'前缀',root:'词根/基础词',suffix:'后缀',ending:'词尾变化'};
+ const rows=m.parts.map(p=>'<div class="morphology-part"><strong class="morph-'+p[1]+'">'+esc(p[0])+'</strong><span>'+esc(labels[p[1]]||'构词部分')+' · '+esc(p[2])+'</span></div>').join('');
+ const family=(m.family||[]).map(item=>'<div class="morphology-family-item"><div class="morphology-family-word">'+coloredWordHTML(item[0],item[2])+'</div><div class="morphology-family-meaning">'+esc(item[1])+'</div></div>').join('');
+ return '<details class="morphology-details"><summary>单词解析 · 构词与词族</summary><div class="morphology-parts">'+rows+'</div><p class="morphology-note">'+esc(m.note)+'</p>'+(family?'<div class="morphology-family">'+family+'</div>':'')+'<div class="morphology-legend"><span class="morph-prefix">前缀</span><span class="morph-root">词根/基础词</span><span class="morph-suffix">后缀</span></div></details>';
+}
+
 function allWords(){return WORDS.concat(state.custom||[])}function wordById(id){return allWords().find(w=>w.id===id)}function wordExampleHTML(w){let en=String(w.en||'').trim(),zh=String(w.zh||'').trim();if(!en)return '';return '<div class="example"><p>'+esc(en)+'</p>'+(zh&&zh!==String(w.meaning||'').trim()?'<p class="zh">'+esc(zh)+'</p>':'')+'</div>'}
 function dueWords(){const now=Date.now();return allWords().filter(w=>{let c=state.cards[w.id];if(!c||!c.seen)return false;let dueAt=Number(c.dueAt);if(Number.isFinite(dueAt)&&dueAt>0)return dueAt<=now;if(!c.due)return false;let legacy=String(c.due);let dueTime=legacy.includes('T')?new Date(legacy).getTime():new Date(legacy+'T00:00:00').getTime();return Number.isFinite(dueTime)&&dueTime<=now})}
 function dueLabel(c){if(!c)return'—';let t=Number(c.dueAt);if(!Number.isFinite(t)||t<=0){if(!c.due)return'—';t=String(c.due).includes('T')?new Date(c.due).getTime():new Date(c.due+'T00:00:00').getTime()}if(!Number.isFinite(t))return String(c.due||'—');let d=new Date(t);return d.toLocaleString('zh-CN',{month:'numeric',day:'numeric',hour:'2-digit',minute:'2-digit'})}
@@ -350,14 +399,14 @@ function learnView(app){
  const due=dueWords();
  if(due.length){
   const w=due[0],c=state.cards[w.id]||{};
-  app.innerHTML='<div class="row" style="margin:8px 3px 0"><span class="eyebrow">REVIEW FIRST · 到期复习</span><span class="tag">'+due.length+' 个待复习</span></div><article class="card word-card minimal-word-card" data-swipe-card data-swipe-enabled="true" data-swipe-animated="true swipe-enter" data-swipe-id="'+esc(w.id)+'" data-swipe-mode="auto-review"><button class="word-button" data-action="say" data-id="'+esc(w.id)+'">'+esc(w.word)+'</button><div class="word-phonetic">'+esc(w.phonetic||'音标暂缺')+'</div>'+(c.reviewRevealed?'<div class="answer"><div class="meaning">'+esc(w.meaning)+'</div>'+wordExampleHTML(w)+'</div>':'<button class="btn secondary reveal-word-btn" data-action="auto-review-reveal">查看释义</button>')+'</article>'+(c.reviewRevealed?'<div class="rating-grid desktop-ratings"><button class="rating" data-action="auto-review-rate" data-rating="known">认识<small>10分钟后</small></button><button class="rating" data-action="auto-review-rate" data-rating="vague">模糊<small>5分钟后</small></button><button class="rating" data-action="auto-review-rate" data-rating="unknown">不认识<small>1分钟后</small></button></div>':'')+'<p class="small muted" style="text-align:center;margin:10px 0">完成到期复习后，将自动回到新词学习</p>';
+  app.innerHTML='<div class="row" style="margin:8px 3px 0"><span class="eyebrow">REVIEW FIRST · 到期复习</span><span class="tag">'+due.length+' 个待复习</span></div><article class="card word-card minimal-word-card" data-swipe-card data-swipe-enabled="true" data-swipe-animated="true swipe-enter" data-swipe-id="'+esc(w.id)+'" data-swipe-mode="auto-review"><button class="word-button" data-action="say" data-id="'+esc(w.id)+'">'+wordDisplayHTML(w.word)+'</button><div class="word-phonetic">'+esc(w.phonetic||'音标暂缺')+'</div>'+(c.reviewRevealed?'<div class="answer"><div class="meaning">'+esc(w.meaning)+'</div>'+wordExampleHTML(w)+morphologyHTML(w.word)+'</div>':'<button class="btn secondary reveal-word-btn" data-action="auto-review-reveal">查看释义</button>')+'</article>'+(c.reviewRevealed?'<div class="rating-grid desktop-ratings"><button class="rating" data-action="auto-review-rate" data-rating="known">认识<small>10分钟后</small></button><button class="rating" data-action="auto-review-rate" data-rating="vague">模糊<small>5分钟后</small></button><button class="rating" data-action="auto-review-rate" data-rating="unknown">不认识<small>1分钟后</small></button></div>':'')+'<p class="small muted" style="text-align:center;margin:10px 0">完成到期复习后，将自动回到新词学习</p>';
   return;
  }
  let list=getDaily(),i=state.daily.index||0;
  while(i<list.length&&state.cards[list[i].id]&&state.cards[list[i].id].seen){i++;state.daily.index=i;save()}
  let w=list[i],html='';
  if(!w){html='<div class="card empty"><div style="font-size:32px">🎉</div><h2>这一轮学习完成</h2><p>你可以继续学习更多词汇；如果当前水平的新词已经学完，也可以再练习一轮巩固记忆。</p><div class="actions"><button class="btn primary" data-action="continue-learning">继续学习</button><button class="btn secondary" data-action="go-review">查看复习计划</button></div></div>'}
- else{let c=state.cards[w.id]||{};html='<article class="card word-card minimal-word-card" data-swipe-card data-swipe-enabled="true" data-swipe-animated="true swipe-enter" data-swipe-id="'+esc(w.id)+'" data-swipe-mode="daily"><button class="word-button" data-action="say" data-id="'+esc(w.id)+'">'+esc(w.word)+'</button><div class="word-phonetic">'+esc(w.phonetic||'音标暂缺')+'</div>'+(c.revealed?'<div class="answer"><div class="meaning">'+esc(w.meaning)+'</div>'+wordExampleHTML(w)+'</div>':'<button class="btn secondary reveal-word-btn" data-action="reveal">查看释义</button>')+'</article>'+(c.revealed?'<div class="rating-grid desktop-ratings"><button class="rating" data-action="rate" data-rating="known">认识<small>10分钟后</small></button><button class="rating" data-action="rate" data-rating="vague">模糊<small>5分钟后</small></button><button class="rating" data-action="rate" data-rating="unknown">不认识<small>5秒后重现</small></button></div>':'')+(state.autoPlay&&!c.autoSpoken?'<span class="hidden" data-autoplay="'+esc(w.id)+'"></span>':'');}
+ else{let c=state.cards[w.id]||{};html='<article class="card word-card minimal-word-card" data-swipe-card data-swipe-enabled="true" data-swipe-animated="true swipe-enter" data-swipe-id="'+esc(w.id)+'" data-swipe-mode="daily"><button class="word-button" data-action="say" data-id="'+esc(w.id)+'">'+wordDisplayHTML(w.word)+'</button><div class="word-phonetic">'+esc(w.phonetic||'音标暂缺')+'</div>'+(c.revealed?'<div class="answer"><div class="meaning">'+esc(w.meaning)+'</div>'+wordExampleHTML(w)+morphologyHTML(w.word)+'</div>':'<button class="btn secondary reveal-word-btn" data-action="reveal">查看释义</button>')+'</article>'+(c.revealed?'<div class="rating-grid desktop-ratings"><button class="rating" data-action="rate" data-rating="known">认识<small>10分钟后</small></button><button class="rating" data-action="rate" data-rating="vague">模糊<small>5分钟后</small></button><button class="rating" data-action="rate" data-rating="unknown">不认识<small>5秒后重现</small></button></div>':'')+(state.autoPlay&&!c.autoSpoken?'<span class="hidden" data-autoplay="'+esc(w.id)+'"></span>':'');}
  app.innerHTML=html;let auto=app.querySelector('[data-autoplay]');if(auto){let id=auto.dataset.autoplay;state.cards[id]=Object.assign({},state.cards[id]||{},{autoSpoken:true});save();setTimeout(()=>{let x=wordById(id);if(x)say(x.word)},180)}
 }
 
@@ -374,7 +423,7 @@ function reviewView(app){
   const w=wordById(ids[idx]);
   if(w){
    const c=state.cards[w.id]||{};
-   app.innerHTML='<div class="card review-session-head"><div class="row"><span class="eyebrow">TODAY\'S REVIEW</span><span class="tag">'+(idx+1)+' / '+ids.length+'</span></div><div class="review-session-track"><span style="width:'+Math.min(100,Math.round((idx/Math.max(1,ids.length))*100))+'%"></span></div></div><article class="card word-card minimal-word-card" data-swipe-card data-swipe-enabled="true" data-swipe-animated="true swipe-enter" data-swipe-id="'+esc(w.id)+'" data-swipe-mode="review"><button class="word-button" data-action="say" data-id="'+esc(w.id)+'">'+esc(w.word)+'</button><div class="word-phonetic">'+esc(w.phonetic||'音标暂缺')+'</div>'+(c.reviewRevealed?'<div class="answer"><div class="meaning">'+esc(w.meaning)+'</div>'+wordExampleHTML(w)+'</div>':'<button class="btn secondary reveal-word-btn" data-action="review-reveal">查看释义</button>')+'</article>'+(c.reviewRevealed?'<div class="rating-grid desktop-ratings"><button class="rating" data-action="review-rate" data-rating="known">认识<small>10分钟后</small></button><button class="rating" data-action="review-rate" data-rating="vague">模糊<small>5分钟后</small></button><button class="rating" data-action="review-rate" data-rating="unknown">不认识<small>1分钟后</small></button></div>':'')+'<button class="btn quiet" style="width:100%;margin-top:12px" data-action="end-review">暂时结束复习</button>';
+   app.innerHTML='<div class="card review-session-head"><div class="row"><span class="eyebrow">TODAY\'S REVIEW</span><span class="tag">'+(idx+1)+' / '+ids.length+'</span></div><div class="review-session-track"><span style="width:'+Math.min(100,Math.round((idx/Math.max(1,ids.length))*100))+'%"></span></div></div><article class="card word-card minimal-word-card" data-swipe-card data-swipe-enabled="true" data-swipe-animated="true swipe-enter" data-swipe-id="'+esc(w.id)+'" data-swipe-mode="review"><button class="word-button" data-action="say" data-id="'+esc(w.id)+'">'+wordDisplayHTML(w.word)+'</button><div class="word-phonetic">'+esc(w.phonetic||'音标暂缺')+'</div>'+(c.reviewRevealed?'<div class="answer"><div class="meaning">'+esc(w.meaning)+'</div>'+wordExampleHTML(w)+morphologyHTML(w.word)+'</div>':'<button class="btn secondary reveal-word-btn" data-action="review-reveal">查看释义</button>')+'</article>'+(c.reviewRevealed?'<div class="rating-grid desktop-ratings"><button class="rating" data-action="review-rate" data-rating="known">认识<small>10分钟后</small></button><button class="rating" data-action="review-rate" data-rating="vague">模糊<small>5分钟后</small></button><button class="rating" data-action="review-rate" data-rating="unknown">不认识<small>1分钟后</small></button></div>':'')+'<button class="btn quiet" style="width:100%;margin-top:12px" data-action="end-review">暂时结束复习</button>';
    return;
   }
   state.review.active=false;
