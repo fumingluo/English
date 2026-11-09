@@ -141,6 +141,8 @@
 .morphology-family-meaning{font-size:10px;color:var(--muted);margin-top:3px}
 .morphology-legend{display:flex;flex-wrap:wrap;gap:10px;margin-top:10px;font-size:10px;color:var(--muted)}
 .morphology-legend span:before{content:'';display:inline-block;width:7px;height:7px;border-radius:50%;margin-right:4px;background:currentColor}
+
+.morphology-inline{display:flex;align-items:baseline;flex-wrap:wrap;gap:5px 7px;margin:9px 0 2px;padding-top:8px;border-top:1px solid var(--line);font-size:13px;line-height:1.65;color:var(--muted)}.morphology-inline-label{font-size:12px;flex:none;color:var(--muted)}.morph-inline-hint{font-size:12px;color:var(--muted);margin-left:2px}.morphology-inline .morphology-plus{margin:0 1px}
 </style>
 </head>
 <body>
@@ -361,20 +363,15 @@ function coloredWordHTML(word,parts){
 }
 function wordDisplayHTML(word){const m=morphologyFor(word);return coloredWordHTML(word,m&&m.parts.map(p=>[p[0].replace(/^-|-$/g,''),p[1]]))}
 function morphologyHTML(wordOrEntry){
- const entry=wordOrEntry&&typeof wordOrEntry==='object'?wordOrEntry:null;
- const word=entry?entry.word:String(wordOrEntry||'');
+ const word=wordOrEntry&&typeof wordOrEntry==='object'?wordOrEntry.word:String(wordOrEntry||'');
  const m=morphologyFor(word);
- const meaning=entry&&entry.meaning?'<div class="morphology-context"><strong>单词含义</strong><span>'+esc(entry.meaning)+'</span></div>':'';
- const example=entry&&entry.en?'<div class="morphology-context"><strong>例句</strong><span>'+esc(entry.en)+'</span>'+(entry.zh?'<span class="morphology-translation">'+esc(entry.zh)+'</span>':'')+'</div>':'';
- if(!m){
-  return '<details class="morphology-details"><summary>单词解析 · 构词与词族</summary><div class="morphology-empty"><strong>暂不进行构词拆分</strong><p>目前没有足够可靠的构词依据把这个单词拆成前缀、词根或后缀。为了避免把拼写相似误当成真正的构词关系，单词保持完整显示，不强行着色。</p><p>这不代表它永远无法分析；后续可通过更完整的词典资料补充。</p></div>'+meaning+example+'</details>';
- }
- const labels={prefix:'前缀',root:'词根 / 基础词',suffix:'后缀',ending:'词形变化'};
- const formula=m.parts.map(p=>'<span class="morph-part morph-'+p[1]+'">'+esc(p[0])+'</span>').join('<span class="morphology-plus"> + </span>');
- const rows=m.parts.map((p,i)=>'<div class="morphology-part"><span class="morphology-index">'+(i+1)+'</span><strong class="morph-'+p[1]+'">'+esc(p[0])+'</strong><span class="morphology-role">'+esc(labels[p[1]]||'构词部分')+'</span><span class="morphology-part-meaning">'+esc(p[2]||'')+'</span></div>').join('');
- const family=(m.family||[]).map(item=>'<div class="morphology-family-item"><div class="morphology-family-word">'+coloredWordHTML(item[0],item[2])+'</div><div class="morphology-family-meaning">'+esc(item[1])+'</div></div>').join('');
- const familyBlock=family?'<section class="morphology-section"><h4>同根词与词族</h4><div class="morphology-family">'+family+'</div></section>':'<section class="morphology-section"><h4>词族扩展</h4><p class="morphology-muted">当前词条尚无经过校验的词族数据，暂不自动拼凑相关单词。</p></section>';
- return '<details class="morphology-details"><summary>单词解析 · 构词与词族</summary><div class="morphology-content"><div class="morphology-formula-label">构词结构</div><div class="morphology-formula">'+formula+'</div><section class="morphology-section"><h4>组成部分</h4><div class="morphology-parts">'+rows+'</div></section><section class="morphology-section"><h4>构词逻辑</h4><p class="morphology-note">'+esc(m.note||'根据各构词部分的含义理解整个单词。')+'</p></section>'+((m.spelling||m.auto)?'<section class="morphology-section"><h4>拼写说明</h4><p class="morphology-muted">'+esc(m.spelling||'如果单词发生了拼写变化，会在构词逻辑中说明；没有特殊变化时，按所示结构组合。')+'</p></section>':'')+familyBlock+'<div class="morphology-legend"><span class="morph-prefix">前缀</span><span class="morph-root">词根 / 基础词</span><span class="morph-suffix">后缀</span></div>'+meaning+example+'</div></details>';
+ if(!m||!Array.isArray(m.parts)||!m.parts.length)return '';
+ const parts=m.parts.map(p=>{
+  const name='<span class="morph-part morph-'+p[1]+'">'+esc(p[0])+'</span>';
+  const hint=p[2]?'<span class="morph-inline-hint">'+esc(p[2])+'</span>':'';
+  return name+hint;
+ }).join('<span class="morphology-plus"> + </span>');
+ return '<div class="morphology-inline"><span class="morphology-inline-label">构词</span>'+parts+'</div>';
 }
 
 function allWords(){return WORDS.concat(state.custom||[])}function wordById(id){return allWords().find(w=>w.id===id)}function wordExampleHTML(w){let en=String(w.en||'').trim(),zh=String(w.zh||'').trim();if(!en)return '';return '<div class="example"><p>'+esc(en)+'</p>'+(zh&&zh!==String(w.meaning||'').trim()?'<p class="zh">'+esc(zh)+'</p>':'')+'</div>'}
