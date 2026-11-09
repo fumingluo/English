@@ -239,7 +239,7 @@ const MORPH_ROOTS={
  friend:'朋友',teach:'教',read:'阅读',play:'玩；演奏',work:'工作',create:'创造',
  form:'形成；形状',agree:'同意',appear:'出现',connect:'连接',develop:'发展',
  employ:'雇用',govern:'管理',nation:'国家',predict:'预测',clear:'清楚的',
- bright:'明亮的',great:'伟大的',possible:'可能的',comfortab:'comfort（拼写变化）'
+ bright:'明亮的',great:'伟大的',possible:'可能的',probable:'可能的'
 };
 const MORPH_PREFIXES=[
  ['un','表示否定'],['re','表示再次、重新'],['pre','表示在……之前'],
@@ -276,14 +276,15 @@ function automaticMorphology(word){
   let stem=w.slice(0,-suffix.length),root=stem,displayRoot=stem,spellingNote='';
   if(suffix==='ness'&&stem.endsWith('i')&&MORPH_ROOTS[stem.slice(0,-1)+'y']){
    root=stem.slice(0,-1)+'y';spellingNote='：词尾 y 变为 i 后再加 -ness';
-  } else if(suffix==='er'&&MORPH_ROOTS[stem+'e']){
-   root=stem+'e';displayRoot=stem;spellingNote='：基础词词尾 e 省略后再加 -er';
+  } else if((suffix==='er'||suffix==='ly')&&MORPH_ROOTS[stem+'e']){
+   root=stem+'e';displayRoot=stem;spellingNote='：基础词词尾 e 省略后再加 -'+suffix;
   }
   if(!MORPH_ROOTS[root])continue;
   const rootMeaning=MORPH_ROOTS[root];
-  const parts=[[displayRoot,'root',rootMeaning],[suffix,'suffix',meaning]];
+  const parts=[[displayRoot,'root',rootMeaning],['-'+suffix,'suffix',meaning]];
   const family=MORPH_FAMILIES[root]||[];
-  return {parts,note:root+(spellingNote||'')+' + -'+suffix+'：'+meaning+'。',family,auto:true};
+  const note=spellingNote?root+spellingNote+'。':root+' + -'+suffix+'：'+meaning+'。';
+  return {parts,note,family,auto:true};
  }
  // Prefixes are only recognized when the remaining form is a known word/root.
  for(const [prefix,meaning] of MORPH_PREFIXES){
