@@ -3788,7 +3788,7 @@ function getStubbornWords(){
  });
 }
 function shuffleReinforceIds(ids){const out=ids.slice();for(let i=out.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[out[i],out[j]]=[out[j],out[i]]}return out}
-function orderReinforceTargets(words){let pending=words.slice(),ordered=[];while(pending.length){const used=new Set(),group=[],rest=[];pending.forEach(w=>{const key=String(w.meaning||'').trim().toLowerCase();if(group.length<4&&!used.has(key)){group.push(w);used.add(key)}else rest.push(w)});if(!group.length)group.push(rest.shift());ordered.push(...group);pending=rest}return ordered}
+function orderReinforceTargets(words){let pending=words.slice(),ordered=[];while(pending.length){const usedMeanings=new Set(),usedWords=new Set(),group=[],rest=[];pending.forEach(w=>{const meaning=String(w.meaning||'').trim().toLowerCase(),word=String(w.word||'').trim().toLowerCase();if(group.length<4&&!usedMeanings.has(meaning)&&!usedWords.has(word)){group.push(w);usedMeanings.add(meaning);usedWords.add(word)}else rest.push(w)});if(!group.length)group.push(rest.shift());ordered.push(...group);pending=rest}return ordered}
 function startReinforcement(){
  const hard=getStubbornWords();
  if(!hard.length){showToast('目前还没有需要强化的顽固词');return}
@@ -3803,19 +3803,22 @@ function prepareReinforcementRound(){
  if(!targets.length){r.roundComplete=true;return}
  const targetSet=new Set(r.targetIds||[]);
  const usedMeanings=new Set(targets.map(id=>String(wordById(id)?.meaning||'').trim().toLowerCase()).filter(Boolean));
+ const usedWords=new Set(targets.map(id=>String(wordById(id)?.word||'').trim().toLowerCase()).filter(Boolean));
  const candidates=shuffleReinforceIds(allWords().filter(w=>!targets.includes(w.id)&&!targetSet.has(w.id)&&String(w.meaning||'').trim()&&((state.cards[w.id]&&state.cards[w.id].seen)||w.level===state.level)));
  const fillerIds=[];
  for(const word of candidates){
   const key=String(word.meaning||'').trim().toLowerCase();
-  if(usedMeanings.has(key))continue;
-  usedMeanings.add(key);fillerIds.push(word.id);
+  const wordKey=String(word.word||'').trim().toLowerCase();
+  if(usedMeanings.has(key)||usedWords.has(wordKey))continue;
+  usedMeanings.add(key);usedWords.add(wordKey);fillerIds.push(word.id);
   if(fillerIds.length>=4-targets.length)break;
  }
  if(fillerIds.length<4-targets.length){
   for(const word of shuffleReinforceIds(allWords().filter(w=>!targets.includes(w.id)&&!targetSet.has(w.id)&&!fillerIds.includes(w.id)&&String(w.meaning||'').trim()))){
    const key=String(word.meaning||'').trim().toLowerCase();
-   if(usedMeanings.has(key))continue;
-   usedMeanings.add(key);fillerIds.push(word.id);
+   const wordKey=String(word.word||'').trim().toLowerCase();
+   if(usedMeanings.has(key)||usedWords.has(wordKey))continue;
+   usedMeanings.add(key);usedWords.add(wordKey);fillerIds.push(word.id);
    if(fillerIds.length>=4-targets.length)break;
   }
  }
