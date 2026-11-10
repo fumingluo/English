@@ -69,6 +69,47 @@
 }
 @media(min-width:651px){.word-phonetic{font-size:15px;letter-spacing:.3px;color:#748174;margin-top:-14px;min-height:20px}}
 
+/* Focused learning layout: keep recall controls visible without scrolling */
+.shell.learning-focus .hero,
+.shell.learning-focus>#summaryStats{display:none}
+.shell.learning-focus .topbar{height:42px}
+.shell.learning-focus #app{padding-bottom:112px}
+.shell.learning-focus .reinforce-banner{margin:5px 0 8px;padding:8px 10px;gap:8px}
+.shell.learning-focus .reinforce-banner p{font-size:11px;line-height:1.35;margin-top:2px}
+.shell.learning-focus .reinforce-banner .btn{min-height:36px;padding:8px 10px;font-size:11px}
+.shell.learning-focus .rating-grid.desktop-ratings{
+ position:fixed;z-index:6;left:14px;right:14px;bottom:calc(68px + env(safe-area-inset-bottom));
+ width:auto;max-width:692px;margin:0 auto;padding:8px;
+ background:#fff;border:1px solid var(--line);border-radius:16px;
+ box-shadow:0 8px 24px #17271718;gap:7px;
+}
+.shell.learning-focus .rating-grid.desktop-ratings .rating{min-height:52px;padding:7px 3px;font-size:13px}
+.shell.learning-focus .rating-grid.desktop-ratings .rating small{font-size:10px;margin-top:2px}
+.shell.learning-focus .minimal-word-card{min-height:190px;padding:18px 16px;gap:10px;margin:6px 0}
+.shell.learning-focus .minimal-word-card .word-button{font-size:clamp(38px,9vw,50px);padding:6px 8px}
+.shell.learning-focus .minimal-word-card .reveal-word-btn{min-height:44px;min-width:138px;padding:10px 14px;font-size:13px}
+.shell.learning-focus .minimal-word-card .answer{padding-top:10px}
+.shell.learning-focus .minimal-word-card .meaning{font-size:18px;margin-bottom:8px}
+.shell.learning-focus .minimal-word-card .example{padding:9px 11px;font-size:12px;line-height:1.5}
+.shell.learning-focus .minimal-word-card .example .zh{margin-top:3px}
+.shell.learning-focus .morphology-inline{margin-top:6px;padding-top:5px;font-size:11px}
+@media(max-width:650px){
+ .shell.learning-focus .topbar{height:38px}
+ .shell.learning-focus .minimal-word-card{width:100%;min-height:190px;padding:17px 14px;gap:9px}
+ .shell.learning-focus .minimal-word-card .word-button{font-size:clamp(38px,10vw,52px);padding:6px}
+ .shell.learning-focus .minimal-word-card .word-phonetic{font-size:13px;margin-top:-7px;min-height:16px}
+ .shell.learning-focus .rating-grid.desktop-ratings{left:10px;right:10px;bottom:calc(66px + env(safe-area-inset-bottom));padding:7px;gap:6px}
+ .shell.learning-focus .rating-grid.desktop-ratings .rating{min-height:49px;font-size:12px}
+ .shell.learning-focus .rating-grid.desktop-ratings .rating small{font-size:9px}
+ .shell.learning-focus .reinforce-banner{flex-direction:row;align-items:center}
+ .shell.learning-focus .reinforce-banner .btn{width:auto;flex:none}
+}
+@media(max-height:720px){
+ .shell.learning-focus .minimal-word-card{min-height:158px;padding:13px 12px}
+ .shell.learning-focus .minimal-word-card .word-button{font-size:clamp(34px,8vw,44px)}
+}
+
+
 /* Progressive Chinese-English Revelation reader */
 .reader-layout{display:block;margin-top:12px}
 .reader-article{background:#fff;border-radius:18px;padding:20px 18px;box-shadow:var(--shadow);min-width:0}
@@ -4090,7 +4131,7 @@ async function say(text){
   fallbackSay(phrase);
  }
 }
-function updateHeader(){document.getElementById('dateLabel').textContent=new Date().toLocaleDateString('zh-CN',{month:'long',day:'numeric',weekday:'short'});let learned=Object.keys(state.cards).filter(k=>state.cards[k]&&state.cards[k].seen).length,acc=state.stats.attempts?Math.round(state.stats.correct/state.stats.attempts*100):0;document.getElementById('summaryStats').innerHTML='<div class="stat"><strong>🔥 '+(state.stats.streak||0)+'</strong><span>连续学习天数</span></div><div class="stat"><strong>📚 '+learned+'</strong><span>累计学习词条</span></div><div class="stat"><strong>🎯 '+acc+'%</strong><span>练习正确率</span></div>';document.getElementById('planLine').textContent=state.level+'计划 · 今日待复习 '+dueWords().length+' 个 · 新词目标 20 个';document.querySelector('.shell').classList.toggle('compact-page',state.view!=='learn')}
+function updateHeader(){document.getElementById('dateLabel').textContent=new Date().toLocaleDateString('zh-CN',{month:'long',day:'numeric',weekday:'short'});let learned=Object.keys(state.cards).filter(k=>state.cards[k]&&state.cards[k].seen).length;document.getElementById('summaryStats').innerHTML='<div class="stat"><strong>🔥 '+(state.stats.streak||0)+'</strong><span>连续学习天数</span></div><div class="stat"><strong>📚 '+learned+'</strong><span>累计学习词条</span></div>';document.getElementById('planLine').textContent=state.level+'计划 · 今日待复习 '+dueWords().length+' 个 · 新词目标 20 个';const shell=document.querySelector('.shell');shell.classList.toggle('compact-page',state.view!=='learn');shell.classList.toggle('learning-focus',state.view==='learn')}
 function render(){if(state.view==='speak'||state.view==='explore')state.view='learn';updateHeader();document.querySelectorAll('#nav button').forEach(b=>b.classList.toggle('active',b.dataset.view===state.view));let views={learn:learnView,review:reviewView,listen:listenView,bible:bibleView,reader:contextReadingView,mine:mineView,reinforce:reinforceView};(views[state.view]||learnView)(document.getElementById('app'))}
 window.getAppState=function(){return state};
  window.getAllWordsCount=function(){return allWords().length};
