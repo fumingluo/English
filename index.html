@@ -3907,7 +3907,9 @@ function getDaily(){
    return time(a)-time(b);
   });
   if(due.length){
+   const dueIds=new Set(due.map(w=>w.id));
    state.daily.studyQueue.splice(state.daily.index,0,...due.map(makeDueStudyEntry));
+   state.daily.shortQueue=(state.daily.shortQueue||[]).filter(item=>!dueIds.has(item.id));
    save();
   }
  }
@@ -4092,7 +4094,7 @@ function updateHeader(){document.getElementById('dateLabel').textContent=new Dat
 function render(){if(state.view==='speak'||state.view==='explore')state.view='learn';updateHeader();document.querySelectorAll('#nav button').forEach(b=>b.classList.toggle('active',b.dataset.view===state.view));let views={learn:learnView,review:reviewView,listen:listenView,bible:bibleView,reader:contextReadingView,mine:mineView,reinforce:reinforceView};(views[state.view]||learnView)(document.getElementById('app'))}
 window.getAppState=function(){return state};
  window.getAllWordsCount=function(){return allWords().length};
-window.applyCloudState=function(data){if(!data||typeof data!=='object')return;let fresh=blank();state=Object.assign(fresh,data);state.stats=Object.assign(blank().stats,data.stats||{});state.daily=Object.assign(blank().daily,data.daily||{});state.review=Object.assign(blank().review,data.review||{});state.bible=Object.assign(blank().bible,data.bible||{});state.reinforce=Object.assign(blank().reinforce,data.reinforce||{});state.cards=data.cards&&typeof data.cards==='object'?data.cards:{};Object.keys(state.cards).forEach(k=>{let c=state.cards[k];if(c&&c.struggleCount==null)c.struggleCount=c.rating==='unknown'?1:0;if(c&&c.unknownCount==null)c.unknownCount=c.rating==='unknown'?1:0;if(c&&c.reinforceSuccesses==null)c.reinforceSuccesses=0});state.custom=Array.isArray(data.custom)?data.custom:[];if(!Array.isArray(state.bible.revelationVerses))state.bible.revelationVerses=[];if(dueWords().length)state.view='learn';try{localStorage.setItem(KEY,JSON.stringify(state))}catch(e){}render();showToast('已从云端同步最新学习进度')};
+window.applyCloudState=function(data){if(!data||typeof data!=='object')return;let fresh=blank();state=Object.assign(fresh,data);state.stats=Object.assign(blank().stats,data.stats||{});state.daily=Object.assign(blank().daily,data.daily||{});state.review=Object.assign(blank().review,data.review||{});state.bible=Object.assign(blank().bible,data.bible||{});state.reinforce=Object.assign(blank().reinforce,data.reinforce||{});state.cards=data.cards&&typeof data.cards==='object'?data.cards:{};Object.keys(state.cards).forEach(k=>{let c=state.cards[k];if(c&&c.struggleCount==null)c.struggleCount=c.rating==='unknown'?1:0;if(c&&c.unknownCount==null)c.unknownCount=c.rating==='unknown'?1:0;if(c&&c.reinforceSuccesses==null)c.reinforceSuccesses=0});state.custom=Array.isArray(data.custom)?data.custom:[];if(!Array.isArray(state.bible.revelationVerses))state.bible.revelationVerses=[];if(dueWords().length)state.view='learn';dailyDueBootstrap=false;try{localStorage.setItem(KEY,JSON.stringify(state))}catch(e){}render();showToast('已从云端同步最新学习进度')};
 function learnView(app){
  const reinforceBanner=reinforceBannerHTML();
  let list=getDaily(),i=state.daily.index||0;
