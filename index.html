@@ -3623,7 +3623,7 @@ const KEY='dailyEnglish.v3',OLD_KEY='dailyEnglish.v2',INTERVALS=[{n:1,u:'分钟'
 function today(){const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
 function plusDays(n){const d=new Date();d.setDate(d.getDate()+n);return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
 function esc(v){return String(v==null?'':v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
-function blank(){return {level:'初级',autoPlay:false,view:'learn',cards:{},custom:[],daily:{date:'',ids:[],index:0,batch:1,excludedIds:[],queueVersion:2,relearnQueue:[]},review:{ids:[],index:0,active:false},stats:{streak:0,lastStudy:'',unique:[],correct:0,attempts:0,studyDays:[],typingDone:[],typedChars:0},listenMode:'choice',bible:{passage:'rev-all',verse:0,drafts:{},completed:[],totalTyped:0,extraPassages:[],revelationVerses:[],readerChapter:1,readerLevel:1,readerWordLevels:{},cuvChapters:{}}}}
+function blank(){return {level:'初级',autoPlay:false,view:'learn',cards:{},custom:[],daily:{date:'',ids:[],index:0,batch:1,excludedIds:[],queueVersion:0,relearnQueue:[]},review:{ids:[],index:0,active:false},stats:{streak:0,lastStudy:'',unique:[],correct:0,attempts:0,studyDays:[],typingDone:[],typedChars:0},listenMode:'choice',bible:{passage:'rev-all',verse:0,drafts:{},completed:[],totalTyped:0,extraPassages:[],revelationVerses:[],readerChapter:1,readerLevel:1,readerWordLevels:{},cuvChapters:{}}}}
 function load(){let s=blank();try{let raw=localStorage.getItem(KEY);if(!raw)raw=localStorage.getItem(OLD_KEY);if(raw){let old=JSON.parse(raw);s=Object.assign(s,old);s.stats=Object.assign(blank().stats,old.stats||{});s.daily=Object.assign(blank().daily,old.daily||{});s.review=Object.assign(blank().review,old.review||{});s.bible=Object.assign(blank().bible,old.bible||{});s.cards=old.cards&&typeof old.cards==='object'?old.cards:{};s.custom=Array.isArray(old.custom)?old.custom:[];if(!Array.isArray(s.stats.studyDays))s.stats.studyDays=[];if(!Array.isArray(s.stats.unique))s.stats.unique=[];if(!Array.isArray(s.bible.completed))s.bible.completed=[];if(!Array.isArray(s.bible.revelationVerses))s.bible.revelationVerses=[];Object.keys(s.cards).forEach(k=>{let c=s.cards[k];if(c&&c.stage==null)c.stage=c.rating==='known'?1:0;if(c&&c.seen&&!c.due)c.due=plusDays(1)});}}catch(e){console.warn('Local data recovery:',e)}return s}
 let state=load(),question=null,saveTimer=null,revelationLoading=false,revelationError='',bibleAdvanceTimer=null,swipeGesture=null,suppressWordCardClickUntil=0;
 function save(){try{localStorage.setItem(KEY,JSON.stringify(state));if(window.firebaseSync)window.firebaseSync.queue(state)}catch(e){showToast('本机存储空间不足，请先导出备份。')}}
@@ -3913,7 +3913,7 @@ window.applyCloudState=function(data){if(!data||typeof data!=='object')return;le
 function learnView(app){
  let list=getDaily(),i=state.daily.index||0;
  while(i<list.length&&state.cards[list[i].id]&&state.cards[list[i].id].seen){i++;state.daily.index=i;save()}
- const w=list[i],html='';
+ const w=list[i];
  let remaining=availableNewWords().length;
  if(!w){
   const canContinue=remaining>0;
