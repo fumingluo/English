@@ -10,7 +10,7 @@
 <title>Daily English · 每日英语</title>
 <style>
 :root{--ink:#202b20;--muted:#788078;--green:#263b29;--green2:#577b5b;--pale:#e5eee3;--paper:#f7f7f2;--line:#e9ece5;--shadow:0 8px 26px #1727170b;--red:#a45b50;--gold:#9a7535}
-*{box-sizing:border-box}body{margin:0;background:var(--paper);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;padding:0 14px calc(92px + env(safe-area-inset-bottom))}button,input,select,textarea{font:inherit}button{cursor:pointer;-webkit-tap-highlight-color:transparent}.shell{max-width:720px;margin:auto}.topbar{height:44px;display:flex;align-items:center;justify-content:space-between}.brand{font-size:20px;font-weight:800}.brand span{color:var(--green2)}.date-label,.muted{color:var(--muted)}.date-label{font-size:12px}.hero{display:none}.stats-row{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin:5px 0 10px}.stat{background:white;border-radius:12px;padding:7px 10px;box-shadow:var(--shadow)}.stat strong{display:block;font-size:16px}.stat span{font-size:10px;color:var(--muted)}.card{background:white;border-radius:20px;padding:20px 17px;margin-top:13px;box-shadow:var(--shadow)}.progress-wrap{display:flex;align-items:center;gap:10px;margin:17px 2px 8px;color:var(--muted);font-size:11px}.progress{height:7px;flex:1;background:#e5e8df;border-radius:99px;overflow:hidden}.bar{height:100%;background:var(--green2);border-radius:99px;transition:width .2s}.word-card{text-align:center;padding:18px 17px}.word-top,.row{display:flex;align-items:center;justify-content:space-between;gap:9px}.word-top{font-size:11px;color:var(--muted)}.tag{padding:5px 9px;border-radius:99px;background:#f0f3ed;color:#5d705e;font-size:10px;font-weight:750}.word-line{display:flex;justify-content:center;align-items:center;gap:9px;margin:16px 0 2px}.word-button{border:0;background:transparent;color:var(--ink);font-size:clamp(34px,9vw,44px);font-weight:800;padding:4px}.sound{border:0;background:var(--pale);color:var(--green);border-radius:50%;width:42px;height:42px;font-size:18px}.phonetic{color:#8a928a;font-size:13px}.answer{margin-top:16px;padding-top:15px;border-top:1px solid var(--line);text-align:left}.meaning{text-align:center;font-size:20px;font-weight:750;margin:0 0 12px}.example{padding:13px;background:#f8faf6;border-radius:13px;font-size:14px;line-height:1.65}.example-label{font-size:10px;color:var(--green2);font-weight:800;margin-bottom:5px}.example p{margin:0}.example .zh{color:var(--muted);margin-top:4px}.btn{border:0;border-radius:13px;padding:13px 15px;min-height:44px;font-weight:750}.primary{background:var(--green);color:white}.secondary{background:var(--pale);color:#426b45}.quiet{background:#f1f3ef;color:#536153}.gold{background:#f7f0df;color:var(--gold)}.danger{background:#f8e9e6;color:var(--red)}.actions{display:grid;gap:9px;margin-top:12px}.rating-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-top:12px}.rating{min-height:58px;border:1px solid var(--line);background:white;border-radius:13px;font-size:13px;font-weight:750;color:var(--ink)}.rating small{display:block;color:var(--muted);font-size:10px;font-weight:500;margin-top:4px}.section-title{font-size:19px;margin:0 0 5px}.section-sub{color:var(--muted);font-size:12px;line-height:1.6;margin:0 0 14px}.small{font-size:11px}.nav{position:fixed;z-index:5;bottom:0;left:0;right:0;padding:7px 6px calc(7px + env(safe-area-inset-bottom));background:#fffffff2;backdrop-filter:blur(14px);border-top:1px solid var(--line)}.nav-inner{max-width:720px;margin:auto;display:grid;grid-template-columns:repeat(7,1fr);gap:2px}.nav button{border:0;background:transparent;color:#818981;border-radius:11px;padding:6px 1px;min-height:48px;font-size:10px;white-space:nowrap}.nav button b{display:block;font-size:18px;font-weight:500}.nav button.active{background:#edf3ea;color:var(--green);font-weight:750}.field{width:100%;border:1px solid #dfe5dc;background:white;border-radius:12px;padding:12px;min-height:44px;color:var(--ink)}.form-grid{display:grid;gap:11px}.label{font-size:12px;font-weight:700;display:block;margin-bottom:5px}.choice-list{display:grid;gap:8px;margin-top:12px}.choice{width:100%;text-align:left;border:1px solid var(--line);background:white;border-radius:12px;padding:12px;min-height:44px}.choice.correct{background:#edf6eb;border-color:#88ad87}.choice.wrong{background:#fff2ef;border-color:#d4a39c}.feedback{margin-top:10px;padding:11px;border-radius:12px;font-size:13px;line-height:1.6}.good{background:#edf6eb;color:#345a34}.bad{background:#fff2ef;color:#8a453d}.tabs{display:flex;gap:7px;margin:12px 0}.pill{border:0;border-radius:99px;padding:9px 12px;background:#edf0ea;font-size:11px}.pill.active{background:var(--green);color:#fff}.phrase{padding:12px 0;border-bottom:1px solid var(--line)}.empty{text-align:center;padding:25px 10px;color:var(--muted)}.hidden{display:none!important}.toast{position:fixed;bottom:84px;left:50%;transform:translateX(-50%);background:var(--green);color:white;padding:10px 14px;border-radius:99px;font-size:12px;z-index:9;max-width:90%;text-align:center}.field-label{font-size:12px;color:var(--muted);display:block;margin:10px 0 5px}.verse-en{font-family:Georgia,"Times New Roman",serif;font-size:17px;line-height:1.8;color:#263426}.verse-zh{font-size:14px;line-height:1.8;color:#727a70;margin-top:9px}.verse-ref{font-size:11px;font-weight:800;color:var(--green2);letter-spacing:.4px}.typing-box{width:100%;min-height:130px;resize:vertical;border:1.5px solid #dfe5dc;border-radius:14px;padding:14px;background:#fcfdfb;color:var(--ink);font-size:16px;line-height:1.7;outline:none}.typing-box:focus{border-color:#8da78b}.typing-box:disabled{background:#f2f5f0}.typing-metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:12px 0}.metric{background:#f6f8f4;border-radius:12px;padding:10px;text-align:center}.metric strong{display:block;font-size:18px}.metric span{font-size:10px;color:var(--muted)}.key-words{display:flex;flex-wrap:wrap;gap:7px;margin-top:10px}.key-word{border:0;border-radius:99px;background:#f0f3ed;padding:7px 10px;color:#4f684d;font-size:11px}.review-item{padding:12px 0;border-bottom:1px solid var(--line)}.review-item:last-child{border:0}.interval-list{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin-top:12px}.interval{background:#f5f7f2;border-radius:11px;text-align:center;padding:9px 4px}.interval b{display:block;font-size:14px}.interval span{font-size:10px;color:var(--muted)}.toast{pointer-events:none}
+*{box-sizing:border-box}body{margin:0;background:var(--paper);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;padding:0 14px calc(92px + env(safe-area-inset-bottom))}button,input,select,textarea{font:inherit}button{cursor:pointer;-webkit-tap-highlight-color:transparent}.shell{max-width:720px;margin:auto}.topbar{height:44px;display:flex;align-items:center;justify-content:space-between}.brand{font-size:20px;font-weight:800}.brand span{color:var(--green2)}.date-label,.muted{color:var(--muted)}.date-label{font-size:12px}.hero{display:none}.stats-row{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin:5px 0 10px}.stat{background:white;border-radius:12px;padding:7px 10px;box-shadow:var(--shadow)}.stat strong{display:block;font-size:16px}.stat span{font-size:10px;color:var(--muted)}.card{background:white;border-radius:20px;padding:20px 17px;margin-top:13px;box-shadow:var(--shadow)}.progress-wrap{display:flex;align-items:center;gap:10px;margin:17px 2px 8px;color:var(--muted);font-size:11px}.progress{height:7px;flex:1;background:#e5e8df;border-radius:99px;overflow:hidden}.bar{height:100%;background:var(--green2);border-radius:99px;transition:width .2s}.word-card{text-align:center;padding:18px 17px}.word-top,.row{display:flex;align-items:center;justify-content:space-between;gap:9px}.word-top{font-size:11px;color:var(--muted)}.tag{padding:5px 9px;border-radius:99px;background:#f0f3ed;color:#5d705e;font-size:10px;font-weight:750}.word-line{display:flex;justify-content:center;align-items:center;gap:9px;margin:16px 0 2px}.word-button{border:0;background:transparent;color:var(--ink);font-size:clamp(34px,9vw,44px);font-weight:800;padding:4px}.sound{border:0;background:var(--pale);color:var(--green);border-radius:50%;width:42px;height:42px;font-size:18px}.phonetic{color:#8a928a;font-size:13px}.answer{margin-top:16px;padding-top:15px;border-top:1px solid var(--line);text-align:left}.meaning{text-align:center;font-size:20px;font-weight:750;margin:0 0 12px}.example{padding:13px;background:#f8faf6;border-radius:13px;font-size:14px;line-height:1.65}.example-label{font-size:10px;color:var(--green2);font-weight:800;margin-bottom:5px}.example p{margin:0}.example .zh{color:var(--muted);margin-top:4px}.btn{border:0;border-radius:13px;padding:13px 15px;min-height:44px;font-weight:750}.primary{background:var(--green);color:white}.secondary{background:var(--pale);color:#426b45}.quiet{background:#f1f3ef;color:#536153}.gold{background:#f7f0df;color:var(--gold)}.danger{background:#f8e9e6;color:var(--red)}.actions{display:grid;gap:9px;margin-top:12px}.rating-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-top:12px}.rating{min-height:58px;border:1px solid var(--line);background:white;border-radius:13px;font-size:13px;font-weight:750;color:var(--ink)}.rating small{display:block;color:var(--muted);font-size:10px;font-weight:500;margin-top:4px}.section-title{font-size:19px;margin:0 0 5px}.section-sub{color:var(--muted);font-size:12px;line-height:1.6;margin:0 0 14px}.small{font-size:11px}.nav{position:fixed;z-index:5;bottom:0;left:0;right:0;padding:7px 6px calc(7px + env(safe-area-inset-bottom));background:#fffffff2;backdrop-filter:blur(14px);border-top:1px solid var(--line)}.nav-inner{max-width:720px;margin:auto;display:grid;grid-template-columns:repeat(7,1fr);gap:2px}.nav button{border:0;background:transparent;color:#818981;border-radius:11px;padding:6px 1px;min-height:48px;font-size:10px;white-space:nowrap}.nav button b{display:block;font-size:18px;font-weight:500}.nav button.active{background:#edf3ea;color:var(--green);font-weight:750}.field{width:100%;border:1px solid #dfe5dc;background:white;border-radius:12px;padding:12px;min-height:44px;color:var(--ink)}.form-grid{display:grid;gap:11px}.label{font-size:12px;font-weight:700;display:block;margin-bottom:5px}.choice-list{display:grid;gap:8px;margin-top:12px}.choice{width:100%;text-align:left;border:1px solid var(--line);background:white;border-radius:12px;padding:12px;min-height:44px}.choice.correct{background:#edf6eb;border-color:#88ad87}.choice.wrong{background:#fff2ef;border-color:#d4a39c}.feedback{margin-top:10px;padding:11px;border-radius:12px;font-size:13px;line-height:1.6}.good{background:#edf6eb;color:#345a34}.bad{background:#fff2ef;color:#8a453d}.listen-audio-trigger{display:flex;width:100%;align-items:center;justify-content:space-between;gap:12px;text-align:left;border:1px solid var(--line);background:#f6f8f4;color:var(--ink);border-radius:13px;padding:13px 14px;margin:12px 0}.listen-audio-trigger strong{font-size:14px}.listen-audio-trigger small{font-size:11px;color:var(--muted)}.listen-answer-panel{margin-top:14px;padding:14px;border:1px solid var(--line);border-radius:15px;background:#fbfcf9}.listen-answer-word{font-size:25px;font-weight:800;margin:8px 0 2px}.listen-answer-phonetic{font-size:14px;color:var(--muted);margin-bottom:7px}.listen-answer-meaning{font-size:15px;font-weight:700;margin-bottom:8px}.listen-answer-panel .example{margin-top:8px}.listen-repeat-answer,.listen-next-btn{width:100%;margin-top:10px}.tabs{display:flex;gap:7px;margin:12px 0}.pill{border:0;border-radius:99px;padding:9px 12px;background:#edf0ea;font-size:11px}.pill.active{background:var(--green);color:#fff}.phrase{padding:12px 0;border-bottom:1px solid var(--line)}.empty{text-align:center;padding:25px 10px;color:var(--muted)}.hidden{display:none!important}.toast{position:fixed;bottom:84px;left:50%;transform:translateX(-50%);background:var(--green);color:white;padding:10px 14px;border-radius:99px;font-size:12px;z-index:9;max-width:90%;text-align:center}.field-label{font-size:12px;color:var(--muted);display:block;margin:10px 0 5px}.verse-en{font-family:Georgia,"Times New Roman",serif;font-size:17px;line-height:1.8;color:#263426}.verse-zh{font-size:14px;line-height:1.8;color:#727a70;margin-top:9px}.verse-ref{font-size:11px;font-weight:800;color:var(--green2);letter-spacing:.4px}.typing-box{width:100%;min-height:130px;resize:vertical;border:1.5px solid #dfe5dc;border-radius:14px;padding:14px;background:#fcfdfb;color:var(--ink);font-size:16px;line-height:1.7;outline:none}.typing-box:focus{border-color:#8da78b}.typing-box:disabled{background:#f2f5f0}.typing-metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:12px 0}.metric{background:#f6f8f4;border-radius:12px;padding:10px;text-align:center}.metric strong{display:block;font-size:18px}.metric span{font-size:10px;color:var(--muted)}.key-words{display:flex;flex-wrap:wrap;gap:7px;margin-top:10px}.key-word{border:0;border-radius:99px;background:#f0f3ed;padding:7px 10px;color:#4f684d;font-size:11px}.review-item{padding:12px 0;border-bottom:1px solid var(--line)}.review-item:last-child{border:0}.interval-list{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin-top:12px}.interval{background:#f5f7f2;border-radius:11px;text-align:center;padding:9px 4px}.interval b{display:block;font-size:14px}.interval span{font-size:10px;color:var(--muted)}.toast{pointer-events:none}
 /* Compact non-home header and interactive review stages */
 .topbar{height:48px}.shell.compact-page .hero,.shell.compact-page>#summaryStats{display:none}.shell.compact-page .topbar{height:44px}/* Typing-tutor style Bible practice */
 .typing-stage{position:relative;border:1.5px solid #dfe6dc;border-radius:16px;background:#fbfcf9;padding:18px 15px;min-height:150px;overflow:hidden;cursor:text;}
@@ -47,7 +47,7 @@
 .bible-view .actions{display:flex;gap:7px;margin-top:8px}.bible-view .btn{padding:9px 11px;min-height:38px;font-size:12px}
 .minimal-word-card{min-height:180px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;padding:18px 16px;text-align:center}
 .minimal-word-card .word-button{font-size:clamp(38px,11vw,52px);line-height:1.2;padding:10px 8px;max-width:100%;overflow-wrap:anywhere}
-.minimal-word-card .reveal-word-btn{min-width:132px}
+.minimal-word-card .reveal-word-btn{min-width:132px}.word-pronounce-btn{border:0;background:#f2f5ef;color:var(--green2);border-radius:99px;padding:7px 12px;font-size:12px;font-weight:700;margin-top:-5px}
 .minimal-word-card .answer{width:100%;margin-top:0;padding-top:15px}
 .minimal-word-card .meaning{font-size:20px;margin-bottom:12px}
 .minimal-word-card .example{width:100%;text-align:left}
@@ -263,7 +263,7 @@ const FAMILY_ALBUM_WORDS = [
   {
     "id": "fau-e01-photographer",
     "word": "photographer",
-    "phonetic": "",
+    "phonetic": "/fətˈɑːɡɹəfɚ/",
     "meaning": "摄影师",
     "level": "初级",
     "category": "走遍美国",
@@ -276,7 +276,7 @@ const FAMILY_ALBUM_WORDS = [
   {
     "id": "fau-e01-exchange-student",
     "word": "exchange student",
-    "phonetic": "",
+    "phonetic": "/ɛkstʃˈeɪndʒ stˈuːdənt/",
     "meaning": "交换生",
     "level": "初级",
     "category": "走遍美国",
@@ -289,7 +289,7 @@ const FAMILY_ALBUM_WORDS = [
   {
     "id": "fau-e01-take-a-picture",
     "word": "take a picture",
-    "phonetic": "",
+    "phonetic": "/tˈeɪk ɐ pˈɪktʃɚ/",
     "meaning": "拍照",
     "level": "初级",
     "category": "走遍美国",
@@ -302,7 +302,7 @@ const FAMILY_ALBUM_WORDS = [
   {
     "id": "fau-e01-appreciate",
     "word": "appreciate",
-    "phonetic": "",
+    "phonetic": "/ɐpɹˈiːʃɪˌeɪt/",
     "meaning": "感激；欣赏",
     "level": "初级",
     "category": "走遍美国",
@@ -315,7 +315,7 @@ const FAMILY_ALBUM_WORDS = [
   {
     "id": "fau-e01-ferry",
     "word": "ferry",
-    "phonetic": "",
+    "phonetic": "/fˈɛɹi/",
     "meaning": "渡船",
     "level": "初级",
     "category": "走遍美国",
@@ -328,7 +328,7 @@ const FAMILY_ALBUM_WORDS = [
   {
     "id": "fau-e01-photo-album",
     "word": "photo album",
-    "phonetic": "",
+    "phonetic": "/fˈoʊɾoʊ ˈælbəm/",
     "meaning": "相册",
     "level": "初级",
     "category": "走遍美国",
@@ -341,7 +341,7 @@ const FAMILY_ALBUM_WORDS = [
   {
     "id": "fau-e01-introduce-oneself",
     "word": "introduce oneself",
-    "phonetic": "",
+    "phonetic": "/ˌɪntɹədˈuːs wʌnsˈɛlf/",
     "meaning": "自我介绍",
     "level": "初级",
     "category": "走遍美国",
@@ -354,7 +354,7 @@ const FAMILY_ALBUM_WORDS = [
   {
     "id": "fau-e01-street-vendor",
     "word": "street vendor",
-    "phonetic": "",
+    "phonetic": "/stɹˈiːt vˈɛndɚ/",
     "meaning": "街头小贩",
     "level": "初级",
     "category": "走遍美国",
@@ -367,7 +367,7 @@ const FAMILY_ALBUM_WORDS = [
   {
     "id": "fau-e01-be-from",
     "word": "be from",
-    "phonetic": "",
+    "phonetic": "/biː fɹˈʌm/",
     "meaning": "来自",
     "level": "初级",
     "category": "走遍美国",
@@ -380,7 +380,7 @@ const FAMILY_ALBUM_WORDS = [
   {
     "id": "fau-e01-look-forward-to",
     "word": "look forward to",
-    "phonetic": "",
+    "phonetic": "/lˈʊk fˈoːɹwɚd tuː/",
     "meaning": "期待",
     "level": "初级",
     "category": "走遍美国",
@@ -393,7 +393,7 @@ const FAMILY_ALBUM_WORDS = [
   {
     "id": "fau-e02-blind-date",
     "word": "blind date",
-    "phonetic": "",
+    "phonetic": "/blˈaɪnd dˈeɪt/",
     "meaning": "相亲",
     "level": "初级",
     "category": "走遍美国",
@@ -406,7 +406,7 @@ const FAMILY_ALBUM_WORDS = [
   {
     "id": "fau-e02-reservation",
     "word": "reservation",
-    "phonetic": "",
+    "phonetic": "/ɹˌɛzɚvˈeɪʃən/",
     "meaning": "预订；预约",
     "level": "初级",
     "category": "走遍美国",
@@ -419,7 +419,7 @@ const FAMILY_ALBUM_WORDS = [
   {
     "id": "fau-e02-starving",
     "word": "starving",
-    "phonetic": "",
+    "phonetic": "/stˈɑːɹvɪŋ/",
     "meaning": "饿极了",
     "level": "初级",
     "category": "走遍美国",
@@ -432,7 +432,7 @@ const FAMILY_ALBUM_WORDS = [
   {
     "id": "fau-e02-babysitter",
     "word": "babysitter",
-    "phonetic": "",
+    "phonetic": "/bˈeɪbɪsˌɪɾɚ/",
     "meaning": "保姆；临时照看孩子的人",
     "level": "初级",
     "category": "走遍美国",
@@ -445,7 +445,7 @@ const FAMILY_ALBUM_WORDS = [
   {
     "id": "fau-e02-accountant",
     "word": "accountant",
-    "phonetic": "",
+    "phonetic": "/ɐkˈaʊntənt/",
     "meaning": "会计",
     "level": "初级",
     "category": "走遍美国",
@@ -458,7 +458,7 @@ const FAMILY_ALBUM_WORDS = [
   {
     "id": "fau-e02-firm",
     "word": "firm",
-    "phonetic": "",
+    "phonetic": "/fˈɜːm/",
     "meaning": "公司；事务所",
     "level": "初级",
     "category": "走遍美国",
@@ -471,7 +471,7 @@ const FAMILY_ALBUM_WORDS = [
   {
     "id": "fau-e02-nervous",
     "word": "nervous",
-    "phonetic": "",
+    "phonetic": "/nˈɜːvəs/",
     "meaning": "紧张的",
     "level": "初级",
     "category": "走遍美国",
@@ -484,7 +484,7 @@ const FAMILY_ALBUM_WORDS = [
   {
     "id": "fau-e02-occasionally",
     "word": "occasionally",
-    "phonetic": "",
+    "phonetic": "/əkˈeɪʒənəli/",
     "meaning": "偶尔",
     "level": "初级",
     "category": "走遍美国",
@@ -497,7 +497,7 @@ const FAMILY_ALBUM_WORDS = [
   {
     "id": "fau-e02-give-directions",
     "word": "give directions",
-    "phonetic": "",
+    "phonetic": "/ɡˈɪv dɚɹˈɛkʃənz/",
     "meaning": "指路",
     "level": "初级",
     "category": "走遍美国",
@@ -510,7 +510,7 @@ const FAMILY_ALBUM_WORDS = [
   {
     "id": "fau-e02-run-into",
     "word": "run into",
-    "phonetic": "",
+    "phonetic": "/ɹˈʌn ˌɪntʊ/",
     "meaning": "偶遇",
     "level": "初级",
     "category": "走遍美国",
@@ -523,7 +523,7 @@ const FAMILY_ALBUM_WORDS = [
   {
     "id": "fau-e03-trunk",
     "word": "trunk",
-    "phonetic": "",
+    "phonetic": "/tɹˈʌŋk/",
     "meaning": "大箱子；汽车后备箱",
     "level": "初级",
     "category": "走遍美国",
@@ -536,7 +536,7 @@ const FAMILY_ALBUM_WORDS = [
   {
     "id": "fau-e03-belongings",
     "word": "belongings",
-    "phonetic": "",
+    "phonetic": "/bɪlˈɑːŋɪŋz/",
     "meaning": "随身物品；个人物品",
     "level": "初级",
     "category": "走遍美国",
@@ -549,7 +549,7 @@ const FAMILY_ALBUM_WORDS = [
   {
     "id": "fau-e03-anniversary",
     "word": "anniversary",
-    "phonetic": "",
+    "phonetic": "/ˌænɪvˈɜːsɚɹi/",
     "meaning": "周年纪念日",
     "level": "初级",
     "category": "走遍美国",
@@ -562,7 +562,7 @@ const FAMILY_ALBUM_WORDS = [
   {
     "id": "fau-e03-destination",
     "word": "destination",
-    "phonetic": "",
+    "phonetic": "/dˌɛstɪnˈeɪʃən/",
     "meaning": "目的地",
     "level": "初级",
     "category": "走遍美国",
@@ -575,7 +575,7 @@ const FAMILY_ALBUM_WORDS = [
   {
     "id": "fau-e03-aisle",
     "word": "aisle",
-    "phonetic": "",
+    "phonetic": "/ˈaɪəl/",
     "meaning": "过道",
     "level": "初级",
     "category": "走遍美国",
@@ -588,7 +588,7 @@ const FAMILY_ALBUM_WORDS = [
   {
     "id": "fau-e03-hanger",
     "word": "hanger",
-    "phonetic": "",
+    "phonetic": "/hˈæŋɚ/",
     "meaning": "衣架",
     "level": "初级",
     "category": "走遍美国",
@@ -601,7 +601,7 @@ const FAMILY_ALBUM_WORDS = [
   {
     "id": "fau-e03-sort-through",
     "word": "sort through",
-    "phonetic": "",
+    "phonetic": "/sˈɔːɹt θɹˈuː/",
     "meaning": "仔细翻找；整理",
     "level": "初级",
     "category": "走遍美国",
@@ -614,7 +614,7 @@ const FAMILY_ALBUM_WORDS = [
   {
     "id": "fau-e03-come-across",
     "word": "come across",
-    "phonetic": "",
+    "phonetic": "/kˈʌm əkɹˈɑːs/",
     "meaning": "偶然发现",
     "level": "初级",
     "category": "走遍美国",
@@ -627,7 +627,7 @@ const FAMILY_ALBUM_WORDS = [
   {
     "id": "fau-e03-hand-down",
     "word": "hand down",
-    "phonetic": "",
+    "phonetic": "/hˈænd dˈaʊn/",
     "meaning": "传给后代",
     "level": "初级",
     "category": "走遍美国",
@@ -640,7 +640,7 @@ const FAMILY_ALBUM_WORDS = [
   {
     "id": "fau-e03-keepsake",
     "word": "keepsake",
-    "phonetic": "",
+    "phonetic": "/kˈiːpseɪk/",
     "meaning": "纪念物",
     "level": "初级",
     "category": "走遍美国",
@@ -653,7 +653,7 @@ const FAMILY_ALBUM_WORDS = [
   {
     "id": "fau-e04-aerobics",
     "word": "aerobics",
-    "phonetic": "",
+    "phonetic": "/ɛɹˈoʊbɪks/",
     "meaning": "有氧健身操",
     "level": "初级",
     "category": "走遍美国",
@@ -666,7 +666,7 @@ const FAMILY_ALBUM_WORDS = [
   {
     "id": "fau-e04-exhausted",
     "word": "exhausted",
-    "phonetic": "",
+    "phonetic": "/ɛɡzˈɔːstᵻd/",
     "meaning": "筋疲力尽的",
     "level": "初级",
     "category": "走遍美国",
@@ -679,7 +679,7 @@ const FAMILY_ALBUM_WORDS = [
   {
     "id": "fau-e04-instructor",
     "word": "instructor",
-    "phonetic": "",
+    "phonetic": "/ɪnstɹˈʌktɚ/",
     "meaning": "教练；指导老师",
     "level": "初级",
     "category": "走遍美国",
@@ -692,7 +692,7 @@ const FAMILY_ALBUM_WORDS = [
   {
     "id": "fau-e04-advanced",
     "word": "advanced",
-    "phonetic": "",
+    "phonetic": "/ɐdvˈænst/",
     "meaning": "高级的；进阶的",
     "level": "初级",
     "category": "走遍美国",
@@ -705,7 +705,7 @@ const FAMILY_ALBUM_WORDS = [
   {
     "id": "fau-e04-beginner",
     "word": "beginner",
-    "phonetic": "",
+    "phonetic": "/bɪɡˈɪnɚ/",
     "meaning": "初学者",
     "level": "初级",
     "category": "走遍美国",
@@ -718,7 +718,7 @@ const FAMILY_ALBUM_WORDS = [
   {
     "id": "fau-e04-work-out",
     "word": "work out",
-    "phonetic": "",
+    "phonetic": "/wˈɜːk ˈaʊt/",
     "meaning": "锻炼；健身",
     "level": "初级",
     "category": "走遍美国",
@@ -731,7 +731,7 @@ const FAMILY_ALBUM_WORDS = [
   {
     "id": "fau-e04-lift-weights",
     "word": "lift weights",
-    "phonetic": "",
+    "phonetic": "/lˈɪft wˈeɪts/",
     "meaning": "举重；练力量",
     "level": "初级",
     "category": "走遍美国",
@@ -744,7 +744,7 @@ const FAMILY_ALBUM_WORDS = [
   {
     "id": "fau-e04-nonstop",
     "word": "nonstop",
-    "phonetic": "",
+    "phonetic": "/nˌɑːnstˈɑːp/",
     "meaning": "不停地；连续不断地",
     "level": "初级",
     "category": "走遍美国",
@@ -757,7 +757,7 @@ const FAMILY_ALBUM_WORDS = [
   {
     "id": "fau-e04-take-a-break",
     "word": "take a break",
-    "phonetic": "",
+    "phonetic": "/tˈeɪk ɐ bɹˈeɪk/",
     "meaning": "休息一下",
     "level": "初级",
     "category": "走遍美国",
@@ -770,7 +770,7 @@ const FAMILY_ALBUM_WORDS = [
   {
     "id": "fau-e04-no-sweat",
     "word": "no sweat",
-    "phonetic": "",
+    "phonetic": "/nˈoʊ swˈɛt/",
     "meaning": "小事一桩；不费力",
     "level": "初级",
     "category": "走遍美国",
@@ -783,7 +783,7 @@ const FAMILY_ALBUM_WORDS = [
   {
     "id": "fau-e05-cloudy",
     "word": "cloudy",
-    "phonetic": "",
+    "phonetic": "/klˈaʊdi/",
     "meaning": "多云的",
     "level": "初级",
     "category": "走遍美国",
@@ -796,7 +796,7 @@ const FAMILY_ALBUM_WORDS = [
   {
     "id": "fau-e05-thrilled",
     "word": "thrilled",
-    "phonetic": "",
+    "phonetic": "/θɹˈɪld/",
     "meaning": "非常兴奋的",
     "level": "初级",
     "category": "走遍美国",
@@ -809,7 +809,7 @@ const FAMILY_ALBUM_WORDS = [
   {
     "id": "fau-e05-mild",
     "word": "mild",
-    "phonetic": "",
+    "phonetic": "/mˈaɪld/",
     "meaning": "温和的；不太强烈的",
     "level": "初级",
     "category": "走遍美国",
@@ -822,7 +822,7 @@ const FAMILY_ALBUM_WORDS = [
   {
     "id": "fau-e05-grateful",
     "word": "grateful",
-    "phonetic": "",
+    "phonetic": "/ɡɹˈeɪtfəl/",
     "meaning": "感激的",
     "level": "初级",
     "category": "走遍美国",
@@ -835,7 +835,7 @@ const FAMILY_ALBUM_WORDS = [
   {
     "id": "fau-e05-patient",
     "word": "patient",
-    "phonetic": "",
+    "phonetic": "/pˈeɪʃənt/",
     "meaning": "有耐心的",
     "level": "初级",
     "category": "走遍美国",
@@ -848,7 +848,7 @@ const FAMILY_ALBUM_WORDS = [
   {
     "id": "fau-e05-spoil",
     "word": "spoil",
-    "phonetic": "",
+    "phonetic": "/spˈɔɪl/",
     "meaning": "宠坏；破坏",
     "level": "初级",
     "category": "走遍美国",
@@ -861,7 +861,7 @@ const FAMILY_ALBUM_WORDS = [
   {
     "id": "fau-e05-refrigerator",
     "word": "refrigerator",
-    "phonetic": "",
+    "phonetic": "/ɹɪfɹˈɪdʒɚɹˌeɪɾɚ/",
     "meaning": "冰箱",
     "level": "初级",
     "category": "走遍美国",
@@ -874,7 +874,7 @@ const FAMILY_ALBUM_WORDS = [
   {
     "id": "fau-e05-fried-eggs",
     "word": "fried eggs",
-    "phonetic": "",
+    "phonetic": "/fɹˈaɪd ˈɛɡz/",
     "meaning": "煎鸡蛋",
     "level": "初级",
     "category": "走遍美国",
@@ -887,7 +887,7 @@ const FAMILY_ALBUM_WORDS = [
   {
     "id": "fau-e05-go-fishing",
     "word": "go fishing",
-    "phonetic": "",
+    "phonetic": "/ɡˌoʊ fˈɪʃɪŋ/",
     "meaning": "去钓鱼",
     "level": "初级",
     "category": "走遍美国",
@@ -900,7 +900,7 @@ const FAMILY_ALBUM_WORDS = [
   {
     "id": "fau-e05-superstition",
     "word": "superstition",
-    "phonetic": "",
+    "phonetic": "/sˈuːpɚstˈɪʃən/",
     "meaning": "迷信；迷信观念",
     "level": "初级",
     "category": "走遍美国",
@@ -913,7 +913,7 @@ const FAMILY_ALBUM_WORDS = [
   {
     "id": "fau-e06-thanksgiving",
     "word": "Thanksgiving",
-    "phonetic": "",
+    "phonetic": "/θˈæŋksɡɪvɪŋ/",
     "meaning": "感恩节",
     "level": "初级",
     "category": "走遍美国",
@@ -926,7 +926,7 @@ const FAMILY_ALBUM_WORDS = [
   {
     "id": "fau-e06-celebration",
     "word": "celebration",
-    "phonetic": "",
+    "phonetic": "/sˌɛləbɹˈeɪʃən/",
     "meaning": "庆祝活动",
     "level": "初级",
     "category": "走遍美国",
@@ -939,7 +939,7 @@ const FAMILY_ALBUM_WORDS = [
   {
     "id": "fau-e06-tradition",
     "word": "tradition",
-    "phonetic": "",
+    "phonetic": "/tɹɐdˈɪʃən/",
     "meaning": "传统",
     "level": "初级",
     "category": "走遍美国",
@@ -952,7 +952,7 @@ const FAMILY_ALBUM_WORDS = [
   {
     "id": "fau-e06-stuffing",
     "word": "stuffing",
-    "phonetic": "",
+    "phonetic": "/stˈʌfɪŋ/",
     "meaning": "填料；火鸡馅",
     "level": "初级",
     "category": "走遍美国",
@@ -965,7 +965,7 @@ const FAMILY_ALBUM_WORDS = [
   {
     "id": "fau-e06-cranberry-sauce",
     "word": "cranberry sauce",
-    "phonetic": "",
+    "phonetic": "/kɹˈænbɛɹi sˈɔːs/",
     "meaning": "蔓越莓酱",
     "level": "初级",
     "category": "走遍美国",
@@ -978,7 +978,7 @@ const FAMILY_ALBUM_WORDS = [
   {
     "id": "fau-e06-roast-turkey",
     "word": "roast turkey",
-    "phonetic": "",
+    "phonetic": "/ɹˈoʊst tˈɜːki/",
     "meaning": "烤火鸡",
     "level": "初级",
     "category": "走遍美国",
@@ -991,7 +991,7 @@ const FAMILY_ALBUM_WORDS = [
   {
     "id": "fau-e06-get-together",
     "word": "get together",
-    "phonetic": "",
+    "phonetic": "/ɡɛt təɡˈɛðɚ/",
     "meaning": "聚在一起",
     "level": "初级",
     "category": "走遍美国",
@@ -1004,7 +1004,7 @@ const FAMILY_ALBUM_WORDS = [
   {
     "id": "fau-e06-be-thankful-for",
     "word": "be thankful for",
-    "phonetic": "",
+    "phonetic": "/biː θˈæŋkfəl fɔːɹ/",
     "meaning": "对……心怀感激",
     "level": "初级",
     "category": "走遍美国",
@@ -1017,7 +1017,7 @@ const FAMILY_ALBUM_WORDS = [
   {
     "id": "fau-e06-serve-a-meal",
     "word": "serve a meal",
-    "phonetic": "",
+    "phonetic": "/sˈɜːv ɐ mˈiːl/",
     "meaning": "供应饭菜；上菜",
     "level": "初级",
     "category": "走遍美国",
@@ -1030,7 +1030,7 @@ const FAMILY_ALBUM_WORDS = [
   {
     "id": "fau-e06-make-room-for",
     "word": "make room for",
-    "phonetic": "",
+    "phonetic": "/mˌeɪk ɹˈuːm fɔːɹ/",
     "meaning": "为……腾出空间",
     "level": "初级",
     "category": "走遍美国",
@@ -1043,7 +1043,7 @@ const FAMILY_ALBUM_WORDS = [
   {
     "id": "fau-e07-animal-shelter",
     "word": "animal shelter",
-    "phonetic": "",
+    "phonetic": "/ˈænɪməl ʃˈɛltɚ/",
     "meaning": "动物收容所",
     "level": "初级",
     "category": "走遍美国",
@@ -1056,7 +1056,7 @@ const FAMILY_ALBUM_WORDS = [
   {
     "id": "fau-e07-adopt",
     "word": "adopt",
-    "phonetic": "",
+    "phonetic": "/ɐdˈɑːpt/",
     "meaning": "收养；领养",
     "level": "初级",
     "category": "走遍美国",
@@ -1069,7 +1069,7 @@ const FAMILY_ALBUM_WORDS = [
   {
     "id": "fau-e07-cuddle",
     "word": "cuddle",
-    "phonetic": "",
+    "phonetic": "/kˈʌdəl/",
     "meaning": "拥抱；依偎",
     "level": "初级",
     "category": "走遍美国",
@@ -1082,7 +1082,7 @@ const FAMILY_ALBUM_WORDS = [
   {
     "id": "fau-e07-veterinarian",
     "word": "veterinarian",
-    "phonetic": "",
+    "phonetic": "/vˌɛɾɚɹɪnˈɛɹiən/",
     "meaning": "兽医",
     "level": "初级",
     "category": "走遍美国",
@@ -1095,7 +1095,7 @@ const FAMILY_ALBUM_WORDS = [
   {
     "id": "fau-e07-leash",
     "word": "leash",
-    "phonetic": "",
+    "phonetic": "/lˈiːʃ/",
     "meaning": "牵引绳",
     "level": "初级",
     "category": "走遍美国",
@@ -1108,7 +1108,7 @@ const FAMILY_ALBUM_WORDS = [
   {
     "id": "fau-e07-stray-animal",
     "word": "stray animal",
-    "phonetic": "",
+    "phonetic": "/stɹˈeɪ ˈænɪməl/",
     "meaning": "流浪动物",
     "level": "初级",
     "category": "走遍美国",
@@ -1121,7 +1121,7 @@ const FAMILY_ALBUM_WORDS = [
   {
     "id": "fau-e07-take-care-of",
     "word": "take care of",
-    "phonetic": "",
+    "phonetic": "/tˈeɪk kˈɛɹ ʌv/",
     "meaning": "照顾",
     "level": "初级",
     "category": "走遍美国",
@@ -1134,7 +1134,7 @@ const FAMILY_ALBUM_WORDS = [
   {
     "id": "fau-e07-pet-owner",
     "word": "pet owner",
-    "phonetic": "",
+    "phonetic": "/pˈɛt ˈoʊnɚ/",
     "meaning": "宠物主人",
     "level": "初级",
     "category": "走遍美国",
@@ -1147,7 +1147,7 @@ const FAMILY_ALBUM_WORDS = [
   {
     "id": "fau-e07-house-trained",
     "word": "house-trained",
-    "phonetic": "",
+    "phonetic": "/hˈaʊstɹˈeɪnd/",
     "meaning": "受过室内如厕训练的",
     "level": "初级",
     "category": "走遍美国",
@@ -1160,7 +1160,7 @@ const FAMILY_ALBUM_WORDS = [
   {
     "id": "fau-e07-loyal",
     "word": "loyal",
-    "phonetic": "",
+    "phonetic": "/lˈɔɪəl/",
     "meaning": "忠诚的",
     "level": "初级",
     "category": "走遍美国",
@@ -1173,7 +1173,7 @@ const FAMILY_ALBUM_WORDS = [
   {
     "id": "fau-e08-emergency",
     "word": "emergency",
-    "phonetic": "",
+    "phonetic": "/ɪmˈɜːdʒənsi/",
     "meaning": "紧急情况",
     "level": "初级",
     "category": "走遍美国",
@@ -1186,7 +1186,7 @@ const FAMILY_ALBUM_WORDS = [
   {
     "id": "fau-e08-symptom",
     "word": "symptom",
-    "phonetic": "",
+    "phonetic": "/sˈɪmptəm/",
     "meaning": "症状",
     "level": "初级",
     "category": "走遍美国",
@@ -1199,7 +1199,7 @@ const FAMILY_ALBUM_WORDS = [
   {
     "id": "fau-e08-health-insurance",
     "word": "health insurance",
-    "phonetic": "",
+    "phonetic": "/hˈɛlθ ɪnʃˈʊɹɹəns/",
     "meaning": "医疗保险",
     "level": "初级",
     "category": "走遍美国",
@@ -1212,7 +1212,7 @@ const FAMILY_ALBUM_WORDS = [
   {
     "id": "fau-e08-appointment",
     "word": "appointment",
-    "phonetic": "",
+    "phonetic": "/ɐpˈɔɪntmənt/",
     "meaning": "预约；约定",
     "level": "初级",
     "category": "走遍美国",
@@ -1225,7 +1225,7 @@ const FAMILY_ALBUM_WORDS = [
   {
     "id": "fau-e08-prescription",
     "word": "prescription",
-    "phonetic": "",
+    "phonetic": "/pɹɪskɹˈɪpʃən/",
     "meaning": "处方；处方药",
     "level": "初级",
     "category": "走遍美国",
@@ -1238,7 +1238,7 @@ const FAMILY_ALBUM_WORDS = [
   {
     "id": "fau-e08-examine",
     "word": "examine",
-    "phonetic": "",
+    "phonetic": "/ɛɡzˈæmɪn/",
     "meaning": "检查；诊察",
     "level": "初级",
     "category": "走遍美国",
@@ -1251,7 +1251,7 @@ const FAMILY_ALBUM_WORDS = [
   {
     "id": "fau-e08-recover",
     "word": "recover",
-    "phonetic": "",
+    "phonetic": "/ɹɪkˈʌvɚ/",
     "meaning": "康复；恢复",
     "level": "初级",
     "category": "走遍美国",
@@ -1264,7 +1264,7 @@ const FAMILY_ALBUM_WORDS = [
   {
     "id": "fau-e08-fever",
     "word": "fever",
-    "phonetic": "",
+    "phonetic": "/fˈiːvɚ/",
     "meaning": "发烧；发热",
     "level": "初级",
     "category": "走遍美国",
@@ -1277,7 +1277,7 @@ const FAMILY_ALBUM_WORDS = [
   {
     "id": "fau-e08-sore-throat",
     "word": "sore throat",
-    "phonetic": "",
+    "phonetic": "/sˈoːɹ θɹˈoʊt/",
     "meaning": "喉咙痛",
     "level": "初级",
     "category": "走遍美国",
@@ -1290,7 +1290,7 @@ const FAMILY_ALBUM_WORDS = [
   {
     "id": "fau-e08-make-an-appointment",
     "word": "make an appointment",
-    "phonetic": "",
+    "phonetic": "/mˌeɪk ɐn ɐpˈɔɪntmənt/",
     "meaning": "预约",
     "level": "初级",
     "category": "走遍美国",
@@ -1303,7 +1303,7 @@ const FAMILY_ALBUM_WORDS = [
   {
     "id": "fau-e09-tuition",
     "word": "tuition",
-    "phonetic": "",
+    "phonetic": "/tuːˈɪʃən/",
     "meaning": "学费",
     "level": "中级",
     "category": "走遍美国",
@@ -1316,7 +1316,7 @@ const FAMILY_ALBUM_WORDS = [
   {
     "id": "fau-e09-application",
     "word": "application",
-    "phonetic": "",
+    "phonetic": "/ˌæplɪkˈeɪʃən/",
     "meaning": "申请；申请表",
     "level": "中级",
     "category": "走遍美国",
@@ -1329,7 +1329,7 @@ const FAMILY_ALBUM_WORDS = [
   {
     "id": "fau-e09-major",
     "word": "major",
-    "phonetic": "",
+    "phonetic": "/mˈeɪdʒɚ/",
     "meaning": "专业；主修",
     "level": "中级",
     "category": "走遍美国",
@@ -1342,7 +1342,7 @@ const FAMILY_ALBUM_WORDS = [
   {
     "id": "fau-e09-scholarship",
     "word": "scholarship",
-    "phonetic": "",
+    "phonetic": "/skˈɑːlɚʃˌɪp/",
     "meaning": "奖学金",
     "level": "中级",
     "category": "走遍美国",
@@ -1355,7 +1355,7 @@ const FAMILY_ALBUM_WORDS = [
   {
     "id": "fau-e09-campus",
     "word": "campus",
-    "phonetic": "",
+    "phonetic": "/kˈæmpəs/",
     "meaning": "校园",
     "level": "中级",
     "category": "走遍美国",
@@ -1368,7 +1368,7 @@ const FAMILY_ALBUM_WORDS = [
   {
     "id": "fau-e09-admission",
     "word": "admission",
-    "phonetic": "",
+    "phonetic": "/ɐdmˈɪʃən/",
     "meaning": "录取；入学许可",
     "level": "中级",
     "category": "走遍美国",
@@ -1381,7 +1381,7 @@ const FAMILY_ALBUM_WORDS = [
   {
     "id": "fau-e09-compare-options",
     "word": "compare options",
-    "phonetic": "",
+    "phonetic": "/kəmpˈɛɹ ˈɑːpʃənz/",
     "meaning": "比较选择",
     "level": "中级",
     "category": "走遍美国",
@@ -1394,7 +1394,7 @@ const FAMILY_ALBUM_WORDS = [
   {
     "id": "fau-e09-make-up-one-s-mind",
     "word": "make up one's mind",
-    "phonetic": "",
+    "phonetic": "/mˌeɪk ˌʌp wˈʌnz mˈaɪnd/",
     "meaning": "下定决心",
     "level": "中级",
     "category": "走遍美国",
@@ -1407,7 +1407,7 @@ const FAMILY_ALBUM_WORDS = [
   {
     "id": "fau-e09-it-depends",
     "word": "it depends",
-    "phonetic": "",
+    "phonetic": "/ɪt dɪpˈɛndz/",
     "meaning": "视情况而定",
     "level": "中级",
     "category": "走遍美国",
@@ -1420,7 +1420,7 @@ const FAMILY_ALBUM_WORDS = [
   {
     "id": "fau-e09-have-a-say",
     "word": "have a say",
-    "phonetic": "",
+    "phonetic": "/hæv ɐ sˈeɪ/",
     "meaning": "有发言权",
     "level": "中级",
     "category": "走遍美国",
@@ -1433,7 +1433,7 @@ const FAMILY_ALBUM_WORDS = [
   {
     "id": "fau-e10-relax",
     "word": "relax",
-    "phonetic": "",
+    "phonetic": "/ɹɪlˈæks/",
     "meaning": "放松",
     "level": "中级",
     "category": "走遍美国",
@@ -1446,7 +1446,7 @@ const FAMILY_ALBUM_WORDS = [
   {
     "id": "fau-e10-leisure",
     "word": "leisure",
-    "phonetic": "",
+    "phonetic": "/lˈiːʒɚ/",
     "meaning": "闲暇；空闲",
     "level": "中级",
     "category": "走遍美国",
@@ -1459,7 +1459,7 @@ const FAMILY_ALBUM_WORDS = [
   {
     "id": "fau-e10-gardening",
     "word": "gardening",
-    "phonetic": "",
+    "phonetic": "/ɡˈɑːɹdənɪŋ/",
     "meaning": "园艺；种花种菜",
     "level": "中级",
     "category": "走遍美国",
@@ -1472,7 +1472,7 @@ const FAMILY_ALBUM_WORDS = [
   {
     "id": "fau-e10-scenery",
     "word": "scenery",
-    "phonetic": "",
+    "phonetic": "/sˈiːnɚɹi/",
     "meaning": "风景；景色",
     "level": "中级",
     "category": "走遍美国",
@@ -1485,7 +1485,7 @@ const FAMILY_ALBUM_WORDS = [
   {
     "id": "fau-e10-take-a-break",
     "word": "take a break",
-    "phonetic": "",
+    "phonetic": "/tˈeɪk ɐ bɹˈeɪk/",
     "meaning": "休息一下",
     "level": "中级",
     "category": "走遍美国",
@@ -1498,7 +1498,7 @@ const FAMILY_ALBUM_WORDS = [
   {
     "id": "fau-e10-slow-down",
     "word": "slow down",
-    "phonetic": "",
+    "phonetic": "/slˈoʊ dˈaʊn/",
     "meaning": "放慢速度；放慢生活节奏",
     "level": "中级",
     "category": "走遍美国",
@@ -1511,7 +1511,7 @@ const FAMILY_ALBUM_WORDS = [
   {
     "id": "fau-e10-outdoor-activity",
     "word": "outdoor activity",
-    "phonetic": "",
+    "phonetic": "/aʊtdˈoːɹ æktˈɪvɪɾi/",
     "meaning": "户外活动",
     "level": "中级",
     "category": "走遍美国",
@@ -1524,7 +1524,7 @@ const FAMILY_ALBUM_WORDS = [
   {
     "id": "fau-e10-fresh-air",
     "word": "fresh air",
-    "phonetic": "",
+    "phonetic": "/fɹˈɛʃ ˈɛɹ/",
     "meaning": "新鲜空气",
     "level": "中级",
     "category": "走遍美国",
@@ -1537,7 +1537,7 @@ const FAMILY_ALBUM_WORDS = [
   {
     "id": "fau-e10-appreciate-nature",
     "word": "appreciate nature",
-    "phonetic": "",
+    "phonetic": "/ɐpɹˈiːʃɪˌeɪt nˈeɪtʃɚ/",
     "meaning": "欣赏自然",
     "level": "中级",
     "category": "走遍美国",
@@ -1550,7 +1550,7 @@ const FAMILY_ALBUM_WORDS = [
   {
     "id": "fau-e10-in-the-long-run",
     "word": "in the long run",
-    "phonetic": "",
+    "phonetic": "/ɪnðə lˈɑːŋ ɹˈʌn/",
     "meaning": "从长远来看",
     "level": "中级",
     "category": "走遍美国",
@@ -1563,7 +1563,7 @@ const FAMILY_ALBUM_WORDS = [
   {
     "id": "fau-e11-apartment",
     "word": "apartment",
-    "phonetic": "",
+    "phonetic": "/ɐpˈɑːɹtmənt/",
     "meaning": "公寓",
     "level": "中级",
     "category": "走遍美国",
@@ -1576,7 +1576,7 @@ const FAMILY_ALBUM_WORDS = [
   {
     "id": "fau-e11-rent",
     "word": "rent",
-    "phonetic": "",
+    "phonetic": "/ɹˈɛnt/",
     "meaning": "租金；租用",
     "level": "中级",
     "category": "走遍美国",
@@ -1589,7 +1589,7 @@ const FAMILY_ALBUM_WORDS = [
   {
     "id": "fau-e11-landlord",
     "word": "landlord",
-    "phonetic": "",
+    "phonetic": "/lˈændlɔːɹd/",
     "meaning": "房东",
     "level": "中级",
     "category": "走遍美国",
@@ -1602,7 +1602,7 @@ const FAMILY_ALBUM_WORDS = [
   {
     "id": "fau-e11-lease",
     "word": "lease",
-    "phonetic": "",
+    "phonetic": "/lˈiːs/",
     "meaning": "租约",
     "level": "中级",
     "category": "走遍美国",
@@ -1615,7 +1615,7 @@ const FAMILY_ALBUM_WORDS = [
   {
     "id": "fau-e11-mortgage",
     "word": "mortgage",
-    "phonetic": "",
+    "phonetic": "/mˈɔːɹɡɪdʒ/",
     "meaning": "房屋抵押贷款",
     "level": "中级",
     "category": "走遍美国",
@@ -1628,7 +1628,7 @@ const FAMILY_ALBUM_WORDS = [
   {
     "id": "fau-e11-down-payment",
     "word": "down payment",
-    "phonetic": "",
+    "phonetic": "/dˌaʊn pˈeɪmənt/",
     "meaning": "首付款",
     "level": "中级",
     "category": "走遍美国",
@@ -1641,7 +1641,7 @@ const FAMILY_ALBUM_WORDS = [
   {
     "id": "fau-e11-neighborhood",
     "word": "neighborhood",
-    "phonetic": "",
+    "phonetic": "/nˈeɪbɚhˌʊd/",
     "meaning": "街区；社区",
     "level": "中级",
     "category": "走遍美国",
@@ -1654,7 +1654,7 @@ const FAMILY_ALBUM_WORDS = [
   {
     "id": "fau-e11-spacious",
     "word": "spacious",
-    "phonetic": "",
+    "phonetic": "/spˈeɪʃəs/",
     "meaning": "宽敞的",
     "level": "中级",
     "category": "走遍美国",
@@ -1667,7 +1667,7 @@ const FAMILY_ALBUM_WORDS = [
   {
     "id": "fau-e11-utilities",
     "word": "utilities",
-    "phonetic": "",
+    "phonetic": "/juːtˈɪlɪɾiz/",
     "meaning": "水电燃气等公用事业费",
     "level": "中级",
     "category": "走遍美国",
@@ -1680,7 +1680,7 @@ const FAMILY_ALBUM_WORDS = [
   {
     "id": "fau-e11-move-in",
     "word": "move in",
-    "phonetic": "",
+    "phonetic": "/mˈuːv ˈɪn/",
     "meaning": "搬进去；入住",
     "level": "中级",
     "category": "走遍美国",
@@ -1693,7 +1693,7 @@ const FAMILY_ALBUM_WORDS = [
   {
     "id": "fau-e12-promotion",
     "word": "promotion",
-    "phonetic": "",
+    "phonetic": "/pɹəmˈoʊʃən/",
     "meaning": "晋升；升职",
     "level": "中级",
     "category": "走遍美国",
@@ -1706,7 +1706,7 @@ const FAMILY_ALBUM_WORDS = [
   {
     "id": "fau-e12-supervisor",
     "word": "supervisor",
-    "phonetic": "",
+    "phonetic": "/sˈuːpɚvˌaɪzɚ/",
     "meaning": "主管；监督者",
     "level": "中级",
     "category": "走遍美国",
@@ -1719,7 +1719,7 @@ const FAMILY_ALBUM_WORDS = [
   {
     "id": "fau-e12-salary",
     "word": "salary",
-    "phonetic": "",
+    "phonetic": "/sˈælɚɹi/",
     "meaning": "薪水；工资",
     "level": "中级",
     "category": "走遍美国",
@@ -1732,7 +1732,7 @@ const FAMILY_ALBUM_WORDS = [
   {
     "id": "fau-e12-performance",
     "word": "performance",
-    "phonetic": "",
+    "phonetic": "/pɚfˈoːɹməns/",
     "meaning": "表现；业绩",
     "level": "中级",
     "category": "走遍美国",
@@ -1745,7 +1745,7 @@ const FAMILY_ALBUM_WORDS = [
   {
     "id": "fau-e12-responsibility",
     "word": "responsibility",
-    "phonetic": "",
+    "phonetic": "/ɹɪspˌɑːnsəbˈɪlɪɾi/",
     "meaning": "责任；职责",
     "level": "中级",
     "category": "走遍美国",
@@ -1758,7 +1758,7 @@ const FAMILY_ALBUM_WORDS = [
   {
     "id": "fau-e12-deadline",
     "word": "deadline",
-    "phonetic": "",
+    "phonetic": "/dˈɛdlaɪn/",
     "meaning": "截止日期",
     "level": "中级",
     "category": "走遍美国",
@@ -1771,7 +1771,7 @@ const FAMILY_ALBUM_WORDS = [
   {
     "id": "fau-e12-colleague",
     "word": "colleague",
-    "phonetic": "",
+    "phonetic": "/kˈɑːliːɡ/",
     "meaning": "同事",
     "level": "中级",
     "category": "走遍美国",
@@ -1784,7 +1784,7 @@ const FAMILY_ALBUM_WORDS = [
   {
     "id": "fau-e12-handle-a-task",
     "word": "handle a task",
-    "phonetic": "",
+    "phonetic": "/hˈændəl ɐ tˈæsk/",
     "meaning": "处理任务",
     "level": "中级",
     "category": "走遍美国",
@@ -1797,7 +1797,7 @@ const FAMILY_ALBUM_WORDS = [
   {
     "id": "fau-e12-take-initiative",
     "word": "take initiative",
-    "phonetic": "",
+    "phonetic": "/tˈeɪk ɪnˈɪʃiətˌɪv/",
     "meaning": "采取主动",
     "level": "中级",
     "category": "走遍美国",
@@ -1810,7 +1810,7 @@ const FAMILY_ALBUM_WORDS = [
   {
     "id": "fau-e12-well-deserved",
     "word": "well-deserved",
-    "phonetic": "",
+    "phonetic": "/wˈɛldɪzˈɜːvd/",
     "meaning": "当之无愧的；应得的",
     "level": "中级",
     "category": "走遍美国",
@@ -1823,7 +1823,7 @@ const FAMILY_ALBUM_WORDS = [
   {
     "id": "fau-e13-heritage",
     "word": "heritage",
-    "phonetic": "",
+    "phonetic": "/hˈɛɹɪɾɪdʒ/",
     "meaning": "文化遗产；家族传承",
     "level": "中级",
     "category": "走遍美国",
@@ -1836,7 +1836,7 @@ const FAMILY_ALBUM_WORDS = [
   {
     "id": "fau-e13-relative",
     "word": "relative",
-    "phonetic": "",
+    "phonetic": "/ɹˈɛlətˌɪv/",
     "meaning": "亲戚；亲属",
     "level": "中级",
     "category": "走遍美国",
@@ -1849,7 +1849,7 @@ const FAMILY_ALBUM_WORDS = [
   {
     "id": "fau-e13-family-tree",
     "word": "family tree",
-    "phonetic": "",
+    "phonetic": "/fˈæmɪli tɹˈiː/",
     "meaning": "家谱",
     "level": "中级",
     "category": "走遍美国",
@@ -1862,7 +1862,7 @@ const FAMILY_ALBUM_WORDS = [
   {
     "id": "fau-e13-generation",
     "word": "generation",
-    "phonetic": "",
+    "phonetic": "/dʒˌɛnɚɹˈeɪʃən/",
     "meaning": "一代人；世代",
     "level": "中级",
     "category": "走遍美国",
@@ -1875,7 +1875,7 @@ const FAMILY_ALBUM_WORDS = [
   {
     "id": "fau-e13-resemblance",
     "word": "resemblance",
-    "phonetic": "",
+    "phonetic": "/ɹɪsˈɛmbləns/",
     "meaning": "相似之处；相像",
     "level": "中级",
     "category": "走遍美国",
@@ -1888,7 +1888,7 @@ const FAMILY_ALBUM_WORDS = [
   {
     "id": "fau-e13-ancestor",
     "word": "ancestor",
-    "phonetic": "",
+    "phonetic": "/ˈænsɛstɚ/",
     "meaning": "祖先",
     "level": "中级",
     "category": "走遍美国",
@@ -1901,7 +1901,7 @@ const FAMILY_ALBUM_WORDS = [
   {
     "id": "fau-e13-family-background",
     "word": "family background",
-    "phonetic": "",
+    "phonetic": "/fˈæmɪli bˈækɡɹaʊnd/",
     "meaning": "家庭背景",
     "level": "中级",
     "category": "走遍美国",
@@ -1914,7 +1914,7 @@ const FAMILY_ALBUM_WORDS = [
   {
     "id": "fau-e13-be-related-to",
     "word": "be related to",
-    "phonetic": "",
+    "phonetic": "/biː ɹɪlˈeɪɾᵻd tuː/",
     "meaning": "与……有亲属关系",
     "level": "中级",
     "category": "走遍美国",
@@ -1927,7 +1927,7 @@ const FAMILY_ALBUM_WORDS = [
   {
     "id": "fau-e13-take-after",
     "word": "take after",
-    "phonetic": "",
+    "phonetic": "/tˈeɪk ˈæftɚ/",
     "meaning": "长得像；性格像",
     "level": "中级",
     "category": "走遍美国",
@@ -1940,7 +1940,7 @@ const FAMILY_ALBUM_WORDS = [
   {
     "id": "fau-e13-run-in-the-family",
     "word": "run in the family",
-    "phonetic": "",
+    "phonetic": "/ɹˈʌn ɪnðə fˈæmɪli/",
     "meaning": "是家族遗传；在家族中常见",
     "level": "中级",
     "category": "走遍美国",
@@ -1953,7 +1953,7 @@ const FAMILY_ALBUM_WORDS = [
   {
     "id": "fau-e14-strategy",
     "word": "strategy",
-    "phonetic": "",
+    "phonetic": "/stɹˈæɾədʒi/",
     "meaning": "策略；战略",
     "level": "中级",
     "category": "走遍美国",
@@ -1966,7 +1966,7 @@ const FAMILY_ALBUM_WORDS = [
   {
     "id": "fau-e14-opponent",
     "word": "opponent",
-    "phonetic": "",
+    "phonetic": "/əpˈoʊnənt/",
     "meaning": "对手",
     "level": "中级",
     "category": "走遍美国",
@@ -1979,7 +1979,7 @@ const FAMILY_ALBUM_WORDS = [
   {
     "id": "fau-e14-teammate",
     "word": "teammate",
-    "phonetic": "",
+    "phonetic": "/tˈiːmeɪt/",
     "meaning": "队友",
     "level": "中级",
     "category": "走遍美国",
@@ -1992,7 +1992,7 @@ const FAMILY_ALBUM_WORDS = [
   {
     "id": "fau-e14-score",
     "word": "score",
-    "phonetic": "",
+    "phonetic": "/skˈoːɹ/",
     "meaning": "得分；比分",
     "level": "中级",
     "category": "走遍美国",
@@ -2005,7 +2005,7 @@ const FAMILY_ALBUM_WORDS = [
   {
     "id": "fau-e14-rule",
     "word": "rule",
-    "phonetic": "",
+    "phonetic": "/ɹˈuːl/",
     "meaning": "规则",
     "level": "中级",
     "category": "走遍美国",
@@ -2018,7 +2018,7 @@ const FAMILY_ALBUM_WORDS = [
   {
     "id": "fau-e14-fair-play",
     "word": "fair play",
-    "phonetic": "",
+    "phonetic": "/fˈɛɹ plˈeɪ/",
     "meaning": "公平竞争",
     "level": "中级",
     "category": "走遍美国",
@@ -2031,7 +2031,7 @@ const FAMILY_ALBUM_WORDS = [
   {
     "id": "fau-e14-take-turns",
     "word": "take turns",
-    "phonetic": "",
+    "phonetic": "/tˈeɪk tˈɜːnz/",
     "meaning": "轮流",
     "level": "中级",
     "category": "走遍美国",
@@ -2044,7 +2044,7 @@ const FAMILY_ALBUM_WORDS = [
   {
     "id": "fau-e14-make-a-move",
     "word": "make a move",
-    "phonetic": "",
+    "phonetic": "/mˌeɪk ɐ mˈuːv/",
     "meaning": "采取行动；走一步棋",
     "level": "中级",
     "category": "走遍美国",
@@ -2057,7 +2057,7 @@ const FAMILY_ALBUM_WORDS = [
   {
     "id": "fau-e14-challenge",
     "word": "challenge",
-    "phonetic": "",
+    "phonetic": "/tʃˈælɪndʒ/",
     "meaning": "挑战；难题",
     "level": "中级",
     "category": "走遍美国",
@@ -2070,7 +2070,7 @@ const FAMILY_ALBUM_WORDS = [
   {
     "id": "fau-e14-competitive",
     "word": "competitive",
-    "phonetic": "",
+    "phonetic": "/kəmpˈɛɾɪtˌɪv/",
     "meaning": "好竞争的；竞争激烈的",
     "level": "中级",
     "category": "走遍美国",
@@ -2083,7 +2083,7 @@ const FAMILY_ALBUM_WORDS = [
   {
     "id": "fau-e15-honeymoon",
     "word": "honeymoon",
-    "phonetic": "",
+    "phonetic": "/hˈʌnɪmˌuːn/",
     "meaning": "蜜月",
     "level": "中级",
     "category": "走遍美国",
@@ -2096,7 +2096,7 @@ const FAMILY_ALBUM_WORDS = [
   {
     "id": "fau-e15-resort",
     "word": "resort",
-    "phonetic": "",
+    "phonetic": "/ɹɪzˈɔːɹt/",
     "meaning": "度假村",
     "level": "中级",
     "category": "走遍美国",
@@ -2109,7 +2109,7 @@ const FAMILY_ALBUM_WORDS = [
   {
     "id": "fau-e15-sightseeing",
     "word": "sightseeing",
-    "phonetic": "",
+    "phonetic": "/sˈaɪtsiːɪŋ/",
     "meaning": "观光；游览",
     "level": "中级",
     "category": "走遍美国",
@@ -2122,7 +2122,7 @@ const FAMILY_ALBUM_WORDS = [
   {
     "id": "fau-e15-itinerary",
     "word": "itinerary",
-    "phonetic": "",
+    "phonetic": "/aɪtˈɪnɚɹˌɛɹi/",
     "meaning": "行程安排",
     "level": "中级",
     "category": "走遍美国",
@@ -2135,7 +2135,7 @@ const FAMILY_ALBUM_WORDS = [
   {
     "id": "fau-e15-hotel-booking",
     "word": "hotel booking",
-    "phonetic": "",
+    "phonetic": "/hoʊtˈɛl bˈʊkɪŋ/",
     "meaning": "酒店预订",
     "level": "中级",
     "category": "走遍美国",
@@ -2148,7 +2148,7 @@ const FAMILY_ALBUM_WORDS = [
   {
     "id": "fau-e15-check-in",
     "word": "check in",
-    "phonetic": "",
+    "phonetic": "/tʃˈɛk ˈɪn/",
     "meaning": "办理入住",
     "level": "中级",
     "category": "走遍美国",
@@ -2161,7 +2161,7 @@ const FAMILY_ALBUM_WORDS = [
   {
     "id": "fau-e15-check-out",
     "word": "check out",
-    "phonetic": "",
+    "phonetic": "/tʃˈɛk ˈaʊt/",
     "meaning": "退房；查看",
     "level": "中级",
     "category": "走遍美国",
@@ -2174,7 +2174,7 @@ const FAMILY_ALBUM_WORDS = [
   {
     "id": "fau-e15-tourist-attraction",
     "word": "tourist attraction",
-    "phonetic": "",
+    "phonetic": "/tˈʊɹɹɪst ɐtɹˈækʃən/",
     "meaning": "旅游景点",
     "level": "中级",
     "category": "走遍美国",
@@ -2187,7 +2187,7 @@ const FAMILY_ALBUM_WORDS = [
   {
     "id": "fau-e15-get-away",
     "word": "get away",
-    "phonetic": "",
+    "phonetic": "/ɡɛt ɐwˈeɪ/",
     "meaning": "外出度假；暂时离开",
     "level": "中级",
     "category": "走遍美国",
@@ -2200,7 +2200,7 @@ const FAMILY_ALBUM_WORDS = [
   {
     "id": "fau-e15-travel-expenses",
     "word": "travel expenses",
-    "phonetic": "",
+    "phonetic": "/tɹˈævəl ɛkspˈɛnsɪz/",
     "meaning": "旅行开支",
     "level": "中级",
     "category": "走遍美国",
@@ -2213,7 +2213,7 @@ const FAMILY_ALBUM_WORDS = [
   {
     "id": "fau-e16-reunion",
     "word": "reunion",
-    "phonetic": "",
+    "phonetic": "/ɹˌiːjˈuːniən/",
     "meaning": "重聚；团聚",
     "level": "中级",
     "category": "走遍美国",
@@ -2226,7 +2226,7 @@ const FAMILY_ALBUM_WORDS = [
   {
     "id": "fau-e16-get-in-touch",
     "word": "get in touch",
-    "phonetic": "",
+    "phonetic": "/ɡɛt ɪn tˈʌtʃ/",
     "meaning": "取得联系",
     "level": "中级",
     "category": "走遍美国",
@@ -2239,7 +2239,7 @@ const FAMILY_ALBUM_WORDS = [
   {
     "id": "fau-e16-keep-in-touch",
     "word": "keep in touch",
-    "phonetic": "",
+    "phonetic": "/kˈiːp ɪn tˈʌtʃ/",
     "meaning": "保持联系",
     "level": "中级",
     "category": "走遍美国",
@@ -2252,7 +2252,7 @@ const FAMILY_ALBUM_WORDS = [
   {
     "id": "fau-e16-memorable",
     "word": "memorable",
-    "phonetic": "",
+    "phonetic": "/mˈɛmɚɹəbəl/",
     "meaning": "难忘的",
     "level": "中级",
     "category": "走遍美国",
@@ -2265,7 +2265,7 @@ const FAMILY_ALBUM_WORDS = [
   {
     "id": "fau-e16-unexpected",
     "word": "unexpected",
-    "phonetic": "",
+    "phonetic": "/ˌʌnɛkspˈɛktᵻd/",
     "meaning": "意想不到的",
     "level": "中级",
     "category": "走遍美国",
@@ -2278,7 +2278,7 @@ const FAMILY_ALBUM_WORDS = [
   {
     "id": "fau-e16-remind-someone-of",
     "word": "remind someone of",
-    "phonetic": "",
+    "phonetic": "/ɹɪmˈaɪnd sˈʌmwʌn ʌv/",
     "meaning": "使某人想起",
     "level": "中级",
     "category": "走遍美国",
@@ -2291,7 +2291,7 @@ const FAMILY_ALBUM_WORDS = [
   {
     "id": "fau-e16-long-lost",
     "word": "long-lost",
-    "phonetic": "",
+    "phonetic": "/lˈɑːŋlˈɔst/",
     "meaning": "久别的；失散多年的",
     "level": "中级",
     "category": "走遍美国",
@@ -2304,7 +2304,7 @@ const FAMILY_ALBUM_WORDS = [
   {
     "id": "fau-e16-catch-up-with",
     "word": "catch up with",
-    "phonetic": "",
+    "phonetic": "/kˈætʃ ˈʌp wɪð/",
     "meaning": "叙旧；了解近况",
     "level": "中级",
     "category": "走遍美国",
@@ -2317,7 +2317,7 @@ const FAMILY_ALBUM_WORDS = [
   {
     "id": "fau-e16-surprise-party",
     "word": "surprise party",
-    "phonetic": "",
+    "phonetic": "/sɚpɹˈaɪz pˈɑːɹɾi/",
     "meaning": "惊喜派对",
     "level": "中级",
     "category": "走遍美国",
@@ -2330,7 +2330,7 @@ const FAMILY_ALBUM_WORDS = [
   {
     "id": "fau-e16-make-someone-s-day",
     "word": "make someone's day",
-    "phonetic": "",
+    "phonetic": "/mˌeɪk sˈʌmwʌnz dˈeɪ/",
     "meaning": "让某人一天都开心",
     "level": "中级",
     "category": "走遍美国",
@@ -2343,7 +2343,7 @@ const FAMILY_ALBUM_WORDS = [
   {
     "id": "fau-e17-photograph",
     "word": "photograph",
-    "phonetic": "",
+    "phonetic": "/fˈoʊɾəɡɹˌæf/",
     "meaning": "照片；摄影",
     "level": "中级",
     "category": "走遍美国",
@@ -2356,7 +2356,7 @@ const FAMILY_ALBUM_WORDS = [
   {
     "id": "fau-e17-portrait",
     "word": "portrait",
-    "phonetic": "",
+    "phonetic": "/pˈoːɹtɹᵻt/",
     "meaning": "肖像；人物照",
     "level": "中级",
     "category": "走遍美国",
@@ -2369,7 +2369,7 @@ const FAMILY_ALBUM_WORDS = [
   {
     "id": "fau-e17-exhibition",
     "word": "exhibition",
-    "phonetic": "",
+    "phonetic": "/ɛksɪbˈɪʃən/",
     "meaning": "展览",
     "level": "中级",
     "category": "走遍美国",
@@ -2382,7 +2382,7 @@ const FAMILY_ALBUM_WORDS = [
   {
     "id": "fau-e17-frame",
     "word": "frame",
-    "phonetic": "",
+    "phonetic": "/fɹˈeɪm/",
     "meaning": "画框；框架",
     "level": "中级",
     "category": "走遍美国",
@@ -2395,7 +2395,7 @@ const FAMILY_ALBUM_WORDS = [
   {
     "id": "fau-e17-develop-film",
     "word": "develop film",
-    "phonetic": "",
+    "phonetic": "/dɪvˈɛləp fˈɪlm/",
     "meaning": "冲洗胶卷",
     "level": "中级",
     "category": "走遍美国",
@@ -2408,7 +2408,7 @@ const FAMILY_ALBUM_WORDS = [
   {
     "id": "fau-e17-close-up",
     "word": "close-up",
-    "phonetic": "",
+    "phonetic": "/klˈoʊsˈʌp/",
     "meaning": "特写镜头；近距离拍摄",
     "level": "中级",
     "category": "走遍美国",
@@ -2421,7 +2421,7 @@ const FAMILY_ALBUM_WORDS = [
   {
     "id": "fau-e17-capture-a-moment",
     "word": "capture a moment",
-    "phonetic": "",
+    "phonetic": "/kˈæptʃɚɹ ɐ mˈoʊmənt/",
     "meaning": "捕捉瞬间",
     "level": "中级",
     "category": "走遍美国",
@@ -2434,7 +2434,7 @@ const FAMILY_ALBUM_WORDS = [
   {
     "id": "fau-e17-focus-on",
     "word": "focus on",
-    "phonetic": "",
+    "phonetic": "/fˈoʊkəs ˈɑːn/",
     "meaning": "聚焦于；专注于",
     "level": "中级",
     "category": "走遍美国",
@@ -2447,7 +2447,7 @@ const FAMILY_ALBUM_WORDS = [
   {
     "id": "fau-e17-turn-out",
     "word": "turn out",
-    "phonetic": "",
+    "phonetic": "/tˈɜːn ˈaʊt/",
     "meaning": "结果是；最终成为",
     "level": "中级",
     "category": "走遍美国",
@@ -2460,7 +2460,7 @@ const FAMILY_ALBUM_WORDS = [
   {
     "id": "fau-e17-photographic-technique",
     "word": "photographic technique",
-    "phonetic": "",
+    "phonetic": "/fˌoʊɾəɡɹˈæfɪk tɛknˈiːk/",
     "meaning": "摄影技巧",
     "level": "中级",
     "category": "走遍美国",
@@ -2473,7 +2473,7 @@ const FAMILY_ALBUM_WORDS = [
   {
     "id": "fau-e18-volunteer",
     "word": "volunteer",
-    "phonetic": "",
+    "phonetic": "/vˌɑːləntˈɪɹ/",
     "meaning": "志愿者；自愿做",
     "level": "中级",
     "category": "走遍美国",
@@ -2486,7 +2486,7 @@ const FAMILY_ALBUM_WORDS = [
   {
     "id": "fau-e18-charity",
     "word": "charity",
-    "phonetic": "",
+    "phonetic": "/tʃˈæɹɪɾi/",
     "meaning": "慈善；慈善机构",
     "level": "中级",
     "category": "走遍美国",
@@ -2499,7 +2499,7 @@ const FAMILY_ALBUM_WORDS = [
   {
     "id": "fau-e18-donation",
     "word": "donation",
-    "phonetic": "",
+    "phonetic": "/doʊnˈeɪʃən/",
     "meaning": "捐赠；捐款",
     "level": "中级",
     "category": "走遍美国",
@@ -2512,7 +2512,7 @@ const FAMILY_ALBUM_WORDS = [
   {
     "id": "fau-e18-raise-funds",
     "word": "raise funds",
-    "phonetic": "",
+    "phonetic": "/ɹˈeɪz fˈʌndz/",
     "meaning": "筹集资金",
     "level": "中级",
     "category": "走遍美国",
@@ -2525,7 +2525,7 @@ const FAMILY_ALBUM_WORDS = [
   {
     "id": "fau-e18-contribute",
     "word": "contribute",
-    "phonetic": "",
+    "phonetic": "/kəntɹˈɪbjuːt/",
     "meaning": "贡献；捐助",
     "level": "中级",
     "category": "走遍美国",
@@ -2538,7 +2538,7 @@ const FAMILY_ALBUM_WORDS = [
   {
     "id": "fau-e18-make-a-difference",
     "word": "make a difference",
-    "phonetic": "",
+    "phonetic": "/mˌeɪk ɐ dˈɪfɹəns/",
     "meaning": "产生影响；带来改变",
     "level": "中级",
     "category": "走遍美国",
@@ -2551,7 +2551,7 @@ const FAMILY_ALBUM_WORDS = [
   {
     "id": "fau-e18-get-involved",
     "word": "get involved",
-    "phonetic": "",
+    "phonetic": "/ɡɛt ɪnvˈɑːlvd/",
     "meaning": "参与其中",
     "level": "中级",
     "category": "走遍美国",
@@ -2564,7 +2564,7 @@ const FAMILY_ALBUM_WORDS = [
   {
     "id": "fau-e18-local-resident",
     "word": "local resident",
-    "phonetic": "",
+    "phonetic": "/lˈoʊkəl ɹˈɛzɪdənt/",
     "meaning": "当地居民",
     "level": "中级",
     "category": "走遍美国",
@@ -2577,7 +2577,7 @@ const FAMILY_ALBUM_WORDS = [
   {
     "id": "fau-e18-organize-an-event",
     "word": "organize an event",
-    "phonetic": "",
+    "phonetic": "/ˈɔːɹɡɐnˌaɪz ɐn ɪvˈɛnt/",
     "meaning": "组织活动",
     "level": "中级",
     "category": "走遍美国",
@@ -2590,7 +2590,7 @@ const FAMILY_ALBUM_WORDS = [
   {
     "id": "fau-e18-lend-a-hand",
     "word": "lend a hand",
-    "phonetic": "",
+    "phonetic": "/lˈɛnd ɐ hˈænd/",
     "meaning": "帮忙；搭把手",
     "level": "中级",
     "category": "走遍美国",
@@ -2603,7 +2603,7 @@ const FAMILY_ALBUM_WORDS = [
   {
     "id": "fau-e19-ceremony",
     "word": "ceremony",
-    "phonetic": "",
+    "phonetic": "/sˈɛɹɪməni/",
     "meaning": "仪式；典礼",
     "level": "高级",
     "category": "走遍美国",
@@ -2616,7 +2616,7 @@ const FAMILY_ALBUM_WORDS = [
   {
     "id": "fau-e19-bride",
     "word": "bride",
-    "phonetic": "",
+    "phonetic": "/bɹˈaɪd/",
     "meaning": "新娘",
     "level": "高级",
     "category": "走遍美国",
@@ -2629,7 +2629,7 @@ const FAMILY_ALBUM_WORDS = [
   {
     "id": "fau-e19-groom",
     "word": "groom",
-    "phonetic": "",
+    "phonetic": "/ɡɹˈuːm/",
     "meaning": "新郎",
     "level": "高级",
     "category": "走遍美国",
@@ -2642,7 +2642,7 @@ const FAMILY_ALBUM_WORDS = [
   {
     "id": "fau-e19-wedding-reception",
     "word": "wedding reception",
-    "phonetic": "",
+    "phonetic": "/wˈɛdɪŋ ɹɪsˈɛpʃən/",
     "meaning": "婚宴；婚礼招待会",
     "level": "高级",
     "category": "走遍美国",
@@ -2655,7 +2655,7 @@ const FAMILY_ALBUM_WORDS = [
   {
     "id": "fau-e19-marriage-license",
     "word": "marriage license",
-    "phonetic": "",
+    "phonetic": "/mˈæɹɪdʒ lˈaɪsəns/",
     "meaning": "结婚许可证",
     "level": "高级",
     "category": "走遍美国",
@@ -2668,7 +2668,7 @@ const FAMILY_ALBUM_WORDS = [
   {
     "id": "fau-e19-vows",
     "word": "vows",
-    "phonetic": "",
+    "phonetic": "/vˈaʊz/",
     "meaning": "婚誓；誓言",
     "level": "高级",
     "category": "走遍美国",
@@ -2681,7 +2681,7 @@ const FAMILY_ALBUM_WORDS = [
   {
     "id": "fau-e19-best-man",
     "word": "best man",
-    "phonetic": "",
+    "phonetic": "/bˈɛst mˈæn/",
     "meaning": "伴郎",
     "level": "高级",
     "category": "走遍美国",
@@ -2694,7 +2694,7 @@ const FAMILY_ALBUM_WORDS = [
   {
     "id": "fau-e19-bridesmaid",
     "word": "bridesmaid",
-    "phonetic": "",
+    "phonetic": "/bɹˈaɪdsmeɪd/",
     "meaning": "伴娘",
     "level": "高级",
     "category": "走遍美国",
@@ -2707,7 +2707,7 @@ const FAMILY_ALBUM_WORDS = [
   {
     "id": "fau-e19-tie-the-knot",
     "word": "tie the knot",
-    "phonetic": "",
+    "phonetic": "/tˈaɪ ðə nˈɑːt/",
     "meaning": "结婚",
     "level": "高级",
     "category": "走遍美国",
@@ -2720,7 +2720,7 @@ const FAMILY_ALBUM_WORDS = [
   {
     "id": "fau-e19-congratulate",
     "word": "congratulate",
-    "phonetic": "",
+    "phonetic": "/kənɡɹˈætʃʊlˌeɪt/",
     "meaning": "祝贺",
     "level": "高级",
     "category": "走遍美国",
@@ -2733,7 +2733,7 @@ const FAMILY_ALBUM_WORDS = [
   {
     "id": "fau-e20-quality-time",
     "word": "quality time",
-    "phonetic": "",
+    "phonetic": "/kwˈɑːlɪɾi tˈaɪm/",
     "meaning": "高质量的陪伴时间",
     "level": "高级",
     "category": "走遍美国",
@@ -2746,7 +2746,7 @@ const FAMILY_ALBUM_WORDS = [
   {
     "id": "fau-e20-schedule",
     "word": "schedule",
-    "phonetic": "",
+    "phonetic": "/skˈɛdʒuːl/",
     "meaning": "日程；安排",
     "level": "高级",
     "category": "走遍美国",
@@ -2759,7 +2759,7 @@ const FAMILY_ALBUM_WORDS = [
   {
     "id": "fau-e20-household-chores",
     "word": "household chores",
-    "phonetic": "",
+    "phonetic": "/hˈaʊshoʊld tʃˈoːɹz/",
     "meaning": "家务",
     "level": "高级",
     "category": "走遍美国",
@@ -2772,7 +2772,7 @@ const FAMILY_ALBUM_WORDS = [
   {
     "id": "fau-e20-babysit",
     "word": "babysit",
-    "phonetic": "",
+    "phonetic": "/bˈeɪbɪsˌɪt/",
     "meaning": "临时照看孩子",
     "level": "高级",
     "category": "走遍美国",
@@ -2785,7 +2785,7 @@ const FAMILY_ALBUM_WORDS = [
   {
     "id": "fau-e20-spend-time-with",
     "word": "spend time with",
-    "phonetic": "",
+    "phonetic": "/spˈɛnd tˈaɪm wɪð/",
     "meaning": "与……共度时光",
     "level": "高级",
     "category": "走遍美国",
@@ -2798,7 +2798,7 @@ const FAMILY_ALBUM_WORDS = [
   {
     "id": "fau-e20-pay-attention-to",
     "word": "pay attention to",
-    "phonetic": "",
+    "phonetic": "/pˈeɪ ɐtˈɛnʃən tuː/",
     "meaning": "注意；关注",
     "level": "高级",
     "category": "走遍美国",
@@ -2811,7 +2811,7 @@ const FAMILY_ALBUM_WORDS = [
   {
     "id": "fau-e20-family-outing",
     "word": "family outing",
-    "phonetic": "",
+    "phonetic": "/fˈæmɪli ˈaʊɾɪŋ/",
     "meaning": "家庭外出活动",
     "level": "高级",
     "category": "走遍美国",
@@ -2824,7 +2824,7 @@ const FAMILY_ALBUM_WORDS = [
   {
     "id": "fau-e20-work-life-balance",
     "word": "work-life balance",
-    "phonetic": "",
+    "phonetic": "/wˈɜːklˈaɪf bˈæləns/",
     "meaning": "工作与生活的平衡",
     "level": "高级",
     "category": "走遍美国",
@@ -2837,7 +2837,7 @@ const FAMILY_ALBUM_WORDS = [
   {
     "id": "fau-e20-make-time-for",
     "word": "make time for",
-    "phonetic": "",
+    "phonetic": "/mˌeɪk tˈaɪm fɔːɹ/",
     "meaning": "为……腾出时间",
     "level": "高级",
     "category": "走遍美国",
@@ -2850,7 +2850,7 @@ const FAMILY_ALBUM_WORDS = [
   {
     "id": "fau-e20-grow-apart",
     "word": "grow apart",
-    "phonetic": "",
+    "phonetic": "/ɡɹˈoʊ ɐpˈɑːɹt/",
     "meaning": "关系逐渐疏远",
     "level": "高级",
     "category": "走遍美国",
@@ -2863,7 +2863,7 @@ const FAMILY_ALBUM_WORDS = [
   {
     "id": "fau-e21-reputation",
     "word": "reputation",
-    "phonetic": "",
+    "phonetic": "/ɹˌɛpjuːtˈeɪʃən/",
     "meaning": "名声；声誉",
     "level": "高级",
     "category": "走遍美国",
@@ -2876,7 +2876,7 @@ const FAMILY_ALBUM_WORDS = [
   {
     "id": "fau-e21-achievement",
     "word": "achievement",
-    "phonetic": "",
+    "phonetic": "/ɐtʃˈiːvmənt/",
     "meaning": "成就；成绩",
     "level": "高级",
     "category": "走遍美国",
@@ -2889,7 +2889,7 @@ const FAMILY_ALBUM_WORDS = [
   {
     "id": "fau-e21-ambitious",
     "word": "ambitious",
-    "phonetic": "",
+    "phonetic": "/æmbˈɪʃəs/",
     "meaning": "有抱负的；有野心的",
     "level": "高级",
     "category": "走遍美国",
@@ -2902,7 +2902,7 @@ const FAMILY_ALBUM_WORDS = [
   {
     "id": "fau-e21-competition",
     "word": "competition",
-    "phonetic": "",
+    "phonetic": "/kˌɑːmpətˈɪʃən/",
     "meaning": "竞争；比赛",
     "level": "高级",
     "category": "走遍美国",
@@ -2915,7 +2915,7 @@ const FAMILY_ALBUM_WORDS = [
   {
     "id": "fau-e21-opportunity",
     "word": "opportunity",
-    "phonetic": "",
+    "phonetic": "/ɑːpɚtˈuːnɪɾi/",
     "meaning": "机会",
     "level": "高级",
     "category": "走遍美国",
@@ -2928,7 +2928,7 @@ const FAMILY_ALBUM_WORDS = [
   {
     "id": "fau-e21-stand-out",
     "word": "stand out",
-    "phonetic": "",
+    "phonetic": "/stˈænd ˈaʊt/",
     "meaning": "脱颖而出；突出",
     "level": "高级",
     "category": "走遍美国",
@@ -2941,7 +2941,7 @@ const FAMILY_ALBUM_WORDS = [
   {
     "id": "fau-e21-under-pressure",
     "word": "under pressure",
-    "phonetic": "",
+    "phonetic": "/ˌʌndɚ pɹˈɛʃɚ/",
     "meaning": "承受压力",
     "level": "高级",
     "category": "走遍美国",
@@ -2954,7 +2954,7 @@ const FAMILY_ALBUM_WORDS = [
   {
     "id": "fau-e21-take-a-risk",
     "word": "take a risk",
-    "phonetic": "",
+    "phonetic": "/tˈeɪk ɐ ɹˈɪsk/",
     "meaning": "冒险；承担风险",
     "level": "高级",
     "category": "走遍美国",
@@ -2967,7 +2967,7 @@ const FAMILY_ALBUM_WORDS = [
   {
     "id": "fau-e21-small-town-life",
     "word": "small-town life",
-    "phonetic": "",
+    "phonetic": "/smˈɔːltˈaʊn lˈaɪf/",
     "meaning": "小镇生活",
     "level": "高级",
     "category": "走遍美国",
@@ -2980,7 +2980,7 @@ const FAMILY_ALBUM_WORDS = [
   {
     "id": "fau-e21-out-of-one-s-comfort-zone",
     "word": "out of one's comfort zone",
-    "phonetic": "",
+    "phonetic": "/ˌaʊɾəv wˈʌnz kˈʌmfɚt zˈoʊn/",
     "meaning": "走出舒适区",
     "level": "高级",
     "category": "走遍美国",
@@ -2993,7 +2993,7 @@ const FAMILY_ALBUM_WORDS = [
   {
     "id": "fau-e22-career",
     "word": "career",
-    "phonetic": "",
+    "phonetic": "/kɚɹˈɪɹ/",
     "meaning": "职业生涯；事业",
     "level": "高级",
     "category": "走遍美国",
@@ -3006,7 +3006,7 @@ const FAMILY_ALBUM_WORDS = [
   {
     "id": "fau-e22-profession",
     "word": "profession",
-    "phonetic": "",
+    "phonetic": "/pɹəfˈɛʃən/",
     "meaning": "职业；专业",
     "level": "高级",
     "category": "走遍美国",
@@ -3019,7 +3019,7 @@ const FAMILY_ALBUM_WORDS = [
   {
     "id": "fau-e22-resume",
     "word": "résumé",
-    "phonetic": "",
+    "phonetic": "/ɹˈɛzuːmˌeɪ/",
     "meaning": "简历",
     "level": "高级",
     "category": "走遍美国",
@@ -3032,7 +3032,7 @@ const FAMILY_ALBUM_WORDS = [
   {
     "id": "fau-e22-interview",
     "word": "interview",
-    "phonetic": "",
+    "phonetic": "/ˈɪntɚvjˌuː/",
     "meaning": "面试；采访",
     "level": "高级",
     "category": "走遍美国",
@@ -3045,7 +3045,7 @@ const FAMILY_ALBUM_WORDS = [
   {
     "id": "fau-e22-qualification",
     "word": "qualification",
-    "phonetic": "",
+    "phonetic": "/kwˌɑːlɪfɪkˈeɪʃən/",
     "meaning": "资格；资历",
     "level": "高级",
     "category": "走遍美国",
@@ -3058,7 +3058,7 @@ const FAMILY_ALBUM_WORDS = [
   {
     "id": "fau-e22-apply-for",
     "word": "apply for",
-    "phonetic": "",
+    "phonetic": "/ɐplˈaɪ fɔːɹ/",
     "meaning": "申请",
     "level": "高级",
     "category": "走遍美国",
@@ -3071,7 +3071,7 @@ const FAMILY_ALBUM_WORDS = [
   {
     "id": "fau-e22-job-opening",
     "word": "job opening",
-    "phonetic": "",
+    "phonetic": "/dʒˈɑːb ˈoʊpənɪŋ/",
     "meaning": "职位空缺",
     "level": "高级",
     "category": "走遍美国",
@@ -3084,7 +3084,7 @@ const FAMILY_ALBUM_WORDS = [
   {
     "id": "fau-e22-career-path",
     "word": "career path",
-    "phonetic": "",
+    "phonetic": "/kɚɹˈɪɹ pˈæθ/",
     "meaning": "职业发展道路",
     "level": "高级",
     "category": "走遍美国",
@@ -3097,7 +3097,7 @@ const FAMILY_ALBUM_WORDS = [
   {
     "id": "fau-e22-make-a-living",
     "word": "make a living",
-    "phonetic": "",
+    "phonetic": "/mˌeɪk ɐ lˈɪvɪŋ/",
     "meaning": "谋生",
     "level": "高级",
     "category": "走遍美国",
@@ -3110,7 +3110,7 @@ const FAMILY_ALBUM_WORDS = [
   {
     "id": "fau-e22-transferable-skills",
     "word": "transferable skills",
-    "phonetic": "",
+    "phonetic": "/tɹænsfˈɜːɹəbəl skˈɪlz/",
     "meaning": "可迁移技能",
     "level": "高级",
     "category": "走遍美国",
@@ -3123,7 +3123,7 @@ const FAMILY_ALBUM_WORDS = [
   {
     "id": "fau-e23-community-center",
     "word": "community center",
-    "phonetic": "",
+    "phonetic": "/kəmjˈuːnɪɾi sˈɛntɚ/",
     "meaning": "社区中心",
     "level": "高级",
     "category": "走遍美国",
@@ -3136,7 +3136,7 @@ const FAMILY_ALBUM_WORDS = [
   {
     "id": "fau-e23-facility",
     "word": "facility",
-    "phonetic": "",
+    "phonetic": "/fəsˈɪlɪɾi/",
     "meaning": "设施；场所",
     "level": "高级",
     "category": "走遍美国",
@@ -3149,7 +3149,7 @@ const FAMILY_ALBUM_WORDS = [
   {
     "id": "fau-e23-workshop",
     "word": "workshop",
-    "phonetic": "",
+    "phonetic": "/wˈɜːkʃɑːp/",
     "meaning": "工作坊；研习班",
     "level": "高级",
     "category": "走遍美国",
@@ -3162,7 +3162,7 @@ const FAMILY_ALBUM_WORDS = [
   {
     "id": "fau-e23-registration",
     "word": "registration",
-    "phonetic": "",
+    "phonetic": "/ɹˌɛdʒɪstɹˈeɪʃən/",
     "meaning": "登记；注册",
     "level": "高级",
     "category": "走遍美国",
@@ -3175,7 +3175,7 @@ const FAMILY_ALBUM_WORDS = [
   {
     "id": "fau-e23-membership",
     "word": "membership",
-    "phonetic": "",
+    "phonetic": "/mˈɛmbɚʃˌɪp/",
     "meaning": "会员资格；会员",
     "level": "高级",
     "category": "走遍美国",
@@ -3188,7 +3188,7 @@ const FAMILY_ALBUM_WORDS = [
   {
     "id": "fau-e23-recreational",
     "word": "recreational",
-    "phonetic": "",
+    "phonetic": "/ɹˌɛkɹiːˈeɪʃənəl/",
     "meaning": "娱乐休闲的",
     "level": "高级",
     "category": "走遍美国",
@@ -3201,7 +3201,7 @@ const FAMILY_ALBUM_WORDS = [
   {
     "id": "fau-e23-sign-up-for",
     "word": "sign up for",
-    "phonetic": "",
+    "phonetic": "/sˈaɪn ˈʌp fɔːɹ/",
     "meaning": "报名参加",
     "level": "高级",
     "category": "走遍美国",
@@ -3214,7 +3214,7 @@ const FAMILY_ALBUM_WORDS = [
   {
     "id": "fau-e23-available-space",
     "word": "available space",
-    "phonetic": "",
+    "phonetic": "/ɐvˈeɪləbəl spˈeɪs/",
     "meaning": "可用空间",
     "level": "高级",
     "category": "走遍美国",
@@ -3227,7 +3227,7 @@ const FAMILY_ALBUM_WORDS = [
   {
     "id": "fau-e23-community-service",
     "word": "community service",
-    "phonetic": "",
+    "phonetic": "/kəmjˈuːnɪɾi sˈɜːvɪs/",
     "meaning": "社区服务",
     "level": "高级",
     "category": "走遍美国",
@@ -3240,7 +3240,7 @@ const FAMILY_ALBUM_WORDS = [
   {
     "id": "fau-e23-public-facility",
     "word": "public facility",
-    "phonetic": "",
+    "phonetic": "/pˈʌblɪk fəsˈɪlɪɾi/",
     "meaning": "公共设施",
     "level": "高级",
     "category": "走遍美国",
@@ -3253,7 +3253,7 @@ const FAMILY_ALBUM_WORDS = [
   {
     "id": "fau-e24-farewell",
     "word": "farewell",
-    "phonetic": "",
+    "phonetic": "/fɛɹwˈɛl/",
     "meaning": "告别；告别会",
     "level": "高级",
     "category": "走遍美国",
@@ -3266,7 +3266,7 @@ const FAMILY_ALBUM_WORDS = [
   {
     "id": "fau-e24-departure",
     "word": "departure",
-    "phonetic": "",
+    "phonetic": "/dɪpˈɑːɹtʃɚ/",
     "meaning": "离开；出发",
     "level": "高级",
     "category": "走遍美国",
@@ -3279,7 +3279,7 @@ const FAMILY_ALBUM_WORDS = [
   {
     "id": "fau-e24-settle-down",
     "word": "settle down",
-    "phonetic": "",
+    "phonetic": "/sˈɛɾəl dˈaʊn/",
     "meaning": "安顿下来；定居",
     "level": "高级",
     "category": "走遍美国",
@@ -3292,7 +3292,7 @@ const FAMILY_ALBUM_WORDS = [
   {
     "id": "fau-e24-stay-connected",
     "word": "stay connected",
-    "phonetic": "",
+    "phonetic": "/stˈeɪ kənˈɛktᵻd/",
     "meaning": "保持联系",
     "level": "高级",
     "category": "走遍美国",
@@ -3305,7 +3305,7 @@ const FAMILY_ALBUM_WORDS = [
   {
     "id": "fau-e24-friendship",
     "word": "friendship",
-    "phonetic": "",
+    "phonetic": "/fɹˈɛndʃɪp/",
     "meaning": "友谊",
     "level": "高级",
     "category": "走遍美国",
@@ -3318,7 +3318,7 @@ const FAMILY_ALBUM_WORDS = [
   {
     "id": "fau-e24-moving-truck",
     "word": "moving truck",
-    "phonetic": "",
+    "phonetic": "/mˈuːvɪŋ tɹˈʌk/",
     "meaning": "搬家卡车",
     "level": "高级",
     "category": "走遍美国",
@@ -3331,7 +3331,7 @@ const FAMILY_ALBUM_WORDS = [
   {
     "id": "fau-e24-the-good-old-days",
     "word": "the good old days",
-    "phonetic": "",
+    "phonetic": "/ðə ɡˈʊd ˈoʊld dˈeɪz/",
     "meaning": "过去的美好时光",
     "level": "高级",
     "category": "走遍美国",
@@ -3344,7 +3344,7 @@ const FAMILY_ALBUM_WORDS = [
   {
     "id": "fau-e24-all-the-best",
     "word": "all the best",
-    "phonetic": "",
+    "phonetic": "/ˈɔːl ðə bˈɛst/",
     "meaning": "祝一切顺利",
     "level": "高级",
     "category": "走遍美国",
@@ -3357,7 +3357,7 @@ const FAMILY_ALBUM_WORDS = [
   {
     "id": "fau-e24-say-goodbye",
     "word": "say goodbye",
-    "phonetic": "",
+    "phonetic": "/sˈeɪ ɡʊdbˈaɪ/",
     "meaning": "告别",
     "level": "高级",
     "category": "走遍美国",
@@ -3370,7 +3370,7 @@ const FAMILY_ALBUM_WORDS = [
   {
     "id": "fau-e24-part-ways",
     "word": "part ways",
-    "phonetic": "",
+    "phonetic": "/pˈɑːɹt wˈeɪz/",
     "meaning": "分道扬镳；各奔前程",
     "level": "高级",
     "category": "走遍美国",
@@ -3383,7 +3383,7 @@ const FAMILY_ALBUM_WORDS = [
   {
     "id": "fau-e25-country-music",
     "word": "country music",
-    "phonetic": "",
+    "phonetic": "/kˈʌntɹi mjˈuːzɪk/",
     "meaning": "乡村音乐",
     "level": "高级",
     "category": "走遍美国",
@@ -3396,7 +3396,7 @@ const FAMILY_ALBUM_WORDS = [
   {
     "id": "fau-e25-performer",
     "word": "performer",
-    "phonetic": "",
+    "phonetic": "/pɚfˈoːɹmɚ/",
     "meaning": "表演者",
     "level": "高级",
     "category": "走遍美国",
@@ -3409,7 +3409,7 @@ const FAMILY_ALBUM_WORDS = [
   {
     "id": "fau-e25-songwriter",
     "word": "songwriter",
-    "phonetic": "",
+    "phonetic": "/sˈɔŋɹaɪɾɚ/",
     "meaning": "歌曲创作者",
     "level": "高级",
     "category": "走遍美国",
@@ -3422,7 +3422,7 @@ const FAMILY_ALBUM_WORDS = [
   {
     "id": "fau-e25-lyrics",
     "word": "lyrics",
-    "phonetic": "",
+    "phonetic": "/lˈɪɹɪks/",
     "meaning": "歌词",
     "level": "高级",
     "category": "走遍美国",
@@ -3435,7 +3435,7 @@ const FAMILY_ALBUM_WORDS = [
   {
     "id": "fau-e25-melody",
     "word": "melody",
-    "phonetic": "",
+    "phonetic": "/mˈɛlədi/",
     "meaning": "旋律",
     "level": "高级",
     "category": "走遍美国",
@@ -3448,7 +3448,7 @@ const FAMILY_ALBUM_WORDS = [
   {
     "id": "fau-e25-instrument",
     "word": "instrument",
-    "phonetic": "",
+    "phonetic": "/ˈɪnstɹəmənt/",
     "meaning": "乐器",
     "level": "高级",
     "category": "走遍美国",
@@ -3461,7 +3461,7 @@ const FAMILY_ALBUM_WORDS = [
   {
     "id": "fau-e25-guitar",
     "word": "guitar",
-    "phonetic": "",
+    "phonetic": "/ɡɪtˈɑːɹ/",
     "meaning": "吉他",
     "level": "高级",
     "category": "走遍美国",
@@ -3474,7 +3474,7 @@ const FAMILY_ALBUM_WORDS = [
   {
     "id": "fau-e25-live-performance",
     "word": "live performance",
-    "phonetic": "",
+    "phonetic": "/lˈaɪv pɚfˈoːɹməns/",
     "meaning": "现场演出",
     "level": "高级",
     "category": "走遍美国",
@@ -3487,7 +3487,7 @@ const FAMILY_ALBUM_WORDS = [
   {
     "id": "fau-e25-audience",
     "word": "audience",
-    "phonetic": "",
+    "phonetic": "/ˈɔːdiəns/",
     "meaning": "观众；听众",
     "level": "高级",
     "category": "走遍美国",
@@ -3500,7 +3500,7 @@ const FAMILY_ALBUM_WORDS = [
   {
     "id": "fau-e25-sing-along",
     "word": "sing along",
-    "phonetic": "",
+    "phonetic": "/sˈɪŋ ɐlˈɑːŋ/",
     "meaning": "跟着唱",
     "level": "高级",
     "category": "走遍美国",
@@ -3513,7 +3513,7 @@ const FAMILY_ALBUM_WORDS = [
   {
     "id": "fau-e26-opening-night",
     "word": "opening night",
-    "phonetic": "",
+    "phonetic": "/ˈoʊpənɪŋ nˈaɪt/",
     "meaning": "首演之夜；开幕之夜",
     "level": "高级",
     "category": "走遍美国",
@@ -3526,7 +3526,7 @@ const FAMILY_ALBUM_WORDS = [
   {
     "id": "fau-e26-gallery",
     "word": "gallery",
-    "phonetic": "",
+    "phonetic": "/ɡˈælɚɹi/",
     "meaning": "画廊；美术馆",
     "level": "高级",
     "category": "走遍美国",
@@ -3539,7 +3539,7 @@ const FAMILY_ALBUM_WORDS = [
   {
     "id": "fau-e26-artwork",
     "word": "artwork",
-    "phonetic": "",
+    "phonetic": "/ˈɑːɹtwɜːk/",
     "meaning": "艺术作品",
     "level": "高级",
     "category": "走遍美国",
@@ -3552,7 +3552,7 @@ const FAMILY_ALBUM_WORDS = [
   {
     "id": "fau-e26-display",
     "word": "display",
-    "phonetic": "",
+    "phonetic": "/dɪsplˈeɪ/",
     "meaning": "展示；陈列",
     "level": "高级",
     "category": "走遍美国",
@@ -3565,7 +3565,7 @@ const FAMILY_ALBUM_WORDS = [
   {
     "id": "fau-e26-curator",
     "word": "curator",
-    "phonetic": "",
+    "phonetic": "/kjʊɹˈeɪɾɚ/",
     "meaning": "策展人；馆长",
     "level": "高级",
     "category": "走遍美国",
@@ -3578,7 +3578,7 @@ const FAMILY_ALBUM_WORDS = [
   {
     "id": "fau-e26-guest-of-honor",
     "word": "guest of honor",
-    "phonetic": "",
+    "phonetic": "/ɡˈɛst ʌv ˈɑːnɚ/",
     "meaning": "贵宾；主宾",
     "level": "高级",
     "category": "走遍美国",
@@ -3591,7 +3591,7 @@ const FAMILY_ALBUM_WORDS = [
   {
     "id": "fau-e26-invitation",
     "word": "invitation",
-    "phonetic": "",
+    "phonetic": "/ɪnvɪtˈeɪʃən/",
     "meaning": "邀请；请柬",
     "level": "高级",
     "category": "走遍美国",
@@ -3604,7 +3604,7 @@ const FAMILY_ALBUM_WORDS = [
   {
     "id": "fau-e26-reception",
     "word": "reception",
-    "phonetic": "",
+    "phonetic": "/ɹɪsˈɛpʃən/",
     "meaning": "招待会；接待",
     "level": "高级",
     "category": "走遍美国",
@@ -3617,7 +3617,7 @@ const FAMILY_ALBUM_WORDS = [
   {
     "id": "fau-e26-unveil",
     "word": "unveil",
-    "phonetic": "",
+    "phonetic": "/ʌnvˈeɪl/",
     "meaning": "揭幕；首次展示",
     "level": "高级",
     "category": "走遍美国",
@@ -3630,7 +3630,7 @@ const FAMILY_ALBUM_WORDS = [
   {
     "id": "fau-e26-celebrate-success",
     "word": "celebrate success",
-    "phonetic": "",
+    "phonetic": "/sˈɛləbɹˌeɪt səksˈɛs/",
     "meaning": "庆祝成功",
     "level": "高级",
     "category": "走遍美国",
@@ -4117,7 +4117,7 @@ function learnView(app){
  const sourceLabel=entry.kind==='due'?'<div class="small muted" style="text-align:center;margin:6px 0 0">到期复习 · 已自动排在新词之前</div>':(entry.kind==='relearn'?'<div class="small muted" style="text-align:center;margin:6px 0 0">即时重学 · 第 '+entry.attempt+' 次回忆</div>':(w.category==='走遍美国'?'<div class="small muted" style="text-align:center;margin:6px 0 0">走遍美国 · 第 '+w.episode+' 集 · '+esc(w.episodeTitle)+'</div>':''));
  let c=state.cards[w.id]||{};
  const struggleHint=Number(c.struggleCount)>0?'<div class="small muted" style="text-align:center;margin:5px 0 0">记忆困难值：'+Math.min(REINFORCE_THRESHOLD,Number(c.struggleCount))+' / '+REINFORCE_THRESHOLD+'</div>':'';
- let html=reinforceBanner+progress+sourceLabel+struggleHint+'<article class="card word-card minimal-word-card" data-swipe-card data-swipe-enabled="true" data-swipe-animated="true swipe-enter" data-swipe-id="'+esc(w.id)+'" data-swipe-mode="daily"><button class="word-button" data-action="say" data-id="'+esc(w.id)+'">'+wordDisplayHTML(w.word)+'</button><div class="word-phonetic">'+esc(w.phonetic||'音标暂缺')+'</div>'+(c.revealed?'<div class="answer"><div class="meaning">'+esc(w.meaning)+'</div>'+wordExampleHTML(w)+morphologyHTML(w)+'</div>':'<button class="btn secondary reveal-word-btn" data-action="reveal">查看释义</button>')+'</article>'+(c.revealed?'<div class="rating-grid desktop-ratings"><button class="rating" data-action="rate" data-rating="known">认识<small>稍后复习</small></button><button class="rating" data-action="rate" data-rating="vague">模糊<small>5 个单词后再测</small></button><button class="rating" data-action="rate" data-rating="unknown">不认识<small>3 个单词后重现</small></button></div>':'');
+ let html=reinforceBanner+progress+sourceLabel+struggleHint+'<article class="card word-card minimal-word-card" data-swipe-card data-swipe-enabled="true" data-swipe-animated="true swipe-enter" data-swipe-id="'+esc(w.id)+'" data-swipe-mode="daily"><button class="word-button" data-action="say" data-id="'+esc(w.id)+'">'+wordDisplayHTML(w.word)+'</button><div class="word-phonetic">'+esc(w.phonetic||'暂未提供音标')+'</div><button class="word-pronounce-btn" data-action="say" data-id="'+esc(w.id)+'">🔊 重听发音</button>'+(c.revealed?'<div class="answer"><div class="meaning">'+esc(w.meaning)+'</div>'+wordExampleHTML(w)+morphologyHTML(w)+'</div>':'<button class="btn secondary reveal-word-btn" data-action="reveal">查看释义</button>')+'</article>'+(c.revealed?'<div class="rating-grid desktop-ratings"><button class="rating" data-action="rate" data-rating="known">认识<small>稍后复习</small></button><button class="rating" data-action="rate" data-rating="vague">模糊<small>5 个单词后再测</small></button><button class="rating" data-action="rate" data-rating="unknown">不认识<small>3 个单词后重现</small></button></div>':'');
  app.innerHTML=html;
  if(state.autoPlay&&!c.autoSpoken){
   const id=w.id,token=entry.token;
@@ -4203,9 +4203,19 @@ function reviewView(app){
 }
 
 function listenView(app){app.innerHTML='<div class="card"><h2 class="section-title">听力训练</h2><p class="section-sub">开始后自动播放英文；选择答案后自动判断并进入下一题，无需手动播放或点击下一题。</p><div class="tabs"><button class="pill '+(state.listenMode==='choice'?'active':'')+'" data-action="mode" data-mode="choice">听音选中文</button><button class="pill '+(state.listenMode==='dictation'?'active':'')+'" data-action="mode" data-mode="dictation">听写单词</button></div>'+(question?questionHTML():'<div class="empty">🎧<p>准备好开始了吗？</p><button class="btn primary" data-action="start">开始练习</button></div>')+'</div>'}
-function questionHTML(){let q=question;if(state.listenMode==='choice')return '<div class="choice-list">'+q.options.map(w=>'<button class="choice '+(q.done?(w.id===q.word.id?'correct':w.id===q.selected?'wrong':''):'')+'" data-action="choose" data-id="'+esc(w.id)+'" '+(q.done?'disabled':'')+'>'+esc(w.meaning)+'</button>').join('')+'</div>'+(q.done?'<div class="feedback '+(q.correct?'good':'bad')+'">'+(q.correct?'回答正确：':'回答错误，正确答案：')+esc(q.word.word)+' · '+esc(q.word.meaning)+'</div>':'');return '<div class="form-grid"><label class="label" for="dictation">听音输入英文单词</label><input id="dictation" class="field" autocomplete="off" placeholder="Type what you hear" '+(q.done?'disabled':'')+'> <button class="btn primary" data-action="check">检查答案</button></div>'+(q.done?'<div class="feedback '+(q.correct?'good':'bad')+'">'+(q.correct?'回答正确！正确拼写：':'回答错误，正确拼写：')+esc(q.word.word)+'</div>':'')}
+function listenAnswerPanel(q){
+ if(!q.done)return '';
+ const w=q.word;
+ return '<div class="listen-answer-panel"><div class="feedback '+(q.correct?'good':'bad')+'">'+(q.correct?'回答正确，听到的单词是：':'这次选错了，正确答案是：')+'</div><div class="listen-answer-word">'+esc(w.word)+'</div><div class="listen-answer-phonetic">'+esc(w.phonetic||'暂未提供音标')+'</div><div class="listen-answer-meaning">'+esc(w.meaning)+'</div>'+wordExampleHTML(w)+'<button class="btn secondary listen-repeat-answer" data-action="play">🔊 再听一次</button>'+(q.correct?'<p class="small muted">稍后自动进入下一题，也可以提前继续。</p>':'<p class="small muted">先听清发音、确认拼写和含义，再进入下一题。</p>')+'<button class="btn primary listen-next-btn" data-action="next">我已确认，进入下一题</button></div>';
+}
+function questionHTML(){
+ const q=question;
+ const audio='<button type="button" class="listen-audio-trigger" data-action="play"><strong>🔊 播放 / 重听</strong><small>可以反复点击，不限次数</small></button>';
+ if(state.listenMode==='choice')return audio+'<div class="choice-list">'+q.options.map(w=>'<button class="choice '+(q.done?(w.id===q.word.id?'correct':w.id===q.selected?'wrong':''):'')+'" data-action="choose" data-id="'+esc(w.id)+'" '+(q.done?'disabled':'')+'>'+esc(w.meaning)+'</button>').join('')+'</div>'+listenAnswerPanel(q);
+ return audio+'<div class="form-grid"><label class="label" for="dictation">听音输入英文单词</label><input id="dictation" class="field" autocomplete="off" placeholder="Type what you hear" '+(q.done?'disabled':'')+'> <button class="btn primary" data-action="check" '+(q.done?'disabled':'')+'>检查答案</button></div>'+listenAnswerPanel(q);
+}
 function newQuestion(){let a=allWords();if(!a.length)return;let w=a[Math.floor(Math.random()*a.length)],others=a.filter(x=>x.id!==w.id).sort(()=>Math.random()-.5).slice(0,3);question={word:w,options:[w].concat(others).sort(()=>Math.random()-.5),done:false,correct:false};render();if(state.view==='listen')say(w.word)}
-function advanceListenAfterAnswer(q){let delay=q.correct?650:1300;setTimeout(()=>{if(question===q&&q.done&&state.view==='listen')newQuestion()},delay)}
+function advanceListenAfterAnswer(q){if(!q.correct)return;setTimeout(()=>{if(question===q&&q.done&&state.view==='listen')newQuestion()},3000)}
 function allPassages(){let list=BIBLE.concat(Array.isArray(state.bible.extraPassages)?state.bible.extraPassages:[]);if(Array.isArray(state.bible.revelationVerses)&&state.bible.revelationVerses.length)list.push({id:'rev-all',title:'启示录 Revelation · 全书',verses:state.bible.revelationVerses});return list}function getPassage(){return allPassages().find(p=>p.id===state.bible.passage)||(state.bible.passage==='rev-all'?{id:'rev-all',title:'启示录 Revelation · 全书',verses:[]}:BIBLE[0])}function getVerse(){let p=getPassage();return p.verses.length?p.verses[Math.min(state.bible.verse,p.verses.length-1)]:null}
 async function loadRevelation(){if(revelationLoading)return;if(Array.isArray(state.bible.revelationVerses)&&state.bible.revelationVerses.length>=400){buildRevelationVocabulary(state.bible.revelationVerses);return;}revelationLoading=true;revelationError='';if(state.view==='bible'||state.view==='reader')render();try{if(typeof window.canonapiv1client!=='function'){await new Promise((resolve,reject)=>{let script=document.createElement('script');script.src='https://www.canonapi.com/v1client.js';script.onload=resolve;script.onerror=()=>reject(new Error('圣经文本服务加载失败'));document.head.appendChild(script)})}if(typeof window.canonapiv1client!=='function')throw new Error('圣经文本服务未能启动');let verses=[];for(let chapter=1;chapter<=22;chapter++){let result=await window.canonapiv1client('revelation',chapter),lines=result&&result.verses;if(!Array.isArray(lines)||!lines.length)throw new Error('第 '+chapter+' 章数据格式异常');lines.forEach((line,index)=>{let en=String(line||'').trim();if(en)verses.push({ref:'Revelation '+chapter+':'+(index+1),en:en,zh:'',v:[]})})}if(verses.length<400)throw new Error('经文数量不完整：'+verses.length+' 节');state.bible.revelationVerses=verses;let vocabularyCount=buildRevelationVocabulary(verses);if(!state.bible.completed.length&&!Object.keys(state.bible.drafts||{}).length)state.bible.passage='rev-all';state.bible.verse=Math.min(state.bible.verse,verses.length-1);save();revelationLoading=false;revelationError='';if(state.view==='bible'||state.view==='reader')render();showToast('启示录全文已加载：'+verses.length+' 节，识别 '+vocabularyCount+' 个不同词形')}catch(err){revelationLoading=false;revelationError=err&&err.message?err.message:'网络连接失败';if(state.bible.passage==='rev-all'&&!state.bible.revelationVerses.length)state.bible.passage='gen1';save();if(state.view==='bible'||state.view==='reader')render();showToast('启示录加载失败，请检查网络后重试')}}
 function norm(s){return String(s).replace(/[’‘]/g,"'").replace(/[“”]/g,'"').toLowerCase()}
@@ -4399,6 +4409,16 @@ else if(a==='reinforce-zh'){
    });
    r.cursor=(Number(r.cursor)||0)+(r.roundTargetIds||[]).length;
    r.roundComplete=true;
+   if(r.autoTriggered){
+    const returnView=r.returnView==='review'?'review':'learn';
+    r.active=false;
+    state.view=returnView;
+    const next=nextCardForSpeech();
+    if(next)state.cards[next.id]=Object.assign({},state.cards[next.id]||{},{autoSpoken:true});
+    save();render();
+    if(next)say(next.word);
+    return;
+   }
   }
   save();render();
  }else{
