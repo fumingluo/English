@@ -145,17 +145,17 @@
 .morphology-inline{display:flex;align-items:baseline;flex-wrap:wrap;gap:5px 7px;margin:9px 0 2px;padding-top:8px;border-top:1px solid var(--line);font-size:13px;line-height:1.65;color:var(--muted)}.morphology-inline-label{font-size:12px;flex:none;color:var(--muted)}.morph-inline-hint{font-size:12px;color:var(--muted);margin-left:2px}.morphology-inline .morphology-plus{margin:0 1px}
 
 /* Stubborn-word matching game */
-.reinforce-banner{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 14px;margin:8px 0 14px;border:1px solid var(--line);border-radius:16px;background:var(--surface)}
+.reinforce-banner{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 14px;margin:8px 0 14px;border:1px solid var(--line);border-radius:16px;background:var(--paper)}
 .reinforce-banner p{margin:3px 0 0;color:var(--muted);font-size:12px;line-height:1.5}
 .reinforce-banner .btn{flex:none}
 .reinforce-card{padding:18px}
 .reinforce-columns{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:14px}
 .reinforce-column{display:flex;flex-direction:column;gap:9px;min-width:0}
 .reinforce-column-title{font-size:12px;color:var(--muted);font-weight:700;margin:0 2px 2px}
-.reinforce-option{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;width:100%;min-height:82px;padding:10px 7px;border:1px solid var(--line);border-radius:13px;background:var(--surface);color:var(--text);font:inherit;cursor:pointer;overflow-wrap:anywhere;transition:border-color .15s,background .15s,transform .15s}
+.reinforce-option{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;width:100%;min-height:82px;padding:10px 7px;border:1px solid var(--line);border-radius:13px;background:var(--paper);color:var(--ink);font:inherit;cursor:pointer;overflow-wrap:anywhere;transition:border-color .15s,background .15s,transform .15s}
 .reinforce-option strong{font-size:15px;line-height:1.3;text-align:center}
 .reinforce-option small{font-size:10px;color:var(--muted)}
-.reinforce-option.selected{border:2px solid var(--accent);background:var(--surface-2);transform:translateY(-1px)}
+.reinforce-option.selected{border:2px solid var(--green);background:var(--pale);transform:translateY(-1px)}
 .reinforce-option.matched{border-color:#36a46b;background:rgba(54,164,107,.1);opacity:.68;cursor:default}
 .reinforce-option:disabled{pointer-events:none}
 .reinforce-game-foot{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:14px;color:var(--muted);font-size:12px}
@@ -3644,7 +3644,7 @@ function today(){const d=new Date();return d.getFullYear()+'-'+String(d.getMonth
 function plusDays(n){const d=new Date();d.setDate(d.getDate()+n);return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
 function esc(v){return String(v==null?'':v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
 function blank(){return {level:'初级',autoPlay:false,view:'learn',cards:{},custom:[],reinforce:{active:false,targetIds:[],cursor:0,roundIds:[],roundTargetIds:[],englishOrder:[],chineseOrder:[],selectedEnglish:null,matched:[],mistakes:0,roundComplete:false},daily:{date:'',ids:[],studyQueue:[],index:0,batch:1,excludedIds:[],shortQueue:[],relearnSeq:0,queueVersion:0,relearnQueue:[]},review:{ids:[],index:0,active:false},stats:{streak:0,lastStudy:'',unique:[],correct:0,attempts:0,studyDays:[],typingDone:[],typedChars:0},listenMode:'choice',bible:{passage:'rev-all',verse:0,drafts:{},completed:[],totalTyped:0,extraPassages:[],revelationVerses:[],readerChapter:1,readerLevel:1,readerWordLevels:{},cuvChapters:{}}}}
-function load(){let s=blank();try{let raw=localStorage.getItem(KEY);if(!raw)raw=localStorage.getItem(OLD_KEY);if(raw){let old=JSON.parse(raw);s=Object.assign(s,old);s.stats=Object.assign(blank().stats,old.stats||{});s.daily=Object.assign(blank().daily,old.daily||{});s.review=Object.assign(blank().review,old.review||{});s.reinforce=Object.assign(blank().reinforce,old.reinforce||{});s.bible=Object.assign(blank().bible,old.bible||{});s.cards=old.cards&&typeof old.cards==='object'?old.cards:{};s.custom=Array.isArray(old.custom)?old.custom:[];if(!Array.isArray(s.stats.studyDays))s.stats.studyDays=[];if(!Array.isArray(s.stats.unique))s.stats.unique=[];if(!Array.isArray(s.bible.completed))s.bible.completed=[];if(!Array.isArray(s.bible.revelationVerses))s.bible.revelationVerses=[];Object.keys(s.cards).forEach(k=>{let c=s.cards[k];if(c&&c.stage==null)c.stage=c.rating==='known'?1:0;if(c&&c.seen&&!c.due)c.due=plusDays(1)});}}catch(e){console.warn('Local data recovery:',e)}return s}
+function load(){let s=blank();try{let raw=localStorage.getItem(KEY);if(!raw)raw=localStorage.getItem(OLD_KEY);if(raw){let old=JSON.parse(raw);s=Object.assign(s,old);s.stats=Object.assign(blank().stats,old.stats||{});s.daily=Object.assign(blank().daily,old.daily||{});s.review=Object.assign(blank().review,old.review||{});s.reinforce=Object.assign(blank().reinforce,old.reinforce||{});s.bible=Object.assign(blank().bible,old.bible||{});s.cards=old.cards&&typeof old.cards==='object'?old.cards:{};s.custom=Array.isArray(old.custom)?old.custom:[];if(!Array.isArray(s.stats.studyDays))s.stats.studyDays=[];if(!Array.isArray(s.stats.unique))s.stats.unique=[];if(!Array.isArray(s.bible.completed))s.bible.completed=[];if(!Array.isArray(s.bible.revelationVerses))s.bible.revelationVerses=[];Object.keys(s.cards).forEach(k=>{let c=s.cards[k];if(c&&c.stage==null)c.stage=c.rating==='known'?1:0;if(c&&c.seen&&!c.due)c.due=plusDays(1);if(c&&c.struggleCount==null)c.struggleCount=c.rating==='unknown'?1:0;if(c&&c.unknownCount==null)c.unknownCount=c.rating==='unknown'?1:0;if(c&&c.reinforceSuccesses==null)c.reinforceSuccesses=0});}}catch(e){console.warn('Local data recovery:',e)}return s}
 let state=load(),question=null,saveTimer=null,revelationLoading=false,revelationError='',bibleAdvanceTimer=null,swipeGesture=null,suppressWordCardClickUntil=0;
 function save(){try{localStorage.setItem(KEY,JSON.stringify(state));if(window.firebaseSync)window.firebaseSync.queue(state)}catch(e){showToast('本机存储空间不足，请先导出备份。')}}
 
@@ -3788,10 +3788,11 @@ function getStubbornWords(){
  });
 }
 function shuffleReinforceIds(ids){const out=ids.slice();for(let i=out.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[out[i],out[j]]=[out[j],out[i]]}return out}
+function orderReinforceTargets(words){let pending=words.slice(),ordered=[];while(pending.length){const used=new Set(),group=[],rest=[];pending.forEach(w=>{const key=String(w.meaning||'').trim().toLowerCase();if(group.length<4&&!used.has(key)){group.push(w);used.add(key)}else rest.push(w)});if(!group.length)group.push(rest.shift());ordered.push(...group);pending=rest}return ordered}
 function startReinforcement(){
  const hard=getStubbornWords();
  if(!hard.length){showToast('目前还没有需要强化的顽固词');return}
- state.reinforce={active:true,targetIds:hard.map(w=>w.id),cursor:0,roundIds:[],roundTargetIds:[],englishOrder:[],chineseOrder:[],selectedEnglish:null,matched:[],mistakes:0,roundComplete:false};
+ state.reinforce={active:true,targetIds:orderReinforceTargets(hard).map(w=>w.id),cursor:0,roundIds:[],roundTargetIds:[],englishOrder:[],chineseOrder:[],selectedEnglish:null,matched:[],mistakes:0,roundComplete:false};
  state.view='reinforce';
  prepareReinforcementRound();
  save();render();
@@ -3801,9 +3802,23 @@ function prepareReinforcementRound(){
  const targets=(r.targetIds||[]).slice(Number(r.cursor)||0,(Number(r.cursor)||0)+4);
  if(!targets.length){r.roundComplete=true;return}
  const targetSet=new Set(r.targetIds||[]);
- let fillers=allWords().filter(w=>!targets.includes(w.id)&&!targetSet.has(w.id)&&((state.cards[w.id]&&state.cards[w.id].seen)||w.level===state.level));
- if(fillers.length<4-targets.length)fillers=fillers.concat(allWords().filter(w=>!targets.includes(w.id)&&!fillers.some(x=>x.id===w.id)));
- const fillerIds=shuffleReinforceIds(fillers.map(w=>w.id)).slice(0,4-targets.length);
+ const usedMeanings=new Set(targets.map(id=>String(wordById(id)?.meaning||'').trim().toLowerCase()).filter(Boolean));
+ const candidates=shuffleReinforceIds(allWords().filter(w=>!targets.includes(w.id)&&!targetSet.has(w.id)&&String(w.meaning||'').trim()&&((state.cards[w.id]&&state.cards[w.id].seen)||w.level===state.level)));
+ const fillerIds=[];
+ for(const word of candidates){
+  const key=String(word.meaning||'').trim().toLowerCase();
+  if(usedMeanings.has(key))continue;
+  usedMeanings.add(key);fillerIds.push(word.id);
+  if(fillerIds.length>=4-targets.length)break;
+ }
+ if(fillerIds.length<4-targets.length){
+  for(const word of shuffleReinforceIds(allWords().filter(w=>!targets.includes(w.id)&&!targetSet.has(w.id)&&!fillerIds.includes(w.id)&&String(w.meaning||'').trim()))){
+   const key=String(word.meaning||'').trim().toLowerCase();
+   if(usedMeanings.has(key))continue;
+   usedMeanings.add(key);fillerIds.push(word.id);
+   if(fillerIds.length>=4-targets.length)break;
+  }
+ }
  const ids=targets.concat(fillerIds);
  r.roundIds=ids;
  r.roundTargetIds=targets;
@@ -4046,7 +4061,7 @@ function updateHeader(){document.getElementById('dateLabel').textContent=new Dat
 function render(){if(state.view==='speak'||state.view==='explore')state.view='learn';updateHeader();document.querySelectorAll('#nav button').forEach(b=>b.classList.toggle('active',b.dataset.view===state.view));let views={learn:learnView,review:reviewView,listen:listenView,bible:bibleView,reader:contextReadingView,mine:mineView,reinforce:reinforceView};(views[state.view]||learnView)(document.getElementById('app'))}
 window.getAppState=function(){return state};
  window.getAllWordsCount=function(){return allWords().length};
-window.applyCloudState=function(data){if(!data||typeof data!=='object')return;let fresh=blank();state=Object.assign(fresh,data);state.stats=Object.assign(blank().stats,data.stats||{});state.daily=Object.assign(blank().daily,data.daily||{});state.review=Object.assign(blank().review,data.review||{});state.bible=Object.assign(blank().bible,data.bible||{});state.reinforce=Object.assign(blank().reinforce,data.reinforce||{});state.cards=data.cards&&typeof data.cards==='object'?data.cards:{};state.custom=Array.isArray(data.custom)?data.custom:[];if(!Array.isArray(state.bible.revelationVerses))state.bible.revelationVerses=[];if(dueWords().length)state.view='learn';try{localStorage.setItem(KEY,JSON.stringify(state))}catch(e){}render();showToast('已从云端同步最新学习进度')};
+window.applyCloudState=function(data){if(!data||typeof data!=='object')return;let fresh=blank();state=Object.assign(fresh,data);state.stats=Object.assign(blank().stats,data.stats||{});state.daily=Object.assign(blank().daily,data.daily||{});state.review=Object.assign(blank().review,data.review||{});state.bible=Object.assign(blank().bible,data.bible||{});state.reinforce=Object.assign(blank().reinforce,data.reinforce||{});state.cards=data.cards&&typeof data.cards==='object'?data.cards:{};Object.keys(state.cards).forEach(k=>{let c=state.cards[k];if(c&&c.struggleCount==null)c.struggleCount=c.rating==='unknown'?1:0;if(c&&c.unknownCount==null)c.unknownCount=c.rating==='unknown'?1:0;if(c&&c.reinforceSuccesses==null)c.reinforceSuccesses=0});state.custom=Array.isArray(data.custom)?data.custom:[];if(!Array.isArray(state.bible.revelationVerses))state.bible.revelationVerses=[];if(dueWords().length)state.view='learn';try{localStorage.setItem(KEY,JSON.stringify(state))}catch(e){}render();showToast('已从云端同步最新学习进度')};
 function learnView(app){
  const hardWords=getStubbornWords();
  const reinforceBanner=hardWords.length?'<div class="reinforce-banner"><div><strong>🔥 顽固词强化 · '+hardWords.length+' 个待巩固</strong><p>连续多次标记不认识的词，来玩一局中英配对。</p></div><button class="btn secondary" data-action="start-reinforce">开始小游戏</button></div>':'';
