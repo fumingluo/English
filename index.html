@@ -3643,9 +3643,9 @@ const KEY='dailyEnglish.v3',OLD_KEY='dailyEnglish.v2',INTERVALS=[{n:1,u:'分钟'
 function today(){const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
 function plusDays(n){const d=new Date();d.setDate(d.getDate()+n);return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
 function esc(v){return String(v==null?'':v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
-function blank(){return {level:'初级',autoPlay:false,view:'learn',cards:{},custom:[],reinforce:{active:false,targetIds:[],cursor:0,roundIds:[],roundTargetIds:[],englishOrder:[],chineseOrder:[],selectedEnglish:null,matched:[],mistakes:0,roundComplete:false},daily:{date:'',ids:[],studyQueue:[],index:0,batch:1,excludedIds:[],shortQueue:[],relearnSeq:0,queueVersion:0,relearnQueue:[]},review:{ids:[],index:0,active:false},stats:{streak:0,lastStudy:'',unique:[],correct:0,attempts:0,studyDays:[],typingDone:[],typedChars:0},listenMode:'choice',bible:{passage:'rev-all',verse:0,drafts:{},completed:[],totalTyped:0,extraPassages:[],revelationVerses:[],readerChapter:1,readerLevel:1,readerWordLevels:{},cuvChapters:{}}}}
+function blank(){return {level:'初级',autoPlay:false,view:'learn',cards:{},custom:[],reinforce:{active:false,autoTriggered:false,returnView:'learn',targetIds:[],cursor:0,roundIds:[],roundTargetIds:[],englishOrder:[],chineseOrder:[],selectedEnglish:null,matched:[],mistakes:0,roundComplete:false},daily:{date:'',ids:[],studyQueue:[],index:0,batch:1,excludedIds:[],shortQueue:[],relearnSeq:0,queueVersion:0,relearnQueue:[]},review:{ids:[],index:0,active:false},stats:{streak:0,lastStudy:'',unique:[],correct:0,attempts:0,studyDays:[],typingDone:[],typedChars:0},listenMode:'choice',bible:{passage:'rev-all',verse:0,drafts:{},completed:[],totalTyped:0,extraPassages:[],revelationVerses:[],readerChapter:1,readerLevel:1,readerWordLevels:{},cuvChapters:{}}}}
 function load(){let s=blank();try{let raw=localStorage.getItem(KEY);if(!raw)raw=localStorage.getItem(OLD_KEY);if(raw){let old=JSON.parse(raw);s=Object.assign(s,old);s.stats=Object.assign(blank().stats,old.stats||{});s.daily=Object.assign(blank().daily,old.daily||{});s.review=Object.assign(blank().review,old.review||{});s.reinforce=Object.assign(blank().reinforce,old.reinforce||{});s.bible=Object.assign(blank().bible,old.bible||{});s.cards=old.cards&&typeof old.cards==='object'?old.cards:{};s.custom=Array.isArray(old.custom)?old.custom:[];if(!Array.isArray(s.stats.studyDays))s.stats.studyDays=[];if(!Array.isArray(s.stats.unique))s.stats.unique=[];if(!Array.isArray(s.bible.completed))s.bible.completed=[];if(!Array.isArray(s.bible.revelationVerses))s.bible.revelationVerses=[];Object.keys(s.cards).forEach(k=>{let c=s.cards[k];if(c&&c.stage==null)c.stage=c.rating==='known'?1:0;if(c&&c.seen&&!c.due)c.due=plusDays(1);if(c&&c.struggleCount==null)c.struggleCount=c.rating==='unknown'?1:0;if(c&&c.unknownCount==null)c.unknownCount=c.rating==='unknown'?1:0;if(c&&c.reinforceSuccesses==null)c.reinforceSuccesses=0});}}catch(e){console.warn('Local data recovery:',e)}return s}
-let state=load(),question=null,saveTimer=null,revelationLoading=false,revelationError='',bibleAdvanceTimer=null,swipeGesture=null,suppressWordCardClickUntil=0;
+let state=load(),question=null,saveTimer=null,revelationLoading=false,revelationError='',bibleAdvanceTimer=null,swipeGesture=null,suppressWordCardClickUntil=0,dailyDueBootstrap=false;
 function save(){try{localStorage.setItem(KEY,JSON.stringify(state));if(window.firebaseSync)window.firebaseSync.queue(state)}catch(e){showToast('本机存储空间不足，请先导出备份。')}}
 
 // Curated, transparent word-building notes. Unknown words stay unsegmented rather than being guessed.
@@ -3793,10 +3793,11 @@ function reinforceBannerHTML(){
 }
 function shuffleReinforceIds(ids){const out=ids.slice();for(let i=out.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[out[i],out[j]]=[out[j],out[i]]}return out}
 function orderReinforceTargets(words){let pending=words.slice(),ordered=[];while(pending.length){const usedMeanings=new Set(),usedWords=new Set(),group=[],rest=[];pending.forEach(w=>{const meaning=String(w.meaning||'').trim().toLowerCase(),word=String(w.word||'').trim().toLowerCase();if(group.length<4&&!usedMeanings.has(meaning)&&!usedWords.has(word)){group.push(w);usedMeanings.add(meaning);usedWords.add(word)}else rest.push(w)});if(!group.length)group.push(rest.shift());ordered.push(...group);pending=rest}return ordered}
-function startReinforcement(){
- const hard=getStubbornWords();
+function startReinforcement(targetIds,autoTriggered){
+ const hard=Array.isArray(targetIds)?targetIds.map(wordById).filter(Boolean):getStubbornWords();
  if(!hard.length){showToast('目前还没有需要强化的顽固词');return}
- state.reinforce={active:true,targetIds:orderReinforceTargets(hard).map(w=>w.id),cursor:0,roundIds:[],roundTargetIds:[],englishOrder:[],chineseOrder:[],selectedEnglish:null,matched:[],mistakes:0,roundComplete:false};
+ const returnView=state.view==='review'?'review':'learn';
+ state.reinforce={active:true,autoTriggered:!!autoTriggered,returnView:returnView,targetIds:orderReinforceTargets(hard).map(w=>w.id),cursor:0,roundIds:[],roundTargetIds:[],englishOrder:[],chineseOrder:[],selectedEnglish:null,matched:[],mistakes:0,roundComplete:false};
  state.view='reinforce';
  prepareReinforcementRound();
  save();render();
@@ -3843,6 +3844,11 @@ function reinforceView(app){
   return;
  }
  if(r.roundComplete){
+  if(r.autoTriggered){
+   const perfect=(Number(r.mistakes)||0)===0;
+   app.innerHTML='<div class="card reinforce-result"><div class="result-icon">'+(perfect?'🏆':'💪')+'</div><div class="eyebrow">AUTOMATIC WORD REINFORCEMENT</div><h2>'+(perfect?'强化闯关完成':'本轮练习已记录')+'</h2><p>'+(perfect?'你无错误完成了重点词配对，已记录一次强化成功。':'本轮出现 '+r.mistakes+' 次错误，因此不会计入无错误通关。这个词仍保留在强化列表中。')+'</p><div class="stats-row"><div class="stat"><strong>'+r.matched.length+' / '+r.roundIds.length+'</strong><span>配对数量</span></div><div class="stat"><strong>'+r.mistakes+'</strong><span>错误尝试</span></div><div class="stat"><strong>'+(state.cards[r.roundTargetIds[0]]?.reinforceSuccesses||0)+'</strong><span>无错误通关</span></div></div><button class="btn primary" style="width:100%;margin-top:14px" data-action="reinforce-exit">返回学习</button></div>';
+   return;
+  }
   const finished=(Number(r.cursor)||0)>=targets.length,remaining=getStubbornWords().length;
   app.innerHTML='<div class="card reinforce-result"><div class="result-icon">'+(finished?'🏆':'✅')+'</div><div class="eyebrow">WORD CONNECTION</div><h2>'+(finished?'本轮强化完成':'本组配对完成')+'</h2><p>'+(finished?'你已经完成本轮顽固词配对。'+(remaining?'还有 '+remaining+' 个词需要继续强化。':'这一轮没有待强化词了。'):'这组词已经全部配对。继续下一组，直到完成所有顽固词。')+'</p><div class="stats-row"><div class="stat"><strong>'+r.matched.length+' / '+r.roundIds.length+'</strong><span>配对数量</span></div><div class="stat"><strong>'+r.mistakes+'</strong><span>错误尝试</span></div><div class="stat"><strong>'+targets.length+'</strong><span>本轮顽固词</span></div></div><button class="btn primary" style="width:100%;margin-top:14px" data-action="'+(!finished?'reinforce-next':(remaining?'reinforce-restart':'reinforce-exit'))+'">'+(!finished?'下一组顽固词':(remaining?'再练一轮':'返回单词学习'))+'</button></div>';
   return;
@@ -3867,25 +3873,45 @@ function dueLabel(c){if(!c)return'—';let t=Number(c.dueAt);if(!Number.isFinite
 function newWords(){return allWords().filter(w=>(w.category==='走遍美国'||w.level===state.level)&&(!state.cards[w.id]||!state.cards[w.id].seen))}
 function availableNewWords(){const used=new Set([...(state.daily.ids||[]),...(state.daily.excludedIds||[])]);return newWords().filter(w=>!used.has(w.id))}
 function makeNewStudyEntry(id){return {id:id,kind:'new',attempt:0,token:'new:'+id}}
+function makeDueStudyEntry(w){const c=state.cards[w.id]||{};return {id:w.id,kind:'due',attempt:0,token:'due:'+w.id+':'+String(c.dueAt||c.due||'')}}
 function makeRelearnStudyEntry(item){return {id:item.id,kind:'relearn',attempt:Number(item.attempt)||1,token:item.token||('relearn:'+item.id+':'+(item.attempt||1))}}
+function dueTimestamp(w){const c=state.cards[w.id]||{},n=Number(c.dueAt);return Number.isFinite(n)&&n>0?n:(c.due?new Date(String(c.due).includes('T')?c.due:c.due+'T00:00:00').getTime():0)}
+function promoteDueWords(){
+ const due=dueWords().sort((a,b)=>dueTimestamp(a)-dueTimestamp(b));
+ if(!due.length)return 0;
+ const dueIds=new Set(due.map(w=>w.id));
+ due.forEach(w=>{const c=state.cards[w.id]||{};state.cards[w.id]=Object.assign({},c,{revealed:false,reviewRevealed:false})});
+ const index=Math.max(0,Math.min(Number(state.daily.index)||0,state.daily.studyQueue.length));
+ const completed=state.daily.studyQueue.slice(0,index),pending=state.daily.studyQueue.slice(index).filter(entry=>!dueIds.has(entry.id));
+ state.daily.studyQueue=completed.concat(due.map(makeDueStudyEntry),pending);
+ state.daily.shortQueue=(state.daily.shortQueue||[]).filter(item=>!dueIds.has(item.id));
+ save();
+ return due.length;
+}
 function getDaily(){
  const isNewDay=state.daily.date!==today()||!Array.isArray(state.daily.ids);
  if(isNewDay){
   const ids=newWords().slice(0,20).map(w=>w.id);
-  state.daily={date:today(),ids:ids,studyQueue:ids.map(makeNewStudyEntry),index:0,batch:1,newTotal:ids.length,excludedIds:[],shortQueue:[],relearnSeq:0,queueVersion:3,relearnQueue:[]};
+  const due=dueWords().sort((a,b)=>dueTimestamp(a)-dueTimestamp(b));
+  state.daily={date:today(),ids:ids,studyQueue:due.map(makeDueStudyEntry).concat(ids.map(makeNewStudyEntry)),index:0,batch:1,newTotal:ids.length,excludedIds:[],shortQueue:[],relearnSeq:0,queueVersion:4,relearnQueue:[]};
   save();
  }else{
   if(!Array.isArray(state.daily.excludedIds))state.daily.excludedIds=[];
   if(!Array.isArray(state.daily.shortQueue))state.daily.shortQueue=[];
-  if(!Array.isArray(state.daily.studyQueue)||state.daily.queueVersion!==3){
-   state.daily.studyQueue=state.daily.ids.map(makeNewStudyEntry);
-   state.daily.shortQueue=[];
-   state.daily.relearnSeq=Number(state.daily.relearnSeq)||0;
-   state.daily.newTotal=state.daily.ids.length;
-   state.daily.queueVersion=3;
-   save();
+  if(!Array.isArray(state.daily.studyQueue)){
+   state.daily.studyQueue=(state.daily.ids||[]).map(makeNewStudyEntry);
+   state.daily.index=0;
+   state.daily.newTotal=(state.daily.ids||[]).length;
   }
+  if(state.daily.queueVersion!==4)state.daily.queueVersion=4;
+  state.daily.relearnSeq=Number(state.daily.relearnSeq)||0;
   state.daily.index=Math.max(0,Math.min(Number(state.daily.index)||0,state.daily.studyQueue.length));
+ }
+ // Refresh due words once when the learning view opens; subsequent updates happen only
+ // after a rating, never while the learner is revealing or reading the current card.
+ if(!dailyDueBootstrap){
+  dailyDueBootstrap=true;
+  promoteDueWords();
  }
  return state.daily.studyQueue.map(entry=>{
   const word=wordById(entry.id);
@@ -3904,7 +3930,7 @@ function advanceShortQueue(){
 function enqueueShortRelearn(entry,rating){
  if(!entry)return;
  let after=0,attempt=(Number(entry.attempt)||0)+1;
- if(entry.kind==='new'){
+ if(entry.kind==='new'||entry.kind==='due'){
   if(rating==='unknown')after=3;
   else if(rating==='vague')after=5;
  }else if(entry.kind==='relearn'){
@@ -4068,7 +4094,7 @@ function updateHeader(){document.getElementById('dateLabel').textContent=new Dat
 function render(){if(state.view==='speak'||state.view==='explore')state.view='learn';updateHeader();document.querySelectorAll('#nav button').forEach(b=>b.classList.toggle('active',b.dataset.view===state.view));let views={learn:learnView,review:reviewView,listen:listenView,bible:bibleView,reader:contextReadingView,mine:mineView,reinforce:reinforceView};(views[state.view]||learnView)(document.getElementById('app'))}
 window.getAppState=function(){return state};
  window.getAllWordsCount=function(){return allWords().length};
-window.applyCloudState=function(data){if(!data||typeof data!=='object')return;let fresh=blank();state=Object.assign(fresh,data);state.stats=Object.assign(blank().stats,data.stats||{});state.daily=Object.assign(blank().daily,data.daily||{});state.review=Object.assign(blank().review,data.review||{});state.bible=Object.assign(blank().bible,data.bible||{});state.reinforce=Object.assign(blank().reinforce,data.reinforce||{});state.cards=data.cards&&typeof data.cards==='object'?data.cards:{};Object.keys(state.cards).forEach(k=>{let c=state.cards[k];if(c&&c.struggleCount==null)c.struggleCount=c.rating==='unknown'?1:0;if(c&&c.unknownCount==null)c.unknownCount=c.rating==='unknown'?1:0;if(c&&c.reinforceSuccesses==null)c.reinforceSuccesses=0});state.custom=Array.isArray(data.custom)?data.custom:[];if(!Array.isArray(state.bible.revelationVerses))state.bible.revelationVerses=[];if(dueWords().length)state.view='learn';try{localStorage.setItem(KEY,JSON.stringify(state))}catch(e){}render();showToast('已从云端同步最新学习进度')};
+window.applyCloudState=function(data){if(!data||typeof data!=='object')return;let fresh=blank();state=Object.assign(fresh,data);state.stats=Object.assign(blank().stats,data.stats||{});state.daily=Object.assign(blank().daily,data.daily||{});state.review=Object.assign(blank().review,data.review||{});state.bible=Object.assign(blank().bible,data.bible||{});state.reinforce=Object.assign(blank().reinforce,data.reinforce||{});state.cards=data.cards&&typeof data.cards==='object'?data.cards:{};Object.keys(state.cards).forEach(k=>{let c=state.cards[k];if(c&&c.struggleCount==null)c.struggleCount=c.rating==='unknown'?1:0;if(c&&c.unknownCount==null)c.unknownCount=c.rating==='unknown'?1:0;if(c&&c.reinforceSuccesses==null)c.reinforceSuccesses=0});state.custom=Array.isArray(data.custom)?data.custom:[];if(!Array.isArray(state.bible.revelationVerses))state.bible.revelationVerses=[];if(dueWords().length)state.view='learn';dailyDueBootstrap=false;try{localStorage.setItem(KEY,JSON.stringify(state))}catch(e){}render();showToast('已从云端同步最新学习进度')};
 function learnView(app){
  const reinforceBanner=reinforceBannerHTML();
  let list=getDaily(),i=state.daily.index||0;
@@ -4085,7 +4111,7 @@ function learnView(app){
  const newDone=state.daily.studyQueue.slice(0,i+1).filter(x=>x.kind==='new').length;
  const pending=(state.daily.shortQueue||[]).length;
  const progress='<div class="row" style="margin:8px 3px 0"><span class="small muted">新词学习 · 第 '+currentBatch+' 组</span><span class="tag">新词 '+newDone+' / '+state.daily.ids.length+'</span></div>'+(pending?'<div class="small muted" style="text-align:center;margin-top:5px">短期重学队列：'+pending+' 个待插入</div>':'');
- const sourceLabel=entry.kind==='relearn'?'<div class="small muted" style="text-align:center;margin:6px 0 0">即时重学 · 第 '+entry.attempt+' 次回忆</div>':(w.category==='走遍美国'?'<div class="small muted" style="text-align:center;margin:6px 0 0">走遍美国 · 第 '+w.episode+' 集 · '+esc(w.episodeTitle)+'</div>':'');
+ const sourceLabel=entry.kind==='due'?'<div class="small muted" style="text-align:center;margin:6px 0 0">到期复习 · 已自动排在新词之前</div>':(entry.kind==='relearn'?'<div class="small muted" style="text-align:center;margin:6px 0 0">即时重学 · 第 '+entry.attempt+' 次回忆</div>':(w.category==='走遍美国'?'<div class="small muted" style="text-align:center;margin:6px 0 0">走遍美国 · 第 '+w.episode+' 集 · '+esc(w.episodeTitle)+'</div>':''));
  let c=state.cards[w.id]||{};
  const struggleHint=Number(c.struggleCount)>0?'<div class="small muted" style="text-align:center;margin:5px 0 0">记忆困难值：'+Math.min(REINFORCE_THRESHOLD,Number(c.struggleCount))+' / '+REINFORCE_THRESHOLD+'</div>':'';
  let html=reinforceBanner+progress+sourceLabel+struggleHint+'<article class="card word-card minimal-word-card" data-swipe-card data-swipe-enabled="true" data-swipe-animated="true swipe-enter" data-swipe-id="'+esc(w.id)+'" data-swipe-mode="daily"><button class="word-button" data-action="say" data-id="'+esc(w.id)+'">'+wordDisplayHTML(w.word)+'</button><div class="word-phonetic">'+esc(w.phonetic||'音标暂缺')+'</div>'+(c.revealed?'<div class="answer"><div class="meaning">'+esc(w.meaning)+'</div>'+wordExampleHTML(w)+morphologyHTML(w)+'</div>':'<button class="btn secondary reveal-word-btn" data-action="reveal">查看释义</button>')+'</article>'+(c.revealed?'<div class="rating-grid desktop-ratings"><button class="rating" data-action="rate" data-rating="known">认识<small>稍后复习</small></button><button class="rating" data-action="rate" data-rating="vague">模糊<small>5 个单词后再测</small></button><button class="rating" data-action="rate" data-rating="unknown">不认识<small>3 个单词后重现</small></button></div>':'');
@@ -4116,7 +4142,7 @@ function schedule(id,rating,fromReview){
   if(!raw||raw.id!==id)return;
   entry=raw;
   if(entry.kind==='new'&&c.seen)return;
-  if(entry.kind==='relearn'&&!c.seen)return;
+  if((entry.kind==='relearn'||entry.kind==='due')&&!c.seen)return;
  }
  let stage=Number(c.stage)||0;
  if(rating==='unknown')stage=1;
@@ -4127,6 +4153,7 @@ function schedule(id,rating,fromReview){
  const priorStruggle=Math.max(0,Number(c.struggleCount)||0),unknownCount=(Number(c.unknownCount)||0)+(rating==='unknown'?1:0);
  const struggleCount=rating==='unknown'?priorStruggle+1:(rating==='known'?Math.max(0,priorStruggle-1):priorStruggle);
  const reinforceSuccesses=rating==='unknown'?0:(Number(c.reinforceSuccesses)||0);
+ const shouldAutoReinforce=rating==='unknown'&&struggleCount>=REINFORCE_THRESHOLD;
  state.cards[id]=Object.assign({},c,{stage:stage,seen:true,dueAt:dueAt,due:new Date(dueAt).toISOString(),last:new Date().toISOString(),rating:rating,revealed:false,reviewRevealed:false,autoSpoken:false,unknownCount:unknownCount,struggleCount:struggleCount,reinforceSuccesses:reinforceSuccesses,lastUnknownAt:rating==='unknown'?new Date().toISOString():(c.lastUnknownAt||'')});
  markActivity();
  if(!fromReview){
@@ -4135,6 +4162,12 @@ function schedule(id,rating,fromReview){
   enqueueShortRelearn(entry,rating);
  }else if(fromReview===true||fromReview==='review'){
   state.review.index++;
+ }
+ if(state.view==='learn')promoteDueWords();
+ if(shouldAutoReinforce){
+  save();
+  startReinforcement([id],true);
+  return;
  }
  const next=nextCardForSpeech();
  if(next)state.cards[next.id]=Object.assign({},state.cards[next.id]||{},{autoSpoken:true});
@@ -4337,7 +4370,7 @@ else if(a==='reveal'){let w=getDaily()[state.daily.index];if(w){say(w.word);stat
 else if(a==='rate'){let w=getDaily()[state.daily.index];if(w)schedule(w.id,b.dataset.rating,false)}
 else if(a==='skip'){let entry=state.daily.studyQueue&&state.daily.studyQueue[state.daily.index],id=entry&&entry.id;if(id&&entry.kind==='new'){if(!Array.isArray(state.daily.excludedIds))state.daily.excludedIds=[];if(!state.daily.excludedIds.includes(id))state.daily.excludedIds.push(id)}state.daily.index++;save();render()}
 else if(a==='start-reinforce')startReinforcement()
-else if(a==='reinforce-exit'){state.reinforce.active=false;state.view='learn';save();render()}
+else if(a==='reinforce-exit'){const returnView=state.reinforce&&state.reinforce.autoTriggered?state.reinforce.returnView:'learn';state.reinforce.active=false;state.view=returnView==='review'?'review':'learn';save();render()}
 else if(a==='reinforce-next'){prepareReinforcementRound();save();render()}
 else if(a==='reinforce-restart')startReinforcement()
 else if(a==='reinforce-en'){
