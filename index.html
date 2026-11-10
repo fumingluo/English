@@ -3875,14 +3875,24 @@ function availableNewWords(){const used=new Set([...(state.daily.ids||[]),...(st
 function makeNewStudyEntry(id){return {id:id,kind:'new',attempt:0,token:'new:'+id}}
 function makeDueStudyEntry(w){const c=state.cards[w.id]||{};return {id:w.id,kind:'due',attempt:0,token:'due:'+w.id+':'+String(c.dueAt||c.due||'')}}
 function makeRelearnStudyEntry(item){return {id:item.id,kind:'relearn',attempt:Number(item.attempt)||1,token:item.token||('relearn:'+item.id+':'+(item.attempt||1))}}
+function dueTimestamp(w){const c=state.cards[w.id]||{},n=Number(c.dueAt);return Number.isFinite(n)&&n>0?n:(c.due?new Date(String(c.due).includes('T')?c.due:c.due+'T00:00:00').getTime():0)}
+function promoteDueWords(){
+ const due=dueWords().sort((a,b)=>dueTimestamp(a)-dueTimestamp(b));
+ if(!due.length)return 0;
+ const dueIds=new Set(due.map(w=>w.id));
+ due.forEach(w=>{const c=state.cards[w.id]||{};state.cards[w.id]=Object.assign({},c,{revealed:false,reviewRevealed:false})});
+ const index=Math.max(0,Math.min(Number(state.daily.index)||0,state.daily.studyQueue.length));
+ const completed=state.daily.studyQueue.slice(0,index),pending=state.daily.studyQueue.slice(index).filter(entry=>!dueIds.has(entry.id));
+ state.daily.studyQueue=completed.concat(due.map(makeDueStudyEntry),pending);
+ state.daily.shortQueue=(state.daily.shortQueue||[]).filter(item=>!dueIds.has(item.id));
+ save();
+ return due.length;
+}
 function getDaily(){
  const isNewDay=state.daily.date!==today()||!Array.isArray(state.daily.ids);
  if(isNewDay){
   const ids=newWords().slice(0,20).map(w=>w.id);
-  const due=dueWords().sort((a,b)=>{
-   const time=w=>{const c=state.cards[w.id]||{};const n=Number(c.dueAt);return Number.isFinite(n)&&n>0?n:(c.due?new Date(String(c.due).includes('T')?c.due:c.due+'T00:00:00').getTime():0)};
-   return time(a)-time(b);
-  });
+  const due=dueWords().sort((a,b)=>dueTimestamp(a)-dueTimestamp(b));
   state.daily={date:today(),ids:ids,studyQueue:due.map(makeDueStudyEntry).concat(ids.map(makeNewStudyEntry)),index:0,batch:1,newTotal:ids.length,excludedIds:[],shortQueue:[],relearnSeq:0,queueVersion:4,relearnQueue:[]};
   save();
  }else{
@@ -3897,21 +3907,11 @@ function getDaily(){
   state.daily.relearnSeq=Number(state.daily.relearnSeq)||0;
   state.daily.index=Math.max(0,Math.min(Number(state.daily.index)||0,state.daily.studyQueue.length));
  }
- // On each page load, insert newly due reviews immediately before the next card.
- // Keep the bootstrap session-scoped so a card cannot jump while the learner is interacting with it.
+ // Refresh due words once when the learning view opens; subsequent updates happen only
+ // after a rating, never while the learner is revealing or reading the current card.
  if(!dailyDueBootstrap){
   dailyDueBootstrap=true;
-  const pendingIds=new Set(state.daily.studyQueue.slice(state.daily.index).map(x=>x.id));
-  const due=dueWords().filter(w=>!pendingIds.has(w.id)).sort((a,b)=>{
-   const time=w=>{const c=state.cards[w.id]||{};const n=Number(c.dueAt);return Number.isFinite(n)&&n>0?n:(c.due?new Date(String(c.due).includes('T')?c.due:c.due+'T00:00:00').getTime():0)};
-   return time(a)-time(b);
-  });
-  if(due.length){
-   const dueIds=new Set(due.map(w=>w.id));
-   state.daily.studyQueue.splice(state.daily.index,0,...due.map(makeDueStudyEntry));
-   state.daily.shortQueue=(state.daily.shortQueue||[]).filter(item=>!dueIds.has(item.id));
-   save();
-  }
+  promoteDueWords();
  }
  return state.daily.studyQueue.map(entry=>{
   const word=wordById(entry.id);
@@ -4163,6 +4163,7 @@ function schedule(id,rating,fromReview){
  }else if(fromReview===true||fromReview==='review'){
   state.review.index++;
  }
+ if(state.view==='learn')promoteDueWords();
  if(shouldAutoReinforce){
   save();
   startReinforcement([id],true);
