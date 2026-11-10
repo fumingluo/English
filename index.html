@@ -3983,18 +3983,24 @@ function learnView(app){
  let c=state.cards[w.id]||{};
  let html=progress+sourceLabel+'<article class="card word-card minimal-word-card" data-swipe-card data-swipe-enabled="true" data-swipe-animated="true swipe-enter" data-swipe-id="'+esc(w.id)+'" data-swipe-mode="daily"><button class="word-button" data-action="say" data-id="'+esc(w.id)+'">'+wordDisplayHTML(w.word)+'</button><div class="word-phonetic">'+esc(w.phonetic||'音标暂缺')+'</div>'+(c.revealed?'<div class="answer"><div class="meaning">'+esc(w.meaning)+'</div>'+wordExampleHTML(w)+morphologyHTML(w)+'</div>':'<button class="btn secondary reveal-word-btn" data-action="reveal">查看释义</button>')+'</article>'+(c.revealed?'<div class="rating-grid desktop-ratings"><button class="rating" data-action="rate" data-rating="known">认识<small>稍后复习</small></button><button class="rating" data-action="rate" data-rating="vague">模糊<small>5 个单词后再测</small></button><button class="rating" data-action="rate" data-rating="unknown">不认识<small>3 个单词后重现</small></button></div>':'');
  app.innerHTML=html;
+ if(state.autoPlay&&!c.autoSpoken){
+  const id=w.id,token=entry.token;
+  state.cards[id]=Object.assign({},state.cards[id]||{},{autoSpoken:true});
+  save();
+  setTimeout(()=>{const active=getDaily()[state.daily.index||0];if(active&&active.id===id&&active._dailyEntry.token===token)say(w.word)},180);
+ }
 }
 
 function continueLearning(){getDaily();if(!Array.isArray(state.daily.excludedIds))state.daily.excludedIds=[];state.daily.excludedIds.push(...(state.daily.ids||[]).filter(id=>!state.cards[id]||!state.cards[id].seen));const excluded=new Set([...(state.daily.ids||[]),...(state.daily.excludedIds||[])]);const batch=newWords().filter(w=>!excluded.has(w.id)).slice(0,20);if(!batch.length){showToast('当前词库没有更多未学新词，请切换英语水平或先加入新词');return}state.daily.ids=batch.map(w=>w.id);state.daily.studyQueue=batch.map(w=>makeNewStudyEntry(w.id));state.daily.newTotal=batch.length;state.daily.index=0;state.daily.batch=(Number(state.daily.batch)||1)+1;save();render()}
 function goPreviousWord(mode){if(mode==='auto-review'){showToast('待复习单词请前往复习页面');return}let index=mode==='review'?(state.review.index||0):(state.daily.index||0);if(index<=0){showToast('已经是第一个单词');return}if(mode==='review')state.review.index=index-1;else state.daily.index=index-1;save();render()}
-function speakNextCard(){
- let next=null;
- if(state.view==='learn')next=getDaily()[state.daily.index||0];
- else if(state.view==='review'&&state.review.active)next=wordById(state.review.ids[state.review.index||0]);
- if(next){
-  state.cards[next.id]=Object.assign({},state.cards[next.id]||{},{autoSpoken:true});
-  say(next.word);
+function nextCardForSpeech(){
+ if(state.view==='learn'){
+  let next=getDaily()[state.daily.index||0];
+  if(!next&&flushShortQueue()){save();next=getDaily()[state.daily.index||0]}
+  return next||null;
  }
+ if(state.view==='review'&&state.review.active)return wordById(state.review.ids[state.review.index||0])||null;
+ return null;
 }
 function schedule(id,rating,fromReview){
  let c=state.cards[id]||{stage:0,seen:false},entry=null;
@@ -4020,9 +4026,11 @@ function schedule(id,rating,fromReview){
  }else if(fromReview===true||fromReview==='review'){
   state.review.index++;
  }
+ const next=nextCardForSpeech();
+ if(next)state.cards[next.id]=Object.assign({},state.cards[next.id]||{},{autoSpoken:true});
  save();
  render();
- speakNextCard();
+ if(next)say(next.word);
 }
 function reviewView(app){
  const due=dueWords();
