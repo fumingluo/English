@@ -3837,7 +3837,7 @@ function reinforceView(app){
  }
  if(r.roundComplete){
   const finished=(Number(r.cursor)||0)>=targets.length,remaining=getStubbornWords().length;
-  app.innerHTML='<div class="card reinforce-result"><div class="result-icon">'+(finished?'🏆':'✅')+'</div><div class="eyebrow">WORD CONNECTION</div><h2>'+(finished?'本轮强化完成':'本组配对完成')+'</h2><p>'+(finished?'你已经完成本轮顽固词配对。'+(remaining?'还有 '+remaining+' 个词需要继续强化。':'这一轮没有待强化词了。'):'这组词已经全部配对。继续下一组，直到完成所有顽固词。')+'</p><div class="stats-row"><div class="stat"><strong>'+r.matched.length+' / '+r.roundIds.length+'</strong><span>配对数量</span></div><div class="stat"><strong>'+r.mistakes+'</strong><span>错误尝试</span></div><div class="stat"><strong>'+targets.length+'</strong><span>本轮顽固词</span></div></div><button class="btn primary" style="width:100%;margin-top:14px" data-action="'+(finished?'reinforce-exit':'reinforce-next')+'">'+(finished?'返回单词学习':'下一组顽固词')+'</button></div>';
+  app.innerHTML='<div class="card reinforce-result"><div class="result-icon">'+(finished?'🏆':'✅')+'</div><div class="eyebrow">WORD CONNECTION</div><h2>'+(finished?'本轮强化完成':'本组配对完成')+'</h2><p>'+(finished?'你已经完成本轮顽固词配对。'+(remaining?'还有 '+remaining+' 个词需要继续强化。':'这一轮没有待强化词了。'):'这组词已经全部配对。继续下一组，直到完成所有顽固词。')+'</p><div class="stats-row"><div class="stat"><strong>'+r.matched.length+' / '+r.roundIds.length+'</strong><span>配对数量</span></div><div class="stat"><strong>'+r.mistakes+'</strong><span>错误尝试</span></div><div class="stat"><strong>'+targets.length+'</strong><span>本轮顽固词</span></div></div><button class="btn primary" style="width:100%;margin-top:14px" data-action="'+(!finished?'reinforce-next':(remaining?'reinforce-restart':'reinforce-exit'))+'">'+(!finished?'下一组顽固词':(remaining?'再练一轮':'返回单词学习'))+'</button></div>';
   return;
  }
  const matched=new Set(r.matched||[]),targetSet=new Set(r.roundTargetIds||[]);
@@ -4331,6 +4331,7 @@ else if(a==='skip'){let entry=state.daily.studyQueue&&state.daily.studyQueue[sta
 else if(a==='start-reinforce')startReinforcement()
 else if(a==='reinforce-exit'){state.reinforce.active=false;state.view='learn';save();render()}
 else if(a==='reinforce-next'){prepareReinforcementRound();save();render()}
+else if(a==='reinforce-restart')startReinforcement()
 else if(a==='reinforce-en'){
  const r=state.reinforce,id=b.dataset.id;
  if(r&&r.active&&!r.roundComplete&&!(r.matched||[]).includes(id)){
