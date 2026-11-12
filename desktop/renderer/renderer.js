@@ -20,20 +20,21 @@ function renderRows(state, animate = false) {
     else meaning = String(word.meaning || '');
   }
 
-  if (animate && lastIndex !== null && index !== lastIndex) {
-    if (animationTimer) clearTimeout(animationTimer);
+  if (animationTimer) {
+    pendingState = state;
+  } else if (animate && lastIndex !== null && index !== lastIndex) {
     pendingState = state;
     $('lyricTrack').classList.remove('advance');
     void $('lyricTrack').offsetWidth;
     $('lyricTrack').classList.add('advance');
     animationTimer = setTimeout(() => {
       $('lyricTrack').classList.remove('advance');
-      paintRows(pendingState || state, false);
+      paintRows(pendingState || state);
       pendingState = null;
       animationTimer = null;
     }, 380);
   } else {
-    paintRows(state, false);
+    paintRows(state);
   }
   lastIndex = index;
   $('ticker').classList.toggle('playing', !!state.connected && !!state.playing);
