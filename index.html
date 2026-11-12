@@ -3983,18 +3983,18 @@ async function getSpeechVoices(){
  });
  return synth.getVoices();
 }
-async function fallbackSay(text,language=detectTtsLanguage(text)){
- if(!window.speechSynthesis){showToast('当前浏览器不支持语音播放');return}
+async function fallbackSay(text,language=detectTtsLanguage(text),requestId=ttsRequestId){
+ if(!window.speechSynthesis){showToast('当前浏览器不支持语音播放');return false}
  const synth=window.speechSynthesis;
- synth.cancel();
  const lang=language==='zh-CN'?'zh-CN':'en-US';
+ const voices=await getSpeechVoices();
+ // A newer request may have started while the browser was loading its voice list.
+ if(requestId!==ttsRequestId)return false;
  const u=new SpeechSynthesisUtterance(text);
  u.lang=lang;
  u.rate=lang==='zh-CN'?.96:.88;
- const voices=await getSpeechVoices();
  let voice=null;
  if(lang==='zh-CN'){
-  // Prefer natural Mandarin voices; never let an English voice read Chinese.
   voice=voices.find(v=>/^zh[-_]?CN/i.test(v.lang)&&/Xiaoxiao|晓晓|Yunxi|云希|Xiaoyi|晓伊|Huihui|慧慧|Tingting|婷婷|中文.*女|普通话/i.test(v.name))
    ||voices.find(v=>/^zh[-_]?CN/i.test(v.lang))
    ||voices.find(v=>/^zh/i.test(v.lang));
@@ -4005,7 +4005,18 @@ async function fallbackSay(text,language=detectTtsLanguage(text)){
  }
  if(voice)u.voice=voice;
  if(window.audioPlayer&&Number(window.audioPlayer.rate)>0)u.rate*=Math.min(1.25,Math.max(.75,Number(window.audioPlayer.rate)));
- synth.speak(u);
+ return new Promise(resolve=>{
+  let settled=false;
+  const finish=ok=>{if(settled)return;settled=true;u.onend=null;u.onerror=null;resolve(!!ok)};
+  u.onend=()=>finish(true);
+  u.onerror=event=>{
+   // "interrupted" and "canceled" are expected when the user starts another item.
+   if(requestId!==ttsRequestId||event.error==='interrupted'||event.error==='canceled')finish(false);
+   else{console.warn('Speech synthesis failed:',event.error);finish(false)}
+  };
+  if(requestId!==ttsRequestId){finish(false);return}
+  synth.speak(u);
+ });
 }
 function openTtsCache(){
  return new Promise((resolve,reject)=>{
@@ -4049,39 +4060,37 @@ async function trimTtsCache(){
  });
 }
 let endPlayback=null;
+let ttsRequestId=0;
 async function say(text){
  const phrase=String(text||'').trim();
  if(!phrase)return;
- if(endPlayback){endPlayback();endPlayback=null}
+ const requestId=++ttsRequestId;
+ if(endPlayback){const finish=endPlayback;endPlayback=null;finish()}
  if(currentTtsAudio){currentTtsAudio.pause();currentTtsAudio=null}
  if(currentTtsSource){try{currentTtsSource.stop()}catch(e){}currentTtsSource=null}
  if(currentTtsObjectUrl){URL.revokeObjectURL(currentTtsObjectUrl);currentTtsObjectUrl=null}
  if(window.speechSynthesis)window.speechSynthesis.cancel();
 
  const language=detectTtsLanguage(phrase);
- // Chinese explanations use the browser's native Mandarin voice instead of
- // the English-only cloud voice, which otherwise produces a foreign accent.
+ // Browser speech synthesis is asynchronous: wait for onend before allowing
+ // the playlist to continue to its next language segment.
  if(language==='zh-CN'){
-  await fallbackSay(phrase,language);
+  await fallbackSay(phrase,language,requestId);
   return;
  }
 
- // Unlock Web Audio synchronously during the user's tap on iOS.
  const audioContext=getTtsAudioContext();
  let unlockPromise=Promise.resolve();
  if(audioContext&&audioContext.state!=='running'){
   try{unlockPromise=audioContext.resume()}catch(e){unlockPromise=Promise.reject(e)}
  }
-
  const key=language+'|'+phrase.toLowerCase();
  try{
   let blob=null;
-
-  // A local cache failure must never prevent a fresh request to the TTS service.
   try{blob=await readTtsCache(key)}catch(cacheError){
    console.warn('TTS local cache unavailable; requesting fresh audio.',cacheError);
   }
-
+  if(requestId!==ttsRequestId)return;
   if(!blob){
    let response;
    try{
@@ -4090,58 +4099,61 @@ async function say(text){
      headers:{'Content-Type':'application/json'},
      body:JSON.stringify({text:phrase,language:language.split('-')[0]})
     });
-   }catch(networkError){
-    throw new Error('连接语音服务失败：'+(networkError.message||'网络或跨域错误'));
-   }
-
+   }catch(networkError){throw new Error('连接语音服务失败：'+(networkError.message||'网络或跨域错误'))}
+   if(requestId!==ttsRequestId)return;
    if(!response.ok){
     const detail=(await response.text()).slice(0,180);
+    if(requestId!==ttsRequestId)return;
     throw new Error('语音服务返回 HTTP '+response.status+(detail?'：'+detail:''));
    }
-
    const contentType=response.headers.get('Content-Type')||'';
    if(!contentType.toLowerCase().includes('audio')){
     const detail=(await response.text()).slice(0,180);
+    if(requestId!==ttsRequestId)return;
     throw new Error('服务返回的不是音频（'+(contentType||'无 Content-Type')+'）'+(detail?'：'+detail:''));
    }
-
    blob=await response.blob();
+   if(requestId!==ttsRequestId)return;
    if(!blob.size)throw new Error('语音服务返回了空音频');
    writeTtsCache(key,blob).catch(error=>console.warn('TTS cache write failed:',error));
   }
-
   if(!blob||!blob.size)throw new Error('本地音频缓存为空');
-
   if(audioContext){
    await unlockPromise;
+   if(requestId!==ttsRequestId)return;
    if(audioContext.state!=='running')await audioContext.resume();
-   if(audioContext.state!=='running')throw new Error('iPhone 音频通道未解锁（AudioContext: '+audioContext.state+'）');
+   if(requestId!==ttsRequestId)return;
+   if(audioContext.state!=='running')throw new Error('音频通道未解锁（AudioContext: '+audioContext.state+'）');
    const buffer=await audioContext.decodeAudioData(await blob.arrayBuffer());
+   if(requestId!==ttsRequestId)return;
    if(!buffer||!buffer.length)throw new Error('音频解码结果为空');
    const source=audioContext.createBufferSource();
-   source.buffer=buffer;
-   source.connect(audioContext.destination);
+   source.buffer=buffer;source.connect(audioContext.destination);
    currentTtsSource=source;
-   source.onended=()=>{if(currentTtsSource===source)currentTtsSource=null;if(endPlayback)endPlayback()};
    if(window.audioPlayer)source.playbackRate.value=window.audioPlayer.rate||1;
-   await new Promise(resolve=>{endPlayback=resolve;source.start(0)});
+   await new Promise(resolve=>{
+    let settled=false;
+    const finish=()=>{if(settled)return;settled=true;if(currentTtsSource===source)currentTtsSource=null;if(endPlayback===finish)endPlayback=null;resolve()};
+    endPlayback=finish;source.onended=finish;
+    try{source.start(0)}catch(error){finish();throw error}
+   });
   }else{
    const url=URL.createObjectURL(blob),audio=new Audio(url);
-   currentTtsAudio=audio;
-   currentTtsObjectUrl=url;
-   audio.onended=()=>{
-    if(currentTtsAudio===audio)currentTtsAudio=null;
-    if(currentTtsObjectUrl===url){URL.revokeObjectURL(url);currentTtsObjectUrl=null}
-    if(endPlayback)endPlayback();
-   };
+   currentTtsAudio=audio;currentTtsObjectUrl=url;
    if(window.audioPlayer)audio.playbackRate=window.audioPlayer.rate||1;
-   await new Promise(async(resolve,reject)=>{endPlayback=resolve;try{await audio.play()}catch(e){reject(e)}});
+   await new Promise((resolve,reject)=>{
+    let settled=false;
+    const finish=()=>{if(settled)return;settled=true;if(currentTtsAudio===audio)currentTtsAudio=null;if(currentTtsObjectUrl===url){URL.revokeObjectURL(url);currentTtsObjectUrl=null}if(endPlayback===finish)endPlayback=null;resolve()};
+    endPlayback=finish;audio.onended=finish;
+    audio.play().catch(error=>{if(requestId===ttsRequestId){finish();reject(error)}else finish()});
+   });
   }
  }catch(error){
+  if(requestId!==ttsRequestId)return;
   const message=error&&error.message?error.message:String(error);
   console.error('ElevenLabs TTS playback failed:',error);
   showToast('AI 发音失败：'+message+'；正在尝试系统语音');
-  fallbackSay(phrase,language);
+  await fallbackSay(phrase,language,requestId);
  }
 }
 
@@ -4268,7 +4280,7 @@ async function audioRun(token){
  if(token===audioPlayer.token){audioPlayer.playing=false;audioRender();companionPublish()}
 }
 function audioStart(){if(!audioPlayer.list.length){audioPlayer.list=audioWords();audioPlayer.index=0}if(!audioPlayer.list.length){showToast('这个播放列表还没有已学词汇');return}audioPlayer.playing=true;companionPublish();const token=++audioPlayer.token;audioRun(token)}
-function audioStop(){audioPlayer.playing=false;audioPlayer.token++;if(endPlayback){endPlayback();endPlayback=null}if(window.speechSynthesis)window.speechSynthesis.cancel();if(currentTtsAudio){currentTtsAudio.pause();currentTtsAudio=null}if(currentTtsSource){try{currentTtsSource.stop()}catch(e){}currentTtsSource=null}audioRender();companionPublish()}
+function audioStop(){audioPlayer.playing=false;audioPlayer.token++;ttsRequestId++;if(endPlayback){endPlayback();endPlayback=null}if(window.speechSynthesis)window.speechSynthesis.cancel();if(currentTtsAudio){currentTtsAudio.pause();currentTtsAudio=null}if(currentTtsSource){try{currentTtsSource.stop()}catch(e){}currentTtsSource=null}audioRender();companionPublish()}
 function audioView(app){audioPlayer.list=audioWords();audioPlayer.index=Math.min(audioPlayer.index,Math.max(0,audioPlayer.list.length-1));audioRender()}
 
 function updateHeader(){document.getElementById('dateLabel').textContent=new Date().toLocaleDateString('zh-CN',{month:'long',day:'numeric',weekday:'short'});let learned=Object.keys(state.cards).filter(k=>state.cards[k]&&state.cards[k].seen).length;document.getElementById('summaryStats').innerHTML='<div class="stat"><strong>🔥 '+(state.stats.streak||0)+'</strong><span>连续学习天数</span></div><div class="stat"><strong>📚 '+learned+'</strong><span>累计学习词数</span></div>';document.querySelector('.shell').classList.toggle('compact-page',state.view!=='learn')}
