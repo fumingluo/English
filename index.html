@@ -4107,6 +4107,31 @@ async function say(text){
 
 let audioPlayer={list:[],index:0,playing:false,mode:'easy',source:'all',gap:1500,rate:1,loop:false,shuffle:false,token:0};
 window.audioPlayer=audioPlayer;
+
+// Optional Windows desktop companion bridge. It is inert when the companion is not running.
+let companionSocket=null, companionRetry=null, companionSegment='';
+function companionPublish(){
+ const w=audioPlayer.list[audioPlayer.index];
+ if(!companionSocket||companionSocket.readyState!==WebSocket.OPEN)return;
+ companionSocket.send(JSON.stringify({type:'state',word:w?.word||'',phonetic:w?.phonetic||'',meaning:w?audioMeaning(w):'',example:w?.en||'',segment:companionSegment,playing:!!audioPlayer.playing,index:audioPlayer.index||0,total:audioPlayer.list.length||0}));
+}
+function companionConnect(){
+ if(companionSocket&&[WebSocket.OPEN,WebSocket.CONNECTING].includes(companionSocket.readyState))return;
+ try{
+  companionSocket=new WebSocket('ws://127.0.0.1:17321');
+  companionSocket.addEventListener('open',companionPublish);
+  companionSocket.addEventListener('message',event=>{
+   let msg;try{msg=JSON.parse(event.data)}catch(e){return}
+   if(msg.type!=='control')return;
+   if(msg.action==='toggle'){if(audioPlayer.playing)audioStop();else audioStart()}
+   else if(msg.action==='next'){audioStop();audioPlayer.index=Math.min(audioPlayer.list.length-1,audioPlayer.index+1);audioRender();audioStart()}
+   else if(msg.action==='prev'){audioStop();audioPlayer.index=Math.max(0,audioPlayer.index-1);audioRender();audioStart()}
+  });
+  companionSocket.addEventListener('close',()=>{companionSocket=null});
+  companionSocket.addEventListener('error',()=>{});
+ }catch(e){companionSocket=null}
+}
+setInterval(companionConnect,3000);
 function audioWords(){
  const words=allWords().filter(w=>w&&w.word&&state.cards[w.id]&&state.cards[w.id].seen);
  let list=words.filter(w=>{const c=state.cards[w.id]||{};if(audioPlayer.source==='weak')return c.rating==='unknown'||c.rating==='vague'||(Number(c.struggleCount)||0)>0;if(audioPlayer.source==='due')return c.due&&c.due<=today();if(audioPlayer.source==='recent')return true;return true});
@@ -4131,10 +4156,12 @@ function audioRender(){
  '<div class="audio-setting"><label>语速</label><select id="audioRate">'+[[0.8,'慢速 0.8×'],[1,'正常 1.0×'],[1.2,'稍快 1.2×'],[1.4,'快速 1.4×']].map(x=>'<option value="'+x[0]+'" '+(audioPlayer.rate===x[0]?'selected':'')+'>'+x[1]+'</option>').join('')+'</select></div>'+
  '<div class="audio-setting"><label>播放方式</label><select id="audioLoop"><option value="0" '+(!audioPlayer.loop?'selected':'')+'>播放一遍停止</option><option value="1" '+(audioPlayer.loop?'selected':'')+'>循环播放</option></select></div></div>'+
  '<p class="audio-hint">轻松磨耳朵：英文 → 中文 → 英文。主动回忆：先听中文，留出思考时间，再听英文。英语沉浸：只听英文。播放不会改变单词熟练度或复习计划。</p></div>';
+ companionPublish();
 }
 function audioWait(ms,token){return new Promise(resolve=>{const start=Date.now();function tick(){if(token!==audioPlayer.token||!audioPlayer.playing)return resolve(false);if(Date.now()-start>=ms)return resolve(true);setTimeout(tick,100)}tick()})}
 async function audioSpeak(text,token){
  if(token!==audioPlayer.token||!audioPlayer.playing)return false;
+ companionSegment=String(text||'');companionPublish();
  await say(text);
  // TTS duration is estimated conservatively for word/phrase length; pause remains configurable.
  return token===audioPlayer.token&&audioPlayer.playing;
@@ -4164,8 +4191,8 @@ async function audioRun(token){
  }
  if(token===audioPlayer.token){audioPlayer.playing=false;audioRender()}
 }
-function audioStart(){if(!audioPlayer.list.length){audioPlayer.list=audioWords();audioPlayer.index=0}if(!audioPlayer.list.length){showToast('这个播放列表还没有已学词汇');return}audioPlayer.playing=true;const token=++audioPlayer.token;audioRun(token)}
-function audioStop(){audioPlayer.playing=false;audioPlayer.token++;if(endPlayback){endPlayback();endPlayback=null}if(window.speechSynthesis)window.speechSynthesis.cancel();if(currentTtsAudio){currentTtsAudio.pause();currentTtsAudio=null}if(currentTtsSource){try{currentTtsSource.stop()}catch(e){}currentTtsSource=null}audioRender()}
+function audioStart(){if(!audioPlayer.list.length){audioPlayer.list=audioWords();audioPlayer.index=0}if(!audioPlayer.list.length){showToast('这个播放列表还没有已学词汇');return}audioPlayer.playing=true;companionPublish();const token=++audioPlayer.token;audioRun(token)}
+function audioStop(){audioPlayer.playing=false;audioPlayer.token++;if(endPlayback){endPlayback();endPlayback=null}if(window.speechSynthesis)window.speechSynthesis.cancel();if(currentTtsAudio){currentTtsAudio.pause();currentTtsAudio=null}if(currentTtsSource){try{currentTtsSource.stop()}catch(e){}currentTtsSource=null}audioRender();companionPublish()}
 function audioView(app){audioPlayer.list=audioWords();audioPlayer.index=Math.min(audioPlayer.index,Math.max(0,audioPlayer.list.length-1));audioRender()}
 
 function updateHeader(){document.getElementById('dateLabel').textContent=new Date().toLocaleDateString('zh-CN',{month:'long',day:'numeric',weekday:'short'});let learned=Object.keys(state.cards).filter(k=>state.cards[k]&&state.cards[k].seen).length;document.getElementById('summaryStats').innerHTML='<div class="stat"><strong>🔥 '+(state.stats.streak||0)+'</strong><span>连续学习天数</span></div><div class="stat"><strong>📚 '+learned+'</strong><span>累计学习词数</span></div>';document.querySelector('.shell').classList.toggle('compact-page',state.view!=='learn')}
