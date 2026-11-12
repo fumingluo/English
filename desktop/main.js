@@ -5,7 +5,7 @@ const { WebSocketServer } = require('ws');
 let win;
 let tray;
 let server;
-let latest = { type: 'state', connected: false, word: '', phonetic: '', meaning: '', example: '', exampleZh: '', segment: '', segmentZh: '', playing: false, index: 0, total: 0 };
+let latest = { type: 'state', connected: false, word: '', phonetic: '', meaning: '', example: '', exampleZh: '', segment: '', segmentZh: '', queue: [], mode: 'easy', gap: 1500, rate: 1, loop: false, playing: false, index: 0, total: 0 };
 
 function broadcast(payload) {
   if (!server) return;
@@ -32,6 +32,7 @@ function startBridge() {
       socket.close(1008, 'Origin not allowed'); return;
     }
     socket.send(JSON.stringify({ ...latest, connected: true }));
+    if (win && !win.isDestroyed()) win.webContents.send('companion:state', { ...latest, connected: true });
     socket.on('message', raw => {
       let msg; try { msg = JSON.parse(raw.toString()); } catch { return; }
       if (msg.type === 'state') {
