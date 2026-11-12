@@ -92,7 +92,7 @@ function render(state) {
       paintRows(pendingState || snapshot);
       pendingState = null;
       animationTimer = null;
-    }, 380);
+    }, 680);
     return;
   }
 
