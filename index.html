@@ -4225,7 +4225,7 @@ async function audioRun(token){
   else{audioPlayer.playing=false;break}
   audioRender();
  }
- if(token===audioPlayer.token){audioPlayer.playing=false;audioRender()}
+ if(token===audioPlayer.token){audioPlayer.playing=false;audioRender();companionPublish()}
 }
 function audioStart(){if(!audioPlayer.list.length){audioPlayer.list=audioWords();audioPlayer.index=0}if(!audioPlayer.list.length){showToast('这个播放列表还没有已学词汇');return}audioPlayer.playing=true;companionPublish();const token=++audioPlayer.token;audioRun(token)}
 function audioStop(){audioPlayer.playing=false;audioPlayer.token++;if(endPlayback){endPlayback();endPlayback=null}if(window.speechSynthesis)window.speechSynthesis.cancel();if(currentTtsAudio){currentTtsAudio.pause();currentTtsAudio=null}if(currentTtsSource){try{currentTtsSource.stop()}catch(e){}currentTtsSource=null}audioRender();companionPublish()}
