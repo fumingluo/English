@@ -1,0 +1,57 @@
+name: Build Windows English Companion
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - feat/windows-global-vocabulary-companion
+    paths:
+      - "desktop/**"
+      - "index.html"
+      - ".github/workflows/build-windows-companion.yml"
+  pull_request:
+    paths:
+      - "desktop/**"
+      - "index.html"
+      - ".github/workflows/build-windows-companion.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: windows-latest
+    defaults:
+      run:
+        working-directory: desktop
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: desktop/package.json
+
+      - name: Install dependencies
+        run: npm install --no-audit --no-fund
+
+      - name: Check JavaScript syntax
+        shell: pwsh
+        run: |
+          node --check main.js
+          node --check preload.js
+          node --check renderer/renderer.js
+
+      - name: Build Windows installer
+        run: npm run dist
+
+      - name: Upload installer
+        uses: actions/upload-artifact@v4
+        with:
+          name: English-Windows-Companion-Installer
+          path: desktop/dist/*.exe
+          if-no-files-found: error
+          retention-days: 14
