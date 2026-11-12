@@ -1,61 +1,80 @@
 const $ = id => document.getElementById(id);
 let snapshot = { connected:false, playing:false, queue:[], index:0, total:0 };
-let lastLine = '';
+let lastIndex = null;
+let animationTimer = null;
+let pendingState = null;
 
-function setMarquee(text) {
-  const viewport = document.querySelector('.marquee-viewport');
-  const marquee = $('marquee');
-  const clean = String(text || 'Waiting for webpage playback');
-  if (clean === lastLine) return;
-  lastLine = clean;
-  marquee.classList.remove('rolling');
-  marquee.innerHTML = '';
-  const first = document.createElement('span');
-  first.textContent = clean;
-  marquee.appendChild(first);
-  requestAnimationFrame(() => {
-    const overflow = first.getBoundingClientRect().width - viewport.getBoundingClientRect().width;
-    if (overflow > 12) {
-      const copy = document.createElement('span');
-      copy.textContent = clean;
-      copy.setAttribute('aria-hidden','true');
-      marquee.appendChild(copy);
-      const distance = first.getBoundingClientRect().width;
-      const duration = Math.max(8, Math.min(28, distance / 34));
-      marquee.style.setProperty('--scroll-distance', distance + 'px');
-      marquee.style.setProperty('--scroll-duration', duration + 's');
-      marquee.classList.add('rolling');
+function rowText(item) {
+  if (!item) return '';
+  return String(item.word || item.segment || item.text || '').trim();
+}
+function renderRows(state, animate = false) {
+  const queue = Array.isArray(state.queue) ? state.queue : [];
+  const index = Math.max(0, Math.min(Number(state.index) || 0, Math.max(0, queue.length - 1)));
+  const word = queue[index] || state;
+  const spoken = String(state.segment || '').trim();
+  const currentText = spoken || rowText(word) || 'Ready?';
+  let meaning = String(state.segmentZh || '').trim();
+  if (!meaning) {
+    if (spoken && spoken === String(word.meaning || '').trim()) meaning = rowText(word);
+    else meaning = String(word.meaning || '');
+  }
+
+  if (animate && lastIndex !== null && index !== lastIndex) {
+    if (animationTimer) clearTimeout(animationTimer);
+    pendingState = state;
+    $('lyricTrack').classList.remove('advance');
+    void $('lyricTrack').offsetWidth;
+    $('lyricTrack').classList.add('advance');
+    animationTimer = setTimeout(() => {
+      $('lyricTrack').classList.remove('advance');
+      paintRows(pendingState || state, false);
+      pendingState = null;
+      animationTimer = null;
+    }, 380);
+  } else {
+    paintRows(state, false);
+  }
+  lastIndex = index;
+  $('ticker').classList.toggle('playing', !!state.connected && !!state.playing);
+  $('status').textContent = !state.connected
+    ? '等待网页连接'
+    : state.playing ? '网页正在播放' : '已连接 · 网页已暂停';
+  $('liveDot').title = state.playing ? '网页正在播放' : '网页已暂停';
+  $('progress').textContent = state.total
+    ? (Number(state.index || 0) + 1) + ' / ' + state.total
+    : (queue.length ? (index + 1) + ' / ' + queue.length : '');
+  $('currentWord').title = currentText;
+  $('currentMeaning').title = meaning;
+}
+function paintRows(state) {
+  const queue = Array.isArray(state.queue) ? state.queue : [];
+  const index = Math.max(0, Math.min(Number(state.index) || 0, Math.max(0, queue.length - 1)));
+  const word = queue[index] || state;
+  const spoken = String(state.segment || '').trim();
+  const currentText = spoken || rowText(word) || 'Ready?';
+  let meaning = String(state.segmentZh || '').trim();
+  if (!meaning) {
+    if (spoken && spoken === String(word.meaning || '').trim()) meaning = rowText(word);
+    else meaning = String(word.meaning || '');
+  }
+  const indices = [index - 2, index - 1, index, index + 1, index + 2];
+  indices.forEach((queueIndex, slot) => {
+    const el = $('row' + slot);
+    if (slot === 2) {
+      $('currentWord').textContent = currentText;
+      $('currentMeaning').textContent = meaning;
+      return;
     }
+    const item = queue[queueIndex];
+    el.textContent = rowText(item);
+    el.title = rowText(item);
   });
 }
-
 function render(state) {
   snapshot = { ...snapshot, ...state };
   if (Array.isArray(state.queue)) snapshot.queue = state.queue;
-  const queue = snapshot.queue || [];
-  const index = Math.max(0, Math.min(Number(snapshot.index)||0, Math.max(0, queue.length-1)));
-  const word = queue[index] || snapshot;
-  const connected = !!snapshot.connected;
-  const playing = !!snapshot.playing;
-  const spoken = String(snapshot.segment || '').trim();
-  const displayText = spoken || word.word || 'Ready?';
-  let translation = String(snapshot.segmentZh || '').trim();
-  if (!translation) {
-    if (spoken && spoken === String(word.meaning || '').trim()) translation = word.word || '';
-    else translation = word.meaning || '';
-  }
-
-  $('ticker').classList.toggle('playing', connected && playing);
-  $('status').textContent = !connected
-    ? '等待网页连接'
-    : playing ? '网页正在播放' : '已连接 · 网页已暂停';
-  $('translation').textContent = translation;
-  $('translation').title = translation;
-  $('liveDot').title = playing ? '网页正在播放' : '网页已暂停';
-  $('progress').textContent = snapshot.total
-    ? (Number(snapshot.index||0)+1)+' / '+snapshot.total
-    : (queue.length ? (index+1)+' / '+queue.length : '');
-  setMarquee(displayText);
+  renderRows(snapshot, true);
 }
 
 window.companion.onState(render);
