@@ -1,28 +1,35 @@
 const $ = id => document.getElementById(id);
+
 let snapshot = { connected:false, playing:false, queue:[], index:0, total:0 };
 let activeEvent = null;
-let eventQueue = [];
+let pendingEvent = null;
 let lastEventKey = '';
-let animationTimer = null;
+let transitionTimer = null;
 let previousPlaying = false;
+
+const TRANSITION_MS = 520;
 
 function rowText(item) {
   if (!item) return '';
   return String(item.word || item.segment || item.text || '').trim();
 }
+
 function getIndex(state) {
   const queue = Array.isArray(state.queue) ? state.queue : [];
   return Math.max(0, Math.min(Number(state.index) || 0, Math.max(0, queue.length - 1)));
 }
+
 function normalize(value) {
   return String(value || '').trim().toLocaleLowerCase();
 }
+
 function segmentBelongsToItem(segment, item) {
   if (!segment || !item) return false;
   const candidate = normalize(segment);
   return [item.word, item.example, item.meaning]
     .some(value => normalize(value) === candidate);
 }
+
 function paintRows(state, segment, segmentZh) {
   const queue = Array.isArray(state.queue) ? state.queue : [];
   const index = getIndex(state);
@@ -41,12 +48,15 @@ function paintRows(state, segment, segmentZh) {
     el.textContent = rowText(item);
     el.title = rowText(item);
   });
+
   $('currentWord').title = currentText;
   $('currentMeaning').title = meaning;
 }
+
 function updateStatus(state) {
   const queue = Array.isArray(state.queue) ? state.queue : [];
   const index = getIndex(state);
+
   $('ticker').classList.toggle('playing', !!state.connected && !!state.playing);
   $('status').textContent = !state.connected
     ? '等待网页连接'
@@ -56,43 +66,51 @@ function updateStatus(state) {
     ? (Number(state.index || 0) + 1) + ' / ' + state.total
     : (queue.length ? (index + 1) + ' / ' + queue.length : '');
 }
-function setNextRow(event) {
-  const next = $('row3');
-  next.textContent = event.segment;
-  next.title = event.segment;
-}
+
 function finishTransition() {
-  const next = eventQueue.shift();
-  if (!next) {
-    animationTimer = null;
-    return;
-  }
-  activeEvent = next;
+  if (!transitionTimer) return;
+
+  clearTimeout(transitionTimer);
+  transitionTimer = null;
+
   const track = $('lyricTrack');
   track.classList.remove('advance');
-  paintRows(next.state, next.segment, next.segmentZh);
-  animationTimer = null;
+
+  if (pendingEvent) {
+    activeEvent = pendingEvent;
+    pendingEvent = null;
+    paintRows(activeEvent.state, activeEvent.segment, activeEvent.segmentZh);
+  }
+
   startNextTransition();
 }
+
 function startNextTransition() {
-  if (animationTimer || !eventQueue.length) return;
-  const next = eventQueue[0];
+  if (transitionTimer || !pendingEvent) return;
+
+  const next = pendingEvent;
+  pendingEvent = null;
+
   if (!activeEvent) {
-    eventQueue.shift();
     activeEvent = next;
     paintRows(next.state, next.segment, next.segmentZh);
-    startNextTransition();
     return;
   }
 
-  // Put the next spoken phrase on the lower lyric row before moving it into focus.
-  setNextRow(next);
+  // Stage the next phrase below the center line. Do not replace the
+  // center text until the moving row has physically reached the center.
+  const nextRow = $('row3');
+  nextRow.textContent = next.segment;
+  nextRow.title = next.segment;
+
   const track = $('lyricTrack');
   track.classList.remove('advance');
   void track.offsetWidth;
   track.classList.add('advance');
-  animationTimer = setTimeout(finishTransition, 540);
+
+  transitionTimer = setTimeout(finishTransition, TRANSITION_MS + 80);
 }
+
 function render(state) {
   snapshot = { ...snapshot, ...state };
   if (Array.isArray(state.queue)) snapshot.queue = state.queue;
@@ -103,30 +121,33 @@ function render(state) {
   const item = queue[index] || snapshot;
   const segment = String(snapshot.segment || '').trim();
 
-  // A pause/restart may legitimately replay the same phrase.
-  if (!snapshot.playing && previousPlaying) lastEventKey = '';
+  if (!snapshot.playing && previousPlaying) {
+    lastEventKey = '';
+    pendingEvent = null;
+  }
   previousPlaying = !!snapshot.playing;
 
-  // Ignore stale phrase text carried over while the playlist index is changing.
-  // Only accept a phrase once it matches the current vocabulary item.
+  // Ignore stale text from the previous item while the playlist index changes.
   if (segment && segmentBelongsToItem(segment, item)) {
     const key = index + '|' + normalize(segment);
+
     if (key !== lastEventKey) {
       lastEventKey = key;
-      eventQueue.push({
+      pendingEvent = {
         key,
         state: { ...snapshot, queue: [...queue] },
         segment,
         segmentZh: String(snapshot.segmentZh || '').trim()
-      });
+      };
       startNextTransition();
     }
   }
 
-  if (!activeEvent && !animationTimer && !eventQueue.length) {
+  if (!activeEvent && !transitionTimer && !pendingEvent) {
     paintRows(snapshot, '', '');
   }
 }
+
 window.companion.onState(render);
 window.companion.onError(message => { $('status').textContent = message; });
 $('hide').addEventListener('click', () => window.companion.window('hide'));
