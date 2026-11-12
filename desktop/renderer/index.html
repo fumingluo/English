@@ -13,12 +13,16 @@
     <span class="status" id="status">等待网页连接</span>
     <button class="hide" id="hide" title="隐藏悬浮窗">×</button>
   </div>
-  <section class="word-stage" aria-live="polite" aria-atomic="true">
-    <div class="word-pair" id="wordPair">
-      <span class="live-dot" id="liveDot"></span>
-      <span class="current-word" id="currentWord">Ready?</span>
-      <span class="pair-divider" id="pairDivider"></span>
-      <span class="current-meaning" id="currentMeaning"></span>
+  <section class="lyrics-viewport" aria-live="polite" aria-atomic="true">
+    <div class="lyric-track" id="lyricTrack">
+      <div class="lyric-row edge" id="row0"><span class="row-content"><span class="row-word"></span><span class="row-meaning"></span></span></div>
+      <div class="lyric-row adjacent" id="row1"><span class="row-content"><span class="row-word"></span><span class="row-meaning"></span></span></div>
+      <div class="lyric-row current" id="row2">
+        <span class="live-dot" id="liveDot"></span>
+        <span class="row-content"><span class="row-word"></span><span class="row-meaning"></span></span>
+      </div>
+      <div class="lyric-row adjacent" id="row3"><span class="row-content"><span class="row-word"></span><span class="row-meaning"></span></span></div>
+      <div class="lyric-row edge" id="row4"><span class="row-content"><span class="row-word"></span><span class="row-meaning"></span></span></div>
     </div>
   </section>
   <span class="progress" id="progress"></span>
