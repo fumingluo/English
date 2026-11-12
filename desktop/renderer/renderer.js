@@ -76,7 +76,8 @@ function render(state) {
     track.classList.remove('advance');
     void track.offsetWidth;
     track.classList.add('advance');
-    animationTimer = setTimeout(() => finishAnimation(snapshot), 470);
+    // Keep the row data in sync with the full 520ms CSS glide.
+    animationTimer = setTimeout(() => finishAnimation(snapshot), 540);
     return;
   }
   paintRows(snapshot);
