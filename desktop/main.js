@@ -14,7 +14,7 @@ function broadcast(payload) {
 }
 function createWindow() {
   win = new BrowserWindow({
-    width: 420, height: 104, minWidth: 300, minHeight: 88,
+    width: 420, height: 190, minWidth: 320, minHeight: 150,
     frame: false, transparent: true, resizable: false, alwaysOnTop: true,
     skipTaskbar: true, show: false, hasShadow: false, backgroundColor: '#00000000',
     webPreferences: { preload: path.join(__dirname, 'preload.js'), contextIsolation: true, nodeIntegration: false, sandbox: true }
