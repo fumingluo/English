@@ -1,2 +1,24 @@
-*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden;background:transparent;font-family:Inter,"Segoe UI","Microsoft YaHei",sans-serif;color:#f5f7f4}.panel{height:100%;padding:15px 17px 12px;border:1px solid rgba(255,255,255,.18);border-radius:17px;background:rgba(23,31,29,.94);box-shadow:0 12px 38px rgba(0,0,0,.28);display:flex;flex-direction:column;gap:9px}header,footer{display:flex;align-items:center;justify-content:space-between}.brand{font-size:9px;letter-spacing:1.8px;color:#a8c8b1;font-weight:700}.status{font-size:10px;color:#9eaaa2}.icon{border:0;background:transparent;color:#aab5ae;font-size:20px;cursor:pointer;line-height:16px}.content{min-height:0;flex:1;overflow:hidden}.word{font-size:30px;font-weight:750;letter-spacing:-.7px;line-height:1.15;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.phonetic{font-size:12px;color:#aebdb3;margin-top:3px}.meaning{font-size:15px;color:#f2f4ee;margin-top:8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.example{font-size:11px;color:#c1cec5;margin-top:6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.segment{font-size:10px;color:#8eb69a;margin-top:5px}.controls{display:flex;gap:8px}.controls button{width:30px;height:27px;border:1px solid #53665a;border-radius:8px;background:#293b31;color:#eef5ef;cursor:pointer}.controls .play{background:#b6d8bf;color:#17251b;border-color:#b6d8bf;font-weight:800}#progress{font-size:10px;color:#aab7ad}button{ -webkit-app-region:no-drag }header,.content,footer{ -webkit-app-region:drag }
-.example-zh{font-size:11px;color:#9eafa3;margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.segment{font-size:11px;color:#a8d0ae;margin-top:7px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.segment-zh{font-size:10px;color:#b5c6b9;margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+*{box-sizing:border-box}
+html,body{margin:0;width:100%;height:100%;overflow:hidden;background:transparent;font-family:Inter,"Segoe UI","Microsoft YaHei",sans-serif;color:#f5f7f4}
+body{-webkit-app-region:drag}
+.ticker{position:relative;width:100%;height:100%;padding:10px 16px 8px;border:1px solid transparent;border-radius:13px;background:transparent;box-shadow:none;display:flex;flex-direction:column;justify-content:center;gap:5px;transition:background .2s ease,border-color .2s ease,box-shadow .2s ease}
+.ticker:hover{background:rgba(18,25,23,.88);border-color:rgba(255,255,255,.16);box-shadow:0 5px 22px rgba(0,0,0,.2)}
+.hover-tools{position:absolute;top:4px;right:8px;left:14px;height:17px;display:flex;align-items:center;gap:9px;opacity:0;pointer-events:none;transition:opacity .18s ease}
+.ticker:hover .hover-tools{opacity:1;pointer-events:auto}
+.brand{font-size:8px;font-weight:800;letter-spacing:1.5px;color:#a8c8b1}
+.status{font-size:9px;color:#aebbb2}
+.hide{margin-left:auto;border:0;background:transparent;color:#d5ded8;font-size:17px;line-height:15px;cursor:pointer;padding:0 3px;-webkit-app-region:no-drag}
+.line{display:flex;align-items:center;min-width:0;overflow:hidden;white-space:nowrap}
+.english-line{height:31px;gap:8px}
+.live-dot{width:6px;height:6px;flex:0 0 6px;border-radius:50%;background:#8e9a91;opacity:.7}
+.ticker.playing .live-dot{background:#75e0a0;opacity:1;box-shadow:0 0 9px rgba(117,224,160,.8);animation:pulse 1.5s ease-in-out infinite}
+.marquee-viewport{min-width:0;flex:1;overflow:hidden}
+.marquee{display:inline-flex;min-width:100%;width:max-content;will-change:transform}
+.marquee span{display:inline-block;font-size:22px;font-weight:760;letter-spacing:-.45px;line-height:1.2;padding-right:56px;background:linear-gradient(95deg,#fff 0%,#b9f3d0 32%,#a9c9ff 68%,#f0c9ff 100%);background-size:220% auto;background-clip:text;-webkit-background-clip:text;color:transparent;animation:gradient 5s linear infinite}
+.marquee.rolling{animation:marquee var(--scroll-duration,14s) linear infinite}
+.chinese-line{height:17px;padding-left:14px;font-size:11px;line-height:1.3;color:rgba(238,245,239,.82);text-overflow:ellipsis;overflow:hidden}
+.progress{position:absolute;right:13px;bottom:6px;font-size:8px;color:rgba(220,230,223,.42);opacity:0;transition:opacity .18s}
+.ticker:hover .progress{opacity:1}
+@keyframes marquee{0%{transform:translateX(0)}100%{transform:translateX(calc(-1 * var(--scroll-distance,220px)))}}
+@keyframes gradient{to{background-position:220% center}}
+@keyframes pulse{50%{opacity:.45;transform:scale(.82)}}

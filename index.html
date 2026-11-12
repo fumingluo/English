@@ -4108,35 +4108,57 @@ async function say(text){
 let audioPlayer={list:[],index:0,playing:false,mode:'easy',source:'all',gap:1500,rate:1,loop:false,shuffle:false,token:0};
 window.audioPlayer=audioPlayer;
 
-// Optional Windows desktop companion bridge. It is inert when the companion is not running.
-let companionSocket=null, companionRetry=null, companionRequested=false, companionSegment='', companionSegmentZh='', companionQueueSignature='';
+// Windows desktop companion: the webpage remains the only audio player.
+// Once requested, reconnect automatically if the local desktop bridge restarts.
+let companionSocket=null, companionRetry=null, companionRequested=false, companionSegment='', companionSegmentZh='', companionQueueSignature='', companionRetryDelay=1000;
 function companionSetStatus(message){const el=document.getElementById('companionSyncStatus');if(el)el.textContent=message;}
 function companionPublish(){
+ const socket=companionSocket;
+ if(!socket||socket.readyState!==WebSocket.OPEN)return;
  const w=audioPlayer.list[audioPlayer.index];
- if(!companionSocket||companionSocket.readyState!==WebSocket.OPEN)return;
- const queue=audioPlayer.list.map(item=>({word:item.word||'',phonetic:item.phonetic||'',meaning:audioMeaning(item),example:item.en||'',exampleZh:item.meaning&&item.en?item.zh||'':''}));
+ const queue=audioPlayer.list.map(item=>({word:item.word||'',phonetic:item.phonetic||'',meaning:audioMeaning(item),example:item.en||'',exampleZh:item.en?item.zh||'':''}));
  const signature=JSON.stringify(queue);
- const payload={type:'state',word:w?.word||'',phonetic:w?.phonetic||'',meaning:w?audioMeaning(w):'',example:w?.en||'',exampleZh:w?.meaning&&w?.en?w.zh||'':'',mode:audioPlayer.mode||'easy',gap:Number(audioPlayer.gap)||1500,rate:Number(audioPlayer.rate)||1,loop:!!audioPlayer.loop,segment:companionSegment,segmentZh:companionSegmentZh,playing:!!audioPlayer.playing,index:audioPlayer.index||0,total:audioPlayer.list.length||0};
+ const payload={type:'state',word:w?.word||'',phonetic:w?.phonetic||'',meaning:w?audioMeaning(w):'',example:w?.en||'',exampleZh:w?.en?w.zh||'':'',mode:audioPlayer.mode||'easy',gap:Number(audioPlayer.gap)||1500,rate:Number(audioPlayer.rate)||1,loop:!!audioPlayer.loop,segment:companionSegment,segmentZh:companionSegmentZh,playing:!!audioPlayer.playing,index:audioPlayer.index||0,total:audioPlayer.list.length||0};
  if(signature!==companionQueueSignature){payload.queue=queue;companionQueueSignature=signature}
- companionSocket.send(JSON.stringify(payload));
- companionSetStatus('已连接 · 已同步 '+queue.length+' 个词');
+ try{socket.send(JSON.stringify(payload));}
+ catch(error){console.warn('English companion publish failed:',error);try{socket.close()}catch(_){}}
+}
+function companionScheduleReconnect(){
+ if(!companionRequested||companionRetry)return;
+ const delay=companionRetryDelay;
+ companionRetryDelay=Math.min(10000,Math.round(companionRetryDelay*1.7));
+ companionRetry=setTimeout(()=>{companionRetry=null;companionConnect()},delay);
 }
 function companionConnect(){
- if(companionSocket&&[WebSocket.OPEN,WebSocket.CONNECTING].includes(companionSocket.readyState))return;
- try{
-  companionSocket=new WebSocket('ws://127.0.0.1:17321');
-  companionSocket.addEventListener('open',()=>{companionQueueSignature='';companionPublish();companionSetStatus('连接成功 · 已同步 '+audioPlayer.list.length+' 个词')});
-  companionSocket.addEventListener('message',event=>{
-   let msg;try{msg=JSON.parse(event.data)}catch(e){return}
-   if(msg.type!=='control')return;
-   if(msg.action==='stop'){if(audioPlayer.playing)audioStop()}
-   else if(msg.action==='toggle'){if(audioPlayer.playing)audioStop();else audioStart()}
-   else if(msg.action==='next'){audioStop();audioPlayer.index=Math.min(audioPlayer.list.length-1,audioPlayer.index+1);audioRender();audioStart()}
-   else if(msg.action==='prev'){audioStop();audioPlayer.index=Math.max(0,audioPlayer.index-1);audioRender();audioStart()}
-  });
-  companionSocket.addEventListener('close',()=>{companionSocket=null;companionSetStatus('连接已断开 · 点击“连接并同步”重试')});
-  companionSocket.addEventListener('error',()=>{companionSetStatus('连接失败 · 请检查 Chrome 的“本地网络/环回网络”权限')});
- }catch(e){companionSocket=null}
+ companionRequested=true;
+ if(companionSocket&&[WebSocket.OPEN,WebSocket.CONNECTING].includes(companionSocket.readyState)){
+  if(companionSocket.readyState===WebSocket.OPEN)companionPublish();
+  return;
+ }
+ if(companionRetry){clearTimeout(companionRetry);companionRetry=null}
+ let socket;
+ try{socket=new WebSocket('ws://127.0.0.1:17321');}
+ catch(error){companionSetStatus('无法连接桌面助手 · 正在自动重试');companionScheduleReconnect();return}
+ companionSocket=socket;
+ socket.addEventListener('open',()=>{
+  if(companionSocket!==socket)return;
+  companionRetryDelay=1000;companionQueueSignature='';
+  companionPublish();
+  companionSetStatus('连接成功 · 正在同步网页播放状态');
+ });
+ socket.addEventListener('message',event=>{
+  if(companionSocket!==socket)return;
+  let msg;try{msg=JSON.parse(event.data)}catch(_){return}
+  // The desktop companion is display-only; playback controls stay on this webpage.
+ });
+ socket.addEventListener('close',()=>{
+  if(companionSocket!==socket)return;
+  companionSocket=null;companionSetStatus('桌面连接中断 · 正在自动重连');
+  companionScheduleReconnect();
+ });
+ socket.addEventListener('error',()=>{
+  if(companionSocket===socket)companionSetStatus('连接异常 · 正在自动重试');
+ });
 }
 function audioWords(){
  const words=allWords().filter(w=>w&&w.word&&state.cards[w.id]&&state.cards[w.id].seen);
@@ -4203,7 +4225,7 @@ async function audioRun(token){
   else{audioPlayer.playing=false;break}
   audioRender();
  }
- if(token===audioPlayer.token){audioPlayer.playing=false;audioRender()}
+ if(token===audioPlayer.token){audioPlayer.playing=false;audioRender();companionPublish()}
 }
 function audioStart(){if(!audioPlayer.list.length){audioPlayer.list=audioWords();audioPlayer.index=0}if(!audioPlayer.list.length){showToast('这个播放列表还没有已学词汇');return}audioPlayer.playing=true;companionPublish();const token=++audioPlayer.token;audioRun(token)}
 function audioStop(){audioPlayer.playing=false;audioPlayer.token++;if(endPlayback){endPlayback();endPlayback=null}if(window.speechSynthesis)window.speechSynthesis.cancel();if(currentTtsAudio){currentTtsAudio.pause();currentTtsAudio=null}if(currentTtsSource){try{currentTtsSource.stop()}catch(e){}currentTtsSource=null}audioRender();companionPublish()}

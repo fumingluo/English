@@ -14,9 +14,9 @@ function broadcast(payload) {
 }
 function createWindow() {
   win = new BrowserWindow({
-    width: 370, height: 252, minWidth: 310, minHeight: 205,
-    frame: false, transparent: true, resizable: true, alwaysOnTop: true,
-    skipTaskbar: true, show: false, hasShadow: false,
+    width: 460, height: 86, minWidth: 340, minHeight: 72,
+    frame: false, transparent: true, resizable: false, alwaysOnTop: true,
+    skipTaskbar: true, show: false, hasShadow: false, backgroundColor: '#00000000',
     webPreferences: { preload: path.join(__dirname, 'preload.js'), contextIsolation: true, nodeIntegration: false, sandbox: true }
   });
   win.loadFile(path.join(__dirname, 'renderer/index.html'));

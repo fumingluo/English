@@ -1,8 +1,25 @@
 <!doctype html>
-<html lang="zh-CN"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>English 单词悬浮助手</title><link rel="stylesheet" href="style.css"></head>
-<body><main class="panel">
-  <header><span class="brand">ENGLISH · VOCAB</span><span class="status" id="status">等待网页连接</span><button class="icon" id="hide" title="隐藏">×</button></header>
-  <section class="content"><div class="word" id="word">Ready?</div><div class="phonetic" id="phonetic">请先在 English 网页「连续听」页面同步词库</div><div class="meaning" id="meaning">桌面悬浮窗已启动</div><div class="example" id="example"></div><div class="example-zh" id="exampleZh"></div><div class="segment" id="segment"></div><div class="segment-zh" id="segmentZh"></div></section>
-  <footer><span id="progress">—</span><div class="controls"><button data-action="prev" title="上一个">⏮</button><button data-action="toggle" class="play" title="播放/暂停">▶</button><button data-action="next" title="下一个">⏭</button></div></footer>
-</main><script src="renderer.js"></script></body></html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>English 浮动字幕</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<main class="ticker" id="ticker">
+  <div class="hover-tools">
+    <span class="brand">ENGLISH</span>
+    <span class="status" id="status">等待网页连接</span>
+    <button class="hide" id="hide" title="隐藏悬浮字幕">×</button>
+  </div>
+  <div class="line english-line">
+    <span class="live-dot" id="liveDot"></span>
+    <div class="marquee-viewport"><div class="marquee" id="marquee"><span id="segment">Ready?</span></div></div>
+  </div>
+  <div class="line chinese-line" id="translation">请在网页「连续听」中连接同步</div>
+  <span class="progress" id="progress"></span>
+</main>
+<script src="renderer.js"></script>
+</body>
+</html>
