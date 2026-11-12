@@ -1,6 +1,6 @@
 const $ = id => document.getElementById(id);
 let snapshot = { connected:false }, queue = [], localIndex = 0;
-let localPlaying = false, localToken = 0, localSegment = '', localSegmentZh = '';
+let localPlaying = false, localPaused = false, localToken = 0, localSegment = '', localSegmentZh = '';
 let localMode = 'easy', localGap = 1500, localRate = 1, localLoop = false;
 
 function render(s) {
@@ -17,7 +17,7 @@ function render(s) {
 }
 function updateDisplay() {
   const w = queue[localIndex] || snapshot;
-  $('status').textContent = localPlaying ? '● 桌面独立播放' : (snapshot.connected ? (snapshot.playing ? '● 网页正在播放' : '● 已连接 · 可独立播放') : (queue.length ? '● 离线播放就绪' : '等待网页同步词库'));
+  $('status').textContent = localPlaying ? (localPaused ? 'Ⅱ 桌面播放已暂停' : '● 桌面独立播放') : (snapshot.connected ? (snapshot.playing ? '● 网页正在播放' : '● 已连接 · 可独立播放') : (queue.length ? '● 离线播放就绪' : '等待网页同步词库'));
   $('word').textContent = w.word || 'Ready?';
   $('phonetic').textContent = w.phonetic || (queue.length ? '桌面语音引擎已就绪' : '请打开 English 网页并进入「连续听」同步词库');
   $('meaning').textContent = w.meaning || '';
@@ -26,13 +26,15 @@ function updateDisplay() {
   $('segment').textContent = localPlaying ? localSegment : (snapshot.segment || '');
   $('segmentZh').textContent = localPlaying ? localSegmentZh : (snapshot.segmentZh || '');
   $('progress').textContent = queue.length ? (localIndex+1)+' / '+queue.length : (snapshot.total ? (Number(snapshot.index||0)+1)+' / '+snapshot.total : 'English');
-  document.querySelector('[data-action="toggle"]').textContent = localPlaying ? 'Ⅱ' : '▶';
+  document.querySelector('[data-action="toggle"]').textContent = localPlaying && !localPaused ? 'Ⅱ' : '▶';
 }
-function wait(ms, token) {
-  return new Promise(resolve => {
-    const timer = setTimeout(() => resolve(token === localToken && localPlaying), ms);
-    if (token !== localToken || !localPlaying) { clearTimeout(timer); resolve(false); }
-  });
+async function wait(ms, token) {
+  let elapsed = 0;
+  while (elapsed < ms && token === localToken && localPlaying) {
+    if (!localPaused) elapsed += 100;
+    await new Promise(resolve => setTimeout(resolve, 100));
+  }
+  return token === localToken && localPlaying;
 }
 function speak(text, lang, token, zh='') {
   return new Promise(resolve => {
@@ -95,6 +97,7 @@ function startLocal() {
   if (!queue.length) { $('status').textContent = '请先在网页「连续听」页面同步播放列表'; return; }
   if (localPlaying) return;
   localPlaying = true;
+  localPaused = false;
   localToken++;
   try { window.companion.control('stop'); } catch (_) {}
   updateDisplay();
@@ -102,9 +105,22 @@ function startLocal() {
 }
 function stopLocal() {
   localPlaying = false;
+  localPaused = false;
   localToken++;
   if ('speechSynthesis' in window) speechSynthesis.cancel();
   localSegment = ''; localSegmentZh = '';
+  updateDisplay();
+}
+function pauseLocal() {
+  if (!localPlaying || localPaused) return;
+  localPaused = true;
+  if ('speechSynthesis' in window) speechSynthesis.pause();
+  updateDisplay();
+}
+function resumeLocal() {
+  if (!localPlaying || !localPaused) return;
+  localPaused = false;
+  if ('speechSynthesis' in window) speechSynthesis.resume();
   updateDisplay();
 }
 function moveLocal(delta) {
@@ -119,7 +135,7 @@ window.companion.onState(render);
 window.companion.onError(message => { $('status').textContent = message; });
 document.querySelectorAll('[data-action]').forEach(button => button.addEventListener('click', () => {
   const action = button.dataset.action;
-  if (action === 'toggle') { if (localPlaying) stopLocal(); else startLocal(); }
+  if (action === 'toggle') { if (localPlaying && !localPaused) pauseLocal(); else if (localPlaying && localPaused) resumeLocal(); else startLocal(); }
   else if (action === 'next') moveLocal(1);
   else if (action === 'prev') moveLocal(-1);
 }));
