@@ -13,11 +13,21 @@
     <span class="status" id="status">等待网页连接</span>
     <button class="hide" id="hide" title="隐藏悬浮字幕">×</button>
   </div>
-  <div class="line english-line">
-    <span class="live-dot" id="liveDot"></span>
-    <div class="marquee-viewport"><div class="marquee" id="marquee"><span id="segment">Ready?</span></div></div>
-  </div>
-  <div class="line chinese-line" id="translation">请在网页「连续听」中连接同步</div>
+  <section class="lyrics-viewport" aria-live="polite">
+    <div class="lyric-track" id="lyricTrack">
+      <div class="lyric-row edge" id="row0"></div>
+      <div class="lyric-row adjacent" id="row1"></div>
+      <div class="lyric-row current" id="row2">
+        <span class="live-dot" id="liveDot"></span>
+        <span class="current-word" id="currentWord">Ready?</span>
+        <span class="current-meaning" id="currentMeaning"></span>
+      </div>
+      <div class="lyric-row adjacent" id="row3"></div>
+      <div class="lyric-row edge" id="row4"></div>
+    </div>
+    <div class="fade-top"></div>
+    <div class="fade-bottom"></div>
+  </section>
   <span class="progress" id="progress"></span>
 </main>
 <script src="renderer.js"></script>
