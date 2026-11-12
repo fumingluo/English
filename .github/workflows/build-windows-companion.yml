@@ -7,10 +7,12 @@ on:
       - feat/windows-global-vocabulary-companion
     paths:
       - "desktop/**"
+      - "index.html"
       - ".github/workflows/build-windows-companion.yml"
   pull_request:
     paths:
       - "desktop/**"
+      - "index.html"
       - ".github/workflows/build-windows-companion.yml"
 
 permissions:
