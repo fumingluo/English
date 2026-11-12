@@ -2,7 +2,9 @@ const $ = id => document.getElementById(id);
 
 let snapshot = { connected:false, playing:false, queue:[], index:0, total:0 };
 let activeItemKey = '';
-let hasPainted = false;
+let lastIndex = null;
+let animationTimer = null;
+let pendingState = null;
 
 function normalizeIndex(state) {
   const queue = Array.isArray(state.queue) ? state.queue : [];
@@ -10,10 +12,50 @@ function normalizeIndex(state) {
   return Math.max(0, Math.min(value, Math.max(0, queue.length - 1)));
 }
 
-function updateStatus(state) {
+function itemAt(state, index) {
+  const queue = Array.isArray(state.queue) ? state.queue : [];
+  const item = queue[index] || (index === normalizeIndex(state) ? state : null);
+  if (!item) return null;
+  return {
+    word: String(item.word || item.segment || item.text || '').trim(),
+    meaning: String(item.meaning || item.translation || '').trim()
+  };
+}
+
+function paintRows(state) {
   const queue = Array.isArray(state.queue) ? state.queue : [];
   const index = normalizeIndex(state);
+  for (let slot = 0; slot < 5; slot++) {
+    const row = $('row' + slot);
+    const content = row.querySelector('.row-content');
+    const wordNode = row.querySelector('.row-word');
+    const meaningNode = row.querySelector('.row-meaning');
+    const item = itemAt(state, index + slot - 2);
+    const word = item?.word || '';
+    const meaning = item?.meaning || '';
+    wordNode.textContent = word;
+    meaningNode.textContent = meaning;
+    meaningNode.hidden = !meaning;
+    row.classList.toggle('empty', !word && !meaning);
 
+    // Fit long vocabulary phrases without adding ellipses or clipping their text.
+    content.style.fontSize = '20px';
+    const available = Math.max(120, row.clientWidth - (slot === 2 ? 42 : 24));
+    const measured = content.scrollWidth;
+    if (measured > available) {
+      content.style.fontSize = Math.max(11, 20 * available / measured) + 'px';
+    }
+  }
+  activeItemKey = itemKey(state);
+  lastIndex = index;
+}
+
+function itemKey(state) {
+  const item = itemAt(state, normalizeIndex(state)) || {};
+  return normalizeIndex(state) + '|' + item.word.toLocaleLowerCase() + '|' + item.meaning;
+}
+
+function updateStatus(state) {
   $('ticker').classList.toggle('playing', !!state.connected && !!state.playing);
   $('status').textContent = !state.connected
     ? '等待网页连接'
@@ -21,43 +63,40 @@ function updateStatus(state) {
   $('liveDot').title = state.playing ? '正在播放' : '已暂停';
   $('progress').textContent = state.total
     ? (Number(state.index || 0) + 1) + ' / ' + state.total
-    : (queue.length ? (index + 1) + ' / ' + queue.length : '');
-}
-
-function paintItem(state, animate) {
-  const queue = Array.isArray(state.queue) ? state.queue : [];
-  const index = normalizeIndex(state);
-  const item = queue[index] || state;
-  const word = String(item.word || state.word || '').trim();
-  const meaning = String(item.meaning || state.meaning || '').trim();
-  const key = index + '|' + word.toLocaleLowerCase() + '|' + meaning;
-
-  if (key === activeItemKey) return;
-  activeItemKey = key;
-
-  const pair = $('wordPair');
-  pair.classList.remove('entering');
-  $('currentWord').textContent = word || 'Ready?';
-  $('currentMeaning').textContent = meaning;
-  $('pairDivider').hidden = !(word && meaning);
-
-  if (animate && hasPainted && word) {
-    void pair.offsetWidth;
-    pair.classList.add('entering');
-  }
-  hasPainted = true;
+    : (state.queue.length ? (normalizeIndex(state) + 1) + ' / ' + state.queue.length : '');
 }
 
 function render(state) {
   snapshot = { ...snapshot, ...state };
   if (Array.isArray(state.queue)) snapshot.queue = state.queue;
-
   updateStatus(snapshot);
 
-  // The companion is intentionally word-only. Audio segment changes
-  // (word / definition / example) never replace the displayed word.
-  // Both the English word and Chinese meaning come from the same queue item.
-  paintItem(snapshot, true);
+  const nextIndex = normalizeIndex(snapshot);
+  const nextKey = itemKey(snapshot);
+
+  // Never follow audio sub-segments: word, definition and example audio all
+  // belong to the same queue item, so the displayed word/translation stay paired.
+  if (animationTimer) {
+    pendingState = snapshot;
+    return;
+  }
+
+  if (lastIndex !== null && nextIndex !== lastIndex && activeItemKey) {
+    pendingState = snapshot;
+    const track = $('lyricTrack');
+    track.classList.remove('advance');
+    void track.offsetWidth;
+    track.classList.add('advance');
+    animationTimer = setTimeout(() => {
+      track.classList.remove('advance');
+      paintRows(pendingState || snapshot);
+      pendingState = null;
+      animationTimer = null;
+    }, 380);
+    return;
+  }
+
+  if (nextKey !== activeItemKey) paintRows(snapshot);
 }
 
 window.companion.onState(render);
