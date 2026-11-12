@@ -10,7 +10,7 @@ body{-webkit-app-region:drag}
 .hide{margin-left:auto;border:0;background:transparent;color:#171a18;font-size:17px;line-height:15px;cursor:pointer;padding:0 3px;-webkit-app-region:no-drag}
 .lyrics-viewport{position:relative;width:100%;height:170px;overflow:hidden;mask-image:linear-gradient(to bottom,transparent 0%,#000 13%,#000 87%,transparent 100%);-webkit-mask-image:linear-gradient(to bottom,transparent 0%,#000 13%,#000 87%,transparent 100%)}
 .lyric-track{position:absolute;inset:0;display:flex;flex-direction:column;will-change:transform}
-.lyric-row{position:relative;flex:0 0 34px;height:34px;display:flex;align-items:center;justify-content:center;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;transition:opacity .42s ease,filter .42s ease,color .28s ease}
+.lyric-row{position:relative;flex:0 0 34px;height:34px;display:flex;align-items:center;justify-content:center;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;transition:opacity .52s ease,filter .52s ease,color .52s ease,font-size .52s ease,font-weight .52s ease}
 .lyric-row.edge{font-size:13px;font-weight:450;color:rgba(0,0,0,.34);filter:blur(.35px);opacity:.48;text-shadow:0 1px 2px rgba(255,255,255,.55)}
 .lyric-row.adjacent{font-size:15px;font-weight:550;color:rgba(0,0,0,.62);opacity:.82;text-shadow:0 1px 2px rgba(255,255,255,.62)}
 .lyric-row.current{gap:8px;color:#000;opacity:1;filter:none;overflow:visible}
@@ -18,7 +18,7 @@ body{-webkit-app-region:drag}
 .ticker.playing .live-dot{background:#218c4b;opacity:1;box-shadow:0 0 8px rgba(33,140,75,.42);animation:pulse 1.7s ease-in-out infinite}
 .current-word{max-width:calc(100% - 24px);overflow:hidden;text-overflow:ellipsis;font-size:23px;font-weight:800;letter-spacing:-.45px;line-height:27px;color:#000;text-shadow:0 1px 2px rgba(255,255,255,.72),0 0 1px rgba(255,255,255,.55)}
 .current-meaning{position:absolute;left:18px;right:18px;top:25px;text-align:center;overflow:hidden;text-overflow:ellipsis;font-size:10.5px;line-height:12px;color:#202620;font-weight:600;text-shadow:0 1px 2px rgba(255,255,255,.72)}
-.lyric-track.advance{animation:lyric-rise .52s cubic-bezier(.22,.68,.2,1) forwards}
+.lyric-track.advance{animation:lyric-rise .52s cubic-bezier(.22,.68,.2,1) forwards}\n.lyric-track.advance #row2{opacity:.82;color:rgba(0,0,0,.62)}\n.lyric-track.advance #currentWord{font-size:15px;font-weight:550;letter-spacing:0}\n.lyric-track.advance #currentMeaning{opacity:0}\n.lyric-track.advance #row3{font-size:23px;font-weight:800;color:#000;opacity:1;filter:none;text-shadow:0 1px 2px rgba(255,255,255,.72),0 0 1px rgba(255,255,255,.55)}
 .progress{position:absolute;right:13px;bottom:5px;font-size:8px;color:rgba(0,0,0,.62);opacity:0;transition:opacity .2s ease}
 .ticker:hover .progress{opacity:1}
 @keyframes lyric-rise{0%{transform:translateY(0)}72%{transform:translateY(-34px)}88%{transform:translateY(-33px)}100%{transform:translateY(-34px)}}
