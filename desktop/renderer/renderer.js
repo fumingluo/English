@@ -5,7 +5,9 @@ function render(s) {
   $('phonetic').textContent = s.phonetic || (s.connected ? '等待下一个单词' : '请打开 English 网页并进入「连续听」');
   $('meaning').textContent = s.meaning || '';
   $('example').textContent = s.example || '';
+  $('exampleZh').textContent = s.exampleZh || '';
   $('segment').textContent = s.segment || '';
+  $('segmentZh').textContent = s.segmentZh || '';
   $('progress').textContent = s.total ? (Number(s.index || 0) + 1) + ' / ' + s.total : 'English';
   document.querySelector('[data-action="toggle"]').textContent = s.playing ? 'Ⅱ' : '▶';
 }
