@@ -3967,13 +3967,45 @@ function getTtsAudioContext(){
  return ttsAudioContext;
 }
 function primeTtsAudio(){const ctx=getTtsAudioContext();if(ctx&&ctx.state!=='running'){try{ctx.resume().catch(()=>{})}catch(e){}}}
-function fallbackSay(text){
+function detectTtsLanguage(text){
+ return /[\\u3400-\\u9fff]/.test(String(text||''))?'zh-CN':'en-US';
+}
+async function getSpeechVoices(){
+ const synth=window.speechSynthesis;
+ if(!synth)return [];
+ let voices=synth.getVoices();
+ if(voices.length)return voices;
+ await new Promise(resolve=>{
+  let done=false;
+  const finish=()=>{if(done)return;done=true;clearTimeout(timer);synth.removeEventListener('voiceschanged',finish);resolve()};
+  const timer=setTimeout(finish,1000);
+  synth.addEventListener('voiceschanged',finish);
+ });
+ return synth.getVoices();
+}
+async function fallbackSay(text,language=detectTtsLanguage(text)){
  if(!window.speechSynthesis){showToast('当前浏览器不支持语音播放');return}
- window.speechSynthesis.cancel();
- let u=new SpeechSynthesisUtterance(text);u.lang='en-US';u.rate=.88;
- let vs=window.speechSynthesis.getVoices();
- let v=vs.find(x=>x.lang==='en-US'&&/Samantha|Google US English|Aria|Jenny/i.test(x.name))||vs.find(x=>x.lang==='en-US');
- if(v)u.voice=v;window.speechSynthesis.speak(u);
+ const synth=window.speechSynthesis;
+ synth.cancel();
+ const lang=language==='zh-CN'?'zh-CN':'en-US';
+ const u=new SpeechSynthesisUtterance(text);
+ u.lang=lang;
+ u.rate=lang==='zh-CN'?.96:.88;
+ const voices=await getSpeechVoices();
+ let voice=null;
+ if(lang==='zh-CN'){
+  // Prefer natural Mandarin voices; never let an English voice read Chinese.
+  voice=voices.find(v=>/^zh[-_]?CN/i.test(v.lang)&&/Xiaoxiao|晓晓|Yunxi|云希|Xiaoyi|晓伊|Huihui|慧慧|Tingting|婷婷|中文.*女|普通话/i.test(v.name))
+   ||voices.find(v=>/^zh[-_]?CN/i.test(v.lang))
+   ||voices.find(v=>/^zh/i.test(v.lang));
+ }else{
+  voice=voices.find(v=>/^en[-_]?US/i.test(v.lang)&&/Samantha|Google US English|Aria|Jenny/i.test(v.name))
+   ||voices.find(v=>/^en[-_]?US/i.test(v.lang))
+   ||voices.find(v=>/^en/i.test(v.lang));
+ }
+ if(voice)u.voice=voice;
+ if(window.audioPlayer&&Number(window.audioPlayer.rate)>0)u.rate*=Math.min(1.25,Math.max(.75,Number(window.audioPlayer.rate)));
+ synth.speak(u);
 }
 function openTtsCache(){
  return new Promise((resolve,reject)=>{
@@ -4026,6 +4058,14 @@ async function say(text){
  if(currentTtsObjectUrl){URL.revokeObjectURL(currentTtsObjectUrl);currentTtsObjectUrl=null}
  if(window.speechSynthesis)window.speechSynthesis.cancel();
 
+ const language=detectTtsLanguage(phrase);
+ // Chinese explanations use the browser's native Mandarin voice instead of
+ // the English-only cloud voice, which otherwise produces a foreign accent.
+ if(language==='zh-CN'){
+  await fallbackSay(phrase,language);
+  return;
+ }
+
  // Unlock Web Audio synchronously during the user's tap on iOS.
  const audioContext=getTtsAudioContext();
  let unlockPromise=Promise.resolve();
@@ -4033,7 +4073,7 @@ async function say(text){
   try{unlockPromise=audioContext.resume()}catch(e){unlockPromise=Promise.reject(e)}
  }
 
- const key=phrase.toLowerCase();
+ const key=language+'|'+phrase.toLowerCase();
  try{
   let blob=null;
 
@@ -4048,7 +4088,7 @@ async function say(text){
     response=await fetch(TTS_API_URL,{
      method:'POST',
      headers:{'Content-Type':'application/json'},
-     body:JSON.stringify({text:phrase})
+     body:JSON.stringify({text:phrase,language:language.split('-')[0]})
     });
    }catch(networkError){
     throw new Error('连接语音服务失败：'+(networkError.message||'网络或跨域错误'));
@@ -4101,7 +4141,7 @@ async function say(text){
   const message=error&&error.message?error.message:String(error);
   console.error('ElevenLabs TTS playback failed:',error);
   showToast('AI 发音失败：'+message+'；正在尝试系统语音');
-  fallbackSay(phrase);
+  fallbackSay(phrase,language);
  }
 }
 
