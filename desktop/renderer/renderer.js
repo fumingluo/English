@@ -2,6 +2,7 @@ const $ = id => document.getElementById(id);
 
 let snapshot = { connected:false, playing:false, queue:[], index:0, total:0 };
 let activeEvent = null;
+let stagedEvent = null;
 let pendingEvent = null;
 let lastEventKey = '';
 let transitionTimer = null;
@@ -73,12 +74,13 @@ function finishTransition() {
   clearTimeout(transitionTimer);
   transitionTimer = null;
 
-  const track = $('lyricTrack');
-  track.classList.remove('advance');
+  $('lyricTrack').classList.remove('advance');
 
-  if (pendingEvent) {
-    activeEvent = pendingEvent;
-    pendingEvent = null;
+  // Commit exactly the phrase that was staged into the moving lower row.
+  // A newer phrase may be pending, but it must get its own complete glide.
+  if (stagedEvent) {
+    activeEvent = stagedEvent;
+    stagedEvent = null;
     paintRows(activeEvent.state, activeEvent.segment, activeEvent.segmentZh);
   }
 
@@ -97,11 +99,10 @@ function startNextTransition() {
     return;
   }
 
-  // Stage the next phrase below the center line. Do not replace the
-  // center text until the moving row has physically reached the center.
+  stagedEvent = next;
   const nextRow = $('row3');
-  nextRow.textContent = next.segment;
-  nextRow.title = next.segment;
+  nextRow.textContent = stagedEvent.segment;
+  nextRow.title = stagedEvent.segment;
 
   const track = $('lyricTrack');
   track.classList.remove('advance');
@@ -127,7 +128,6 @@ function render(state) {
   }
   previousPlaying = !!snapshot.playing;
 
-  // Ignore stale text from the previous item while the playlist index changes.
   if (segment && segmentBelongsToItem(segment, item)) {
     const key = index + '|' + normalize(segment);
 
