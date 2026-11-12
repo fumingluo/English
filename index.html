@@ -4155,7 +4155,7 @@ async function audioRun(token){
    if(!await audioWait(3000,token))break;
    if(!await audioSpeak(w.word,token,'英文单词'))break;
   }else if(audioPlayer.mode==='immersive'){
-   if(!await audioSpeak(w.word,token))break;
+   if(!await audioSpeak(w.word,token,'英文单词'))break;
    if(w.en&&w.en.trim().toLowerCase()!==w.word.trim().toLowerCase()){if(!await audioWait(500,token))break;if(!await audioSpeak(w.en,token,'英文例句'))break}
   }else{
    if(!await audioSpeak(w.word,token))break;
