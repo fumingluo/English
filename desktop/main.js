@@ -5,7 +5,7 @@ const { WebSocketServer } = require('ws');
 let win;
 let tray;
 let server;
-let latest = { type: 'state', connected: false, word: '', phonetic: '', meaning: '', example: '', segment: '', playing: false, index: 0, total: 0 };
+let latest = { type: 'state', connected: false, word: '', phonetic: '', meaning: '', example: '', exampleZh: '', segment: '', segmentZh: '', playing: false, index: 0, total: 0 };
 
 function broadcast(payload) {
   if (!server) return;
@@ -14,7 +14,7 @@ function broadcast(payload) {
 }
 function createWindow() {
   win = new BrowserWindow({
-    width: 370, height: 226, minWidth: 300, minHeight: 180,
+    width: 370, height: 252, minWidth: 310, minHeight: 205,
     frame: false, transparent: true, resizable: true, alwaysOnTop: true,
     skipTaskbar: true, show: false, hasShadow: false,
     webPreferences: { preload: path.join(__dirname, 'preload.js'), contextIsolation: true, nodeIntegration: false, sandbox: true }
@@ -47,7 +47,9 @@ function startBridge() {
     });
   });
   server.on('error', err => {
-    if (win && !win.isDestroyed()) win.webContents.send('companion:error', err.code === 'EADDRINUSE' ? '端口 17321 已被占用' : '本地连接启动失败');
+    const message = err.code === 'EADDRINUSE' ? '本地连接端口已被占用，请退出其他 English 悬浮助手后重试' : '本地连接启动失败：' + (err.message || err.code || '未知错误');
+    latest = { ...latest, connected: false };
+    if (win && !win.isDestroyed()) win.webContents.send('companion:error', message);
   });
 }
 app.whenReady().then(() => {
