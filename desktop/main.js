@@ -66,6 +66,7 @@ if (!hasSingleInstanceLock) {
 }
 
 app.whenReady().then(() => {
+  if (!hasSingleInstanceLock) return;
   createWindow();
   startBridge();
   tray = new Tray(nativeImage.createEmpty());
