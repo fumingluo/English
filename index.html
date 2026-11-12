@@ -3968,7 +3968,7 @@ function getTtsAudioContext(){
 }
 function primeTtsAudio(){const ctx=getTtsAudioContext();if(ctx&&ctx.state!=='running'){try{ctx.resume().catch(()=>{})}catch(e){}}}
 function detectTtsLanguage(text){
- return /[\\u3400-\\u9fff]/.test(String(text||''))?'zh-CN':'en-US';
+ return /[\u3400-\u9fff]/.test(String(text||''))?'zh-CN':'en-US';
 }
 async function getSpeechVoices(){
  const synth=window.speechSynthesis;
