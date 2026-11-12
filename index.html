@@ -4109,17 +4109,21 @@ let audioPlayer={list:[],index:0,playing:false,mode:'easy',source:'all',gap:1500
 window.audioPlayer=audioPlayer;
 
 // Optional Windows desktop companion bridge. It is inert when the companion is not running.
-let companionSocket=null, companionRetry=null, companionSegment='', companionSegmentZh='';
+let companionSocket=null, companionRetry=null, companionSegment='', companionSegmentZh='', companionQueueSignature='';
 function companionPublish(){
  const w=audioPlayer.list[audioPlayer.index];
  if(!companionSocket||companionSocket.readyState!==WebSocket.OPEN)return;
- companionSocket.send(JSON.stringify({type:'state',word:w?.word||'',phonetic:w?.phonetic||'',meaning:w?audioMeaning(w):'',example:w?.en||'',exampleZh:w?.exampleZh||'',queue:audioPlayer.list.slice(0,800).map(item=>({word:item.word||'',phonetic:item.phonetic||'',meaning:audioMeaning(item),example:item.en||'',exampleZh:item.exampleZh||''})),mode:audioPlayer.mode||'easy',gap:Number(audioPlayer.gap)||1500,rate:Number(audioPlayer.rate)||1,loop:!!audioPlayer.loop,segment:companionSegment,segmentZh:companionSegmentZh,playing:!!audioPlayer.playing,index:audioPlayer.index||0,total:audioPlayer.list.length||0}));
+ const queue=audioPlayer.list.map(item=>({word:item.word||'',phonetic:item.phonetic||'',meaning:audioMeaning(item),example:item.en||'',exampleZh:item.exampleZh||''}));
+ const signature=JSON.stringify(queue);
+ const payload={type:'state',word:w?.word||'',phonetic:w?.phonetic||'',meaning:w?audioMeaning(w):'',example:w?.en||'',exampleZh:w?.exampleZh||'',mode:audioPlayer.mode||'easy',gap:Number(audioPlayer.gap)||1500,rate:Number(audioPlayer.rate)||1,loop:!!audioPlayer.loop,segment:companionSegment,segmentZh:companionSegmentZh,playing:!!audioPlayer.playing,index:audioPlayer.index||0,total:audioPlayer.list.length||0};
+ if(signature!==companionQueueSignature){payload.queue=queue;companionQueueSignature=signature}
+ companionSocket.send(JSON.stringify(payload));
 }
 function companionConnect(){
  if(companionSocket&&[WebSocket.OPEN,WebSocket.CONNECTING].includes(companionSocket.readyState))return;
  try{
   companionSocket=new WebSocket('ws://127.0.0.1:17321');
-  companionSocket.addEventListener('open',companionPublish);
+  companionSocket.addEventListener('open',()=>{companionQueueSignature='';companionPublish()});
   companionSocket.addEventListener('message',event=>{
    let msg;try{msg=JSON.parse(event.data)}catch(e){return}
    if(msg.type!=='control')return;
