@@ -4016,6 +4016,7 @@ async function trimTtsCache(){
   tx.onerror=()=>{db.close();reject(tx.error)};
  });
 }
+let endPlayback=null;
 async function say(text){
  const phrase=String(text||'').trim();
  if(!phrase)return;
@@ -4080,8 +4081,9 @@ async function say(text){
    source.buffer=buffer;
    source.connect(audioContext.destination);
    currentTtsSource=source;
-   source.onended=()=>{if(currentTtsSource===source)currentTtsSource=null};
-   source.start(0);
+   source.onended=()=>{if(currentTtsSource===source)currentTtsSource=null;if(endPlayback)endPlayback()};
+   if(window.audioPlayer)source.playbackRate.value=window.audioPlayer.rate||1;
+   await new Promise(resolve=>{endPlayback=resolve;source.start(0)});
   }else{
    const url=URL.createObjectURL(blob),audio=new Audio(url);
    currentTtsAudio=audio;
@@ -4089,8 +4091,10 @@ async function say(text){
    audio.onended=()=>{
     if(currentTtsAudio===audio)currentTtsAudio=null;
     if(currentTtsObjectUrl===url){URL.revokeObjectURL(url);currentTtsObjectUrl=null}
+    if(endPlayback)endPlayback();
    };
-   await audio.play();
+   if(window.audioPlayer)audio.playbackRate=window.audioPlayer.rate||1;
+   await new Promise(async(resolve,reject)=>{endPlayback=resolve;try{await audio.play()}catch(e){reject(e)}});
   }
  }catch(error){
   const message=error&&error.message?error.message:String(error);
@@ -4101,6 +4105,7 @@ async function say(text){
 }
 
 let audioPlayer={list:[],index:0,playing:false,mode:'easy',source:'all',gap:1500,rate:1,loop:false,shuffle:false,token:0};
+window.audioPlayer=audioPlayer;
 function audioWords(){
  const words=allWords().filter(w=>w&&w.word&&state.cards[w.id]&&state.cards[w.id].seen);
  let list=words.filter(w=>{const c=state.cards[w.id]||{};if(audioPlayer.source==='weak')return c.rating==='unknown'||c.rating==='vague'||(Number(c.struggleCount)||0)>0;if(audioPlayer.source==='due')return c.due&&c.due<=today();if(audioPlayer.source==='recent')return true;return true});
@@ -4131,8 +4136,7 @@ async function audioSpeak(text,token){
  if(token!==audioPlayer.token||!audioPlayer.playing)return false;
  await say(text);
  // TTS duration is estimated conservatively for word/phrase length; pause remains configurable.
- const duration=Math.max(650,String(text).length*260);
- return audioWait(duration,token);
+ return token===audioPlayer.token&&audioPlayer.playing;
 }
 async function audioRun(token){
  while(audioPlayer.playing&&token===audioPlayer.token&&audioPlayer.list.length){
@@ -4488,8 +4492,8 @@ async function lookupCustomWord(){let wordEl=document.getElementById('cw'),meani
 function renderPreservingScroll(){const x=window.scrollX,y=window.scrollY;render();window.scrollTo(x,y)}
 function action(b){let a=b.dataset.action;
 if(a==='audio-toggle'){if(audioPlayer.playing)audioStop();else audioStart()}
-else if(a==='audio-next'){audioPlayer.token++;audioPlayer.playing=false;audioPlayer.index=Math.min(audioPlayer.list.length-1,audioPlayer.index+1);audioRender();audioStart()}
-else if(a==='audio-prev'){audioPlayer.token++;audioPlayer.playing=false;audioPlayer.index=Math.max(0,audioPlayer.index-1);audioRender();audioStart()}
+else if(a==='audio-next'){audioStop();audioPlayer.index=Math.min(audioPlayer.list.length-1,audioPlayer.index+1);audioRender();audioStart()}
+else if(a==='audio-prev'){audioStop();audioPlayer.index=Math.max(0,audioPlayer.index-1);audioRender();audioStart()}
 else if(a==='audio-source'){audioStop();audioPlayer.source=b.dataset.value;audioPlayer.list=audioWords();audioPlayer.index=0;audioRender()}
 
 if(a==='lookup-word'){lookupCustomWord()}
@@ -4583,7 +4587,7 @@ else if(a==='export'){let blob=new Blob([JSON.stringify(state,null,2)],{type:'ap
 else if(a==='reset-data'){if(confirm('确定清空本机学习数据、复习记录和自定义词组吗？此操作无法撤销。')){localStorage.removeItem(KEY);localStorage.removeItem(OLD_KEY);state=blank();render()}}
 }
 document.getElementById('nav').addEventListener('click',e=>{let b=e.target.closest('[data-view]');if(!b)return;state.view=b.dataset.view;question=null;save();render()});
-document.getElementById('app').addEventListener('change',e=>{if(e.target.id==='audioMode'){audioPlayer.mode=e.target.value;audioRender()}else if(e.target.id==='audioGap'){audioPlayer.gap=Number(e.target.value);audioRender()}else if(e.target.id==='audioRate'){audioPlayer.rate=Number(e.target.value);audioRender()}else if(e.target.id==='audioLoop'){audioPlayer.loop=e.target.value==='1';audioRender()}});
+document.getElementById('app').addEventListener('change',e=>{if(e.target.id==='audioMode'){if(audioPlayer.playing)audioStop();audioPlayer.mode=e.target.value;audioRender()}else if(e.target.id==='audioGap'){audioPlayer.gap=Number(e.target.value);audioRender()}else if(e.target.id==='audioRate'){audioPlayer.rate=Number(e.target.value);audioRender()}else if(e.target.id==='audioLoop'){audioPlayer.loop=e.target.value==='1';audioRender()}});
 document.getElementById('app').addEventListener('click',e=>{let b=e.target.closest('[data-action]');if(b){action(b);return}let card=e.target.closest('.minimal-word-card[data-swipe-card]');if(card&&Date.now()>suppressWordCardClickUntil){let w=wordById(card.dataset.swipeId);if(w)say(w.word)}});
 document.addEventListener('click',e=>{if(!state.bible.readerWord||state.view!=='reader')return;if(e.target.closest('.reader-word-wrap')||e.target.closest('[data-action="reader-word"]'))return;state.bible.readerWord=null;renderPreservingScroll()});
 function swipeDirection(dx,dy){return Math.abs(dx)>Math.abs(dy)?(dx>0?'right':'left'):(dy<0?'up':'down')}
