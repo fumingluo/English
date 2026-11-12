@@ -52,6 +52,19 @@ function startBridge() {
     if (win && !win.isDestroyed()) win.webContents.send('companion:error', message);
   });
 }
+const hasSingleInstanceLock = app.requestSingleInstanceLock();
+if (!hasSingleInstanceLock) {
+  app.quit();
+} else {
+  app.on('second-instance', () => {
+    if (win && !win.isDestroyed()) {
+      if (win.isMinimized()) win.restore();
+      win.show();
+      win.focus();
+    }
+  });
+}
+
 app.whenReady().then(() => {
   createWindow();
   startBridge();
