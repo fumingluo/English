@@ -4113,7 +4113,7 @@ let companionSocket=null, companionRetry=null, companionSegment='', companionSeg
 function companionPublish(){
  const w=audioPlayer.list[audioPlayer.index];
  if(!companionSocket||companionSocket.readyState!==WebSocket.OPEN)return;
- companionSocket.send(JSON.stringify({type:'state',word:w?.word||'',phonetic:w?.phonetic||'',meaning:w?audioMeaning(w):'',example:w?.en||'',exampleZh:w?.zh||'',segment:companionSegment,segmentZh:companionSegmentZh,playing:!!audioPlayer.playing,index:audioPlayer.index||0,total:audioPlayer.list.length||0}));
+ companionSocket.send(JSON.stringify({type:'state',word:w?.word||'',phonetic:w?.phonetic||'',meaning:w?audioMeaning(w):'',example:w?.en||'',exampleZh:w?.exampleZh||'',queue:audioPlayer.list.slice(0,800).map(item=>({word:item.word||'',phonetic:item.phonetic||'',meaning:audioMeaning(item),example:item.en||'',exampleZh:item.exampleZh||''})),mode:audioPlayer.mode||'easy',gap:Number(audioPlayer.gap)||1500,rate:Number(audioPlayer.rate)||1,loop:!!audioPlayer.loop,segment:companionSegment,segmentZh:companionSegmentZh,playing:!!audioPlayer.playing,index:audioPlayer.index||0,total:audioPlayer.list.length||0}));
 }
 function companionConnect(){
  if(companionSocket&&[WebSocket.OPEN,WebSocket.CONNECTING].includes(companionSocket.readyState))return;
@@ -4123,7 +4123,8 @@ function companionConnect(){
   companionSocket.addEventListener('message',event=>{
    let msg;try{msg=JSON.parse(event.data)}catch(e){return}
    if(msg.type!=='control')return;
-   if(msg.action==='toggle'){if(audioPlayer.playing)audioStop();else audioStart()}
+   if(msg.action==='stop'){if(audioPlayer.playing)audioStop()}
+   else if(msg.action==='toggle'){if(audioPlayer.playing)audioStop();else audioStart()}
    else if(msg.action==='next'){audioStop();audioPlayer.index=Math.min(audioPlayer.list.length-1,audioPlayer.index+1);audioRender();audioStart()}
    else if(msg.action==='prev'){audioStop();audioPlayer.index=Math.max(0,audioPlayer.index-1);audioRender();audioStart()}
   });
@@ -4161,7 +4162,7 @@ function audioRender(){
 function audioWait(ms,token){return new Promise(resolve=>{const start=Date.now();function tick(){if(token!==audioPlayer.token||!audioPlayer.playing)return resolve(false);if(Date.now()-start>=ms)return resolve(true);setTimeout(tick,100)}tick()})}
 async function audioSpeak(text,token){
  if(token!==audioPlayer.token||!audioPlayer.playing)return false;
- companionSegment=String(text||'');const currentWord=audioPlayer.list[audioPlayer.index];companionSegmentZh=currentWord&&currentWord.en&&companionSegment.trim()===String(currentWord.en).trim()?String(currentWord.zh||''):'';companionPublish();
+ companionSegment=String(text||'');const currentWord=audioPlayer.list[audioPlayer.index];companionSegmentZh=currentWord&&currentWord.en&&companionSegment.trim()===String(currentWord.en).trim()?String(currentWord.exampleZh||''):'';companionPublish();
  await say(text);
  // TTS duration is estimated conservatively for word/phrase length; pause remains configurable.
  return token===audioPlayer.token&&audioPlayer.playing;
