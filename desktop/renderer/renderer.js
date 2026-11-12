@@ -1,8 +1,10 @@
 const $ = id => document.getElementById(id);
 let snapshot = { connected:false, playing:false, queue:[], index:0, total:0 };
-let renderedIndex = null;
+let activeEvent = null;
+let eventQueue = [];
+let lastEventKey = '';
 let animationTimer = null;
-let pendingState = null;
+let previousPlaying = false;
 
 function rowText(item) {
   if (!item) return '';
@@ -12,17 +14,21 @@ function getIndex(state) {
   const queue = Array.isArray(state.queue) ? state.queue : [];
   return Math.max(0, Math.min(Number(state.index) || 0, Math.max(0, queue.length - 1)));
 }
-function paintRows(state) {
+function normalize(value) {
+  return String(value || '').trim().toLocaleLowerCase();
+}
+function segmentBelongsToItem(segment, item) {
+  if (!segment || !item) return false;
+  const candidate = normalize(segment);
+  return [item.word, item.example, item.meaning]
+    .some(value => normalize(value) === candidate);
+}
+function paintRows(state, segment, segmentZh) {
   const queue = Array.isArray(state.queue) ? state.queue : [];
   const index = getIndex(state);
   const word = queue[index] || state;
-  const spoken = String(state.segment || '').trim();
-  const currentText = spoken || rowText(word) || 'Ready?';
-  let meaning = String(state.segmentZh || '').trim();
-  if (!meaning) {
-    if (spoken && spoken === String(word.meaning || '').trim()) meaning = rowText(word);
-    else meaning = String(word.meaning || '');
-  }
+  const currentText = String(segment || rowText(word) || 'Ready?').trim();
+  const meaning = String(segmentZh || word.exampleZh || word.meaning || '').trim();
 
   [index - 2, index - 1, index, index + 1, index + 2].forEach((queueIndex, slot) => {
     const el = $('row' + slot);
@@ -50,40 +56,77 @@ function updateStatus(state) {
     ? (Number(state.index || 0) + 1) + ' / ' + state.total
     : (queue.length ? (index + 1) + ' / ' + queue.length : '');
 }
-function finishAnimation(fallbackState) {
-  const latest = pendingState || fallbackState;
+function setNextRow(event) {
+  const next = $('row3');
+  next.textContent = event.segment;
+  next.title = event.segment;
+}
+function finishTransition() {
+  const next = eventQueue.shift();
+  if (!next) {
+    animationTimer = null;
+    return;
+  }
+  activeEvent = next;
   const track = $('lyricTrack');
   track.classList.remove('advance');
-  paintRows(latest);
-  renderedIndex = getIndex(latest);
-  pendingState = null;
+  paintRows(next.state, next.segment, next.segmentZh);
   animationTimer = null;
+  startNextTransition();
+}
+function startNextTransition() {
+  if (animationTimer || !eventQueue.length) return;
+  const next = eventQueue[0];
+  if (!activeEvent) {
+    eventQueue.shift();
+    activeEvent = next;
+    paintRows(next.state, next.segment, next.segmentZh);
+    startNextTransition();
+    return;
+  }
+
+  // Put the next spoken phrase on the lower lyric row before moving it into focus.
+  setNextRow(next);
+  const track = $('lyricTrack');
+  track.classList.remove('advance');
+  void track.offsetWidth;
+  track.classList.add('advance');
+  animationTimer = setTimeout(finishTransition, 540);
 }
 function render(state) {
   snapshot = { ...snapshot, ...state };
   if (Array.isArray(state.queue)) snapshot.queue = state.queue;
   updateStatus(snapshot);
 
-  const nextIndex = getIndex(snapshot);
-  if (animationTimer) {
-    // Coalesce rapid playback updates; render the newest item when this glide ends.
-    pendingState = snapshot;
-    return;
-  }
-  if (renderedIndex !== null && nextIndex !== renderedIndex) {
-    pendingState = snapshot;
-    const track = $('lyricTrack');
-    track.classList.remove('advance');
-    void track.offsetWidth;
-    track.classList.add('advance');
-    // Keep the row data in sync with the full 520ms CSS glide.
-    animationTimer = setTimeout(() => finishAnimation(snapshot), 540);
-    return;
-  }
-  paintRows(snapshot);
-  renderedIndex = nextIndex;
-}
+  const index = getIndex(snapshot);
+  const queue = Array.isArray(snapshot.queue) ? snapshot.queue : [];
+  const item = queue[index] || snapshot;
+  const segment = String(snapshot.segment || '').trim();
 
+  // A pause/restart may legitimately replay the same phrase.
+  if (!snapshot.playing && previousPlaying) lastEventKey = '';
+  previousPlaying = !!snapshot.playing;
+
+  // Ignore stale phrase text carried over while the playlist index is changing.
+  // Only accept a phrase once it matches the current vocabulary item.
+  if (segment && segmentBelongsToItem(segment, item)) {
+    const key = index + '|' + normalize(segment);
+    if (key !== lastEventKey) {
+      lastEventKey = key;
+      eventQueue.push({
+        key,
+        state: { ...snapshot, queue: [...queue] },
+        segment,
+        segmentZh: String(snapshot.segmentZh || '').trim()
+      });
+      startNextTransition();
+    }
+  }
+
+  if (!activeEvent && !animationTimer && !eventQueue.length) {
+    paintRows(snapshot, '', '');
+  }
+}
 window.companion.onState(render);
 window.companion.onError(message => { $('status').textContent = message; });
 $('hide').addEventListener('click', () => window.companion.window('hide'));
