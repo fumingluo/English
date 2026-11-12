@@ -172,6 +172,8 @@
 .audio-player{background:linear-gradient(145deg,#203d34,#365846);color:#f5f7ed;border-radius:20px;padding:19px;margin-top:12px;box-shadow:0 12px 28px #203d3420}
 .audio-kicker{font-size:10px;letter-spacing:1.3px;color:#c1d2bd;font-weight:800}.audio-word{font-size:clamp(30px,8vw,42px);font-weight:850;letter-spacing:-1px;margin:22px 0 4px;overflow-wrap:anywhere}.audio-phonetic{color:#c5d5c8;font-size:13px;min-height:19px}.audio-meaning{font-size:19px;font-weight:750;margin-top:12px;min-height:28px}.audio-track{height:5px;border-radius:99px;background:#ffffff35;margin-top:22px;overflow:hidden}.audio-track span{display:block;height:100%;width:0;background:#d7e5a9;transition:width .2s}.audio-meta{display:flex;justify-content:space-between;color:#c5d5c8;font-size:10px;margin-top:8px}.audio-controls{display:flex;align-items:center;justify-content:center;gap:24px;margin-top:18px}.audio-controls button{border:0;background:transparent;color:white;font-size:22px;min-width:38px;min-height:42px}.audio-controls .audio-main{font-size:38px}.audio-settings{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}.audio-setting{background:#fff;border-radius:13px;padding:11px}.audio-setting label{display:block;font-size:10px;color:var(--muted);margin-bottom:6px}.audio-setting select{width:100%;border:0;background:transparent;color:var(--ink);font-size:12px;outline:none}.audio-mode{display:flex;flex-wrap:wrap;gap:7px;margin-top:10px}.audio-mode button{border:1px solid var(--line);background:white;border-radius:99px;padding:8px 11px;font-size:11px;color:var(--muted)}.audio-mode button.active{background:var(--green);color:white;border-color:var(--green)}.audio-hint{font-size:11px;color:var(--muted);line-height:1.6;margin:11px 2px}
 
+/* Floating continuous-listening caption */
+.audio-float{position:fixed;z-index:8;left:12px;right:12px;bottom:calc(66px + env(safe-area-inset-bottom));max-width:690px;margin:auto;background:#fff;border:1px solid #dfe8dc;border-radius:17px;box-shadow:0 8px 30px #1c321c25;padding:12px 13px;color:var(--ink);display:none}.audio-float.visible{display:block}.audio-float-top{display:flex;align-items:center;justify-content:space-between;gap:8px}.audio-float-state{font-size:10px;color:var(--green2);font-weight:750}.audio-float-word{font-size:20px;font-weight:850;line-height:1.25;margin-top:5px;overflow-wrap:anywhere}.audio-float-phonetic{font-size:11px;color:var(--muted);margin-top:2px}.audio-float-meaning{font-size:12px;color:#536b51;margin-top:4px}.audio-float-example{margin-top:8px;padding-top:8px;border-top:1px solid var(--line)}.audio-float-en{font-size:12px;line-height:1.5;font-weight:650}.audio-float-zh{font-size:11px;line-height:1.5;color:var(--muted);margin-top:3px}.audio-float-controls{display:flex;align-items:center;gap:7px;margin-top:9px}.audio-float-controls button{border:0;border-radius:10px;background:#f0f4ed;color:var(--green);min-width:38px;min-height:34px;font-size:14px}.audio-float-controls .audio-float-toggle{background:var(--green);color:#fff;flex:1;font-weight:750}.audio-float-collapse{border:0;background:transparent;color:var(--muted);font-size:18px;padding:2px 5px}.audio-float-mini{position:fixed;z-index:8;right:14px;bottom:calc(72px + env(safe-area-inset-bottom));width:48px;height:48px;border:0;border-radius:50%;background:var(--green);color:#fff;box-shadow:0 5px 18px #17271735;font-size:20px;display:none}.audio-float-mini.visible{display:block}@media(min-width:700px){.audio-float{bottom:22px;left:auto;right:22px}.audio-float-mini{bottom:22px;right:22px}}@media(max-width:420px){.audio-float{left:8px;right:8px;padding:10px 11px}.audio-float-word{font-size:18px}.audio-float-example{margin-top:6px;padding-top:6px}}
 </style>
 </head>
 <body>
@@ -189,6 +191,7 @@
  <button data-view="reader"><b>📜</b>语境阅读</button>
  <button data-view="mine"><b>✍️</b>我的</button>
 </div></nav>
+<section id="audioFloat" class="audio-float" aria-live="polite" aria-label="连续听悬浮字幕"><div class="audio-float-top"><span class="audio-float-state" id="audioFloatState">正在播放</span><button class="audio-float-collapse" data-float-action="collapse" aria-label="收起">⌄</button></div><div class="audio-float-word" id="audioFloatWord"></div><div class="audio-float-phonetic" id="audioFloatPhonetic"></div><div class="audio-float-meaning" id="audioFloatMeaning"></div><div class="audio-float-example"><div class="audio-float-en" id="audioFloatEn"></div><div class="audio-float-zh" id="audioFloatZh"></div></div><div class="audio-float-controls"><button data-float-action="prev" aria-label="上一个">⏮</button><button class="audio-float-toggle" data-float-action="toggle">Ⅱ 暂停</button><button data-float-action="next" aria-label="下一个">⏭</button></div></section><button id="audioFloatMini" class="audio-float-mini" data-float-action="expand" aria-label="展开正在播放的单词">🎵</button>
 <div id="toast" class="toast hidden" role="status"></div>
 <script>
 'use strict';
@@ -4105,7 +4108,11 @@ async function say(text){
  }
 }
 
-let audioPlayer={list:[],index:0,playing:false,mode:'easy',source:'all',gap:1500,rate:1,loop:false,shuffle:false,token:0};
+let audioPlayer={list:[],index:0,playing:false,pausedForUser:false,mode:'easy',source:'all',gap:1500,rate:1,loop:false,shuffle:false,token:0};
+let audioFloatExpanded=true,audioFloatSegment='准备开始';
+function audioFloatRender(){const panel=document.getElementById('audioFloat'),mini=document.getElementById('audioFloatMini');if(!panel||!mini)return;const active=audioPlayer.playing||audioPlayer.pausedForUser;if(!active){panel.classList.remove('visible');mini.classList.remove('visible');return}const w=audioPlayer.list[audioPlayer.index];if(!w)return;document.getElementById('audioFloatState').textContent=(audioPlayer.playing?'正在朗读 · ':'已暂停 · ')+audioFloatSegment;document.getElementById('audioFloatWord').textContent=w.word||'';document.getElementById('audioFloatPhonetic').textContent=w.phonetic||'';document.getElementById('audioFloatMeaning').textContent=audioMeaning(w);document.getElementById('audioFloatEn').textContent=w.en||'';document.getElementById('audioFloatZh').textContent=w.zh||'';panel.classList.toggle('visible',audioFloatExpanded);mini.classList.toggle('visible',!audioFloatExpanded);const toggle=panel.querySelector('[data-float-action="toggle"]');if(toggle)toggle.textContent=audioPlayer.playing?'Ⅱ 暂停':'▶ 继续'}
+function audioFloatSet(w,segment){audioFloatSegment=segment;audioFloatRender()}
+
 window.audioPlayer=audioPlayer;
 function audioWords(){
  const words=allWords().filter(w=>w&&w.word&&state.cards[w.id]&&state.cards[w.id].seen);
@@ -4133,8 +4140,9 @@ function audioRender(){
  '<p class="audio-hint">轻松磨耳朵：英文 → 中文 → 英文。主动回忆：先听中文，留出思考时间，再听英文。英语沉浸：只听英文。播放不会改变单词熟练度或复习计划。</p></div>';
 }
 function audioWait(ms,token){return new Promise(resolve=>{const start=Date.now();function tick(){if(token!==audioPlayer.token||!audioPlayer.playing)return resolve(false);if(Date.now()-start>=ms)return resolve(true);setTimeout(tick,100)}tick()})}
-async function audioSpeak(text,token){
+async function audioSpeak(text,token,segment){
  if(token!==audioPlayer.token||!audioPlayer.playing)return false;
+ audioFloatSet(audioPlayer.list[audioPlayer.index],segment||'正在朗读');
  await say(text);
  // TTS duration is estimated conservatively for word/phrase length; pause remains configurable.
  return token===audioPlayer.token&&audioPlayer.playing;
@@ -4143,12 +4151,12 @@ async function audioRun(token){
  while(audioPlayer.playing&&token===audioPlayer.token&&audioPlayer.list.length){
   const w=audioPlayer.list[audioPlayer.index];if(!w)break;
   if(audioPlayer.mode==='recall'){
-   if(!await audioSpeak(audioMeaning(w),token))break;
+   if(!await audioSpeak(audioMeaning(w),token,'中文释义'))break;
    if(!await audioWait(3000,token))break;
-   if(!await audioSpeak(w.word,token))break;
+   if(!await audioSpeak(w.word,token,'英文单词'))break;
   }else if(audioPlayer.mode==='immersive'){
    if(!await audioSpeak(w.word,token))break;
-   if(w.en&&w.en.trim().toLowerCase()!==w.word.trim().toLowerCase()){if(!await audioWait(500,token))break;if(!await audioSpeak(w.en,token))break}
+   if(w.en&&w.en.trim().toLowerCase()!==w.word.trim().toLowerCase()){if(!await audioWait(500,token))break;if(!await audioSpeak(w.en,token,'英文例句'))break}
   }else{
    if(!await audioSpeak(w.word,token))break;
    if(!await audioWait(500,token))break;
@@ -4164,8 +4172,8 @@ async function audioRun(token){
  }
  if(token===audioPlayer.token){audioPlayer.playing=false;audioRender()}
 }
-function audioStart(){if(!audioPlayer.list.length){audioPlayer.list=audioWords();audioPlayer.index=0}if(!audioPlayer.list.length){showToast('这个播放列表还没有已学词汇');return}audioPlayer.playing=true;const token=++audioPlayer.token;audioRun(token)}
-function audioStop(){audioPlayer.playing=false;audioPlayer.token++;if(endPlayback){endPlayback();endPlayback=null}if(window.speechSynthesis)window.speechSynthesis.cancel();if(currentTtsAudio){currentTtsAudio.pause();currentTtsAudio=null}if(currentTtsSource){try{currentTtsSource.stop()}catch(e){}currentTtsSource=null}audioRender()}
+function audioStart(){if(!audioPlayer.list.length){audioPlayer.list=audioWords();audioPlayer.index=0}if(!audioPlayer.list.length){showToast('这个播放列表还没有已学词汇');return}audioPlayer.playing=true;audioPlayer.pausedForUser=false;const token=++audioPlayer.token;audioFloatRender();audioRun(token)}
+function audioStop(){audioPlayer.playing=false;audioPlayer.pausedForUser=false;audioPlayer.token++;if(endPlayback){endPlayback();endPlayback=null}if(window.speechSynthesis)window.speechSynthesis.cancel();if(currentTtsAudio){currentTtsAudio.pause();currentTtsAudio=null}if(currentTtsSource){try{currentTtsSource.stop()}catch(e){}currentTtsSource=null}audioRender();audioFloatRender()}
 function audioView(app){audioPlayer.list=audioWords();audioPlayer.index=Math.min(audioPlayer.index,Math.max(0,audioPlayer.list.length-1));audioRender()}
 
 function updateHeader(){document.getElementById('dateLabel').textContent=new Date().toLocaleDateString('zh-CN',{month:'long',day:'numeric',weekday:'short'});let learned=Object.keys(state.cards).filter(k=>state.cards[k]&&state.cards[k].seen).length;document.getElementById('summaryStats').innerHTML='<div class="stat"><strong>🔥 '+(state.stats.streak||0)+'</strong><span>连续学习天数</span></div><div class="stat"><strong>📚 '+learned+'</strong><span>累计学习词数</span></div>';document.querySelector('.shell').classList.toggle('compact-page',state.view!=='learn')}
@@ -4588,6 +4596,7 @@ else if(a==='export'){let blob=new Blob([JSON.stringify(state,null,2)],{type:'ap
 else if(a==='reset-data'){if(confirm('确定清空本机学习数据、复习记录和自定义词组吗？此操作无法撤销。')){localStorage.removeItem(KEY);localStorage.removeItem(OLD_KEY);state=blank();render()}}
 }
 document.getElementById('nav').addEventListener('click',e=>{let b=e.target.closest('[data-view]');if(!b)return;state.view=b.dataset.view;question=null;save();render()});
+document.getElementById('audioFloat').addEventListener('click',e=>{const b=e.target.closest('[data-float-action]');if(!b)return;const a=b.dataset.floatAction;if(a==='collapse'){audioFloatExpanded=false;audioFloatRender()}else if(a==='expand'){audioFloatExpanded=true;audioFloatRender()}else if(a==='toggle'){if(audioPlayer.playing){audioPlayer.playing=false;audioPlayer.pausedForUser=true;audioPlayer.token++;if(endPlayback){endPlayback();endPlayback=null}if(window.speechSynthesis)window.speechSynthesis.cancel();if(currentTtsAudio){currentTtsAudio.pause();currentTtsAudio=null}if(currentTtsSource){try{currentTtsSource.stop()}catch(e){}currentTtsSource=null}audioFloatRender()}else if(audioPlayer.pausedForUser){audioPlayer.pausedForUser=false;audioStart()}else audioStart()}else if(a==='prev'||a==='next'){const active=audioPlayer.playing||audioPlayer.pausedForUser;audioStop();audioPlayer.index=Math.max(0,Math.min(audioPlayer.list.length-1,audioPlayer.index+(a==='next'?1:-1)));audioFloatSegment='准备朗读';audioRender();if(active)audioStart();else audioFloatRender()}});document.getElementById('audioFloatMini').addEventListener('click',()=>{audioFloatExpanded=true;audioFloatRender()});
 document.getElementById('app').addEventListener('change',e=>{if(e.target.id==='audioMode'){if(audioPlayer.playing)audioStop();audioPlayer.mode=e.target.value;audioRender()}else if(e.target.id==='audioGap'){audioPlayer.gap=Number(e.target.value);audioRender()}else if(e.target.id==='audioRate'){audioPlayer.rate=Number(e.target.value);audioRender()}else if(e.target.id==='audioLoop'){audioPlayer.loop=e.target.value==='1';audioRender()}});
 document.getElementById('app').addEventListener('click',e=>{let b=e.target.closest('[data-action]');if(b){action(b);return}let card=e.target.closest('.minimal-word-card[data-swipe-card]');if(card&&Date.now()>suppressWordCardClickUntil){let w=wordById(card.dataset.swipeId);if(w)say(w.word)}});
 document.addEventListener('click',e=>{if(!state.bible.readerWord||state.view!=='reader')return;if(e.target.closest('.reader-word-wrap')||e.target.closest('[data-action="reader-word"]'))return;state.bible.readerWord=null;renderPreservingScroll()});
