@@ -77,13 +77,12 @@
 .reader-layout{display:block;margin-top:12px}
 .reader-article{background:#fff;border-radius:18px;padding:20px 18px;box-shadow:var(--shadow);min-width:0}
 .reader-verse{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;font-size:17px;line-height:2.15;margin:0 0 14px;color:#283629}
-.reader-token{cursor:pointer;margin:0 1px;padding:0 1px;border:0;background:transparent;color:inherit;font:inherit;line-height:inherit;border-radius:4px}.reader-token:hover,.reader-token.selected{background:#f5edcf;color:#765c20}.reader-token.status-familiar{color:#315b91}.reader-token.status-known{color:#426b45}.reader-token.status-fluent{color:#758276}.reader-audio-controls{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:12px 0}.reader-audio-controls #readerAudioStatus{flex:1;min-width:180px}
+.reader-token{cursor:pointer;margin:0 1px;padding:0 1px;border:0;background:transparent;color:inherit;font:inherit;line-height:inherit;border-radius:4px}.reader-token:hover,.reader-token.selected{background:#f5edcf;color:#765c20}.reader-token.status-familiar{color:#315b91}.reader-token.status-known{color:#426b45}.reader-token.status-fluent{color:#758276}
 .reader-ref{display:inline-block;font:700 10px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:#8b9688;margin:0 7px 0 0;vertical-align:middle}
-.reader-word{display:inline;border:0;border-radius:5px;background:#f5edcf;color:#765c20;padding:1px 3px;font:inherit;font-weight:700;line-height:inherit;text-decoration:underline;text-decoration-color:#d8bd76;text-underline-offset:3px}
-.reader-word.status-familiar{background:#e3efff;color:#315b91;text-decoration-color:#8bb2e4}
-.reader-word.status-known{background:#e5eee3;color:#426b45;text-decoration-color:#8eb28d}
-.reader-word.status-fluent{background:transparent;color:#758276;text-decoration:none;font-weight:500}
-.reader-word.selected{outline:2px solid #91b18c}
+.reader-word{display:inline;border:0!important;border-radius:0!important;background:transparent!important;color:inherit!important;padding:0!important;margin:0 1px!important;font:inherit;font-weight:400;line-height:inherit;text-decoration:none!important;box-shadow:none!important}
+.reader-word:hover,.reader-word.selected{background:transparent!important;color:inherit!important;outline:none!important;text-decoration:underline!important;text-decoration-color:#9aaa94!important;text-underline-offset:3px}
+.reader-word.status-familiar,.reader-word.status-known,.reader-word.status-fluent{background:transparent!important;color:inherit!important;text-decoration:none!important;font-weight:400}
+.reader-phrase{border-bottom:1px solid #9aaa94;padding-bottom:1px;white-space:normal}
 .reader-controls{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:10px 0}
 .reader-controls select{max-width:180px}
 .reader-detail{background:#f4f7f1;border-radius:14px;padding:14px;margin-top:14px;font-size:13px;line-height:1.65}
@@ -4164,7 +4163,7 @@ window.audioPlayer=audioPlayer;
 // Windows desktop companion: the webpage remains the only audio player.
 // Once requested, reconnect automatically if the local desktop bridge restarts.
 let companionSocket=null, companionRetry=null, companionRequested=false, companionSegment='', companionSegmentZh='', companionQueueSignature='', companionRetryDelay=1000;
-function companionSetStatus(message){const el=document.getElementById('companionSyncStatus');if(el)el.textContent=message;const readerStatus=document.getElementById('readerAudioStatus');if(readerStatus&&!readerPlayback.active)readerStatus.textContent=message;}
+function companionSetStatus(message){const el=document.getElementById('companionSyncStatus');if(el)el.textContent=message;}
 function companionPublish(){
  const socket=companionSocket;
  if(!socket||socket.readyState!==WebSocket.OPEN)return;
@@ -4554,25 +4553,25 @@ function readerWordMarkup(term,ref,wordKey){
  const panel='<span class="reader-inline-detail" role="group" aria-label="'+esc(term.en)+' 单词释义"><span class="reader-inline-top"><strong>'+esc(term.en)+'</strong><button class="sound" data-action="reader-pronounce" data-word="'+esc(term.en)+'" aria-label="播放发音">🔊</button></span><span class="reader-inline-phonetic">'+esc(READER_IPA[term.en]?' /'+READER_IPA[term.en]+'/':'')+'</span><span class="reader-inline-meaning">'+esc(term.meaning)+'</span><span class="reader-inline-ref">'+esc(ref)+'</span><span class="reader-ratings">'+ratings.map(x=>'<button class="reader-rating '+((state.bible.readerWordLevels||{})[term.en]===x[0]?'active':'')+'" data-action="reader-rate" data-rating="'+x[0]+'" data-word="'+esc(term.en)+'">'+x[1]+'</button>').join('')+'</span><span class="reader-inline-actions"><button class="btn secondary" data-action="reader-add-word">＋ 加入我的词库</button></span></span>';
  return '<span class="reader-word-wrap">'+button+panel+'</span>';
 }
+const READER_PHRASES=['the seven churches','the word of God','the testimony of Jesus','the Alpha and the Omega','the first and the last','the tree of life','the book of life','the holy city','the New Jerusalem','the Lord God','the throne of God','the Lamb of God','King of kings','Lord of lords','day and night','he who has an ear','those who overcome','the Spirit says','the angel of the Lord','the lake of fire'];
 function readerEnglishTokens(source,ref){
- return String(source||'').split(/([A-Za-z]+(?:['’][A-Za-z]+)?|[^A-Za-z]+)/g).filter(Boolean).map((part,index)=>{
+ const phrasePattern=READER_PHRASES.slice().sort((a,b)=>b.length-a.length).map(x=>x.replace(/[.*+?^${}()|[\\]\\\\]/g,'\\\\$&')).join('|');
+ const parts=String(source||'').split(new RegExp('('+phrasePattern+'|[A-Za-z]+(?:[’\\']?[A-Za-z]+)?|[^A-Za-z]+)','gi')).filter(Boolean);
+ let wordIndex=0;
+ const renderWord=part=>{
   if(!/^[A-Za-z]+(?:['’][A-Za-z]+)?$/.test(part))return esc(part);
   const term=READER_TERMS.find(x=>x.en.toLowerCase()===part.toLowerCase());
   const meaning=term?term.meaning:'点击查询中文释义';
-  const key=ref+'|'+index+'|'+part.toLowerCase();
-  const rating=(state.bible.readerWordLevels||{})[part.toLowerCase()]||'unknown';
-  return '<button type="button" class="reader-word reader-token status-'+({unknown:'unlearned',familiar:'familiar',known:'known',fluent:'fluent'}[rating]||'unlearned')+'" data-action="reader-word" data-word-key="'+esc(key)+'" data-word="'+esc(part)+'" data-meaning="'+esc(meaning)+'" data-phonetic="'+esc(READER_IPA[part]||'')+'" data-ref="'+esc(ref)+'" title="点击查看中文释义并播放发音">'+esc(part)+'</button>';
+  const key=ref+'|'+(wordIndex++)+'|'+part.toLowerCase();
+  return '<button type="button" class="reader-word reader-token" data-action="reader-word" data-word-key="'+esc(key)+'" data-word="'+esc(part)+'" data-meaning="'+esc(meaning)+'" data-phonetic="'+esc(READER_IPA[part]||'')+'" data-ref="'+esc(ref)+'" title="点击查看中文释义并播放发音">'+esc(part)+'</button>';
+ };
+ return parts.map(part=>{
+  if(READER_PHRASES.some(p=>p.toLowerCase()===part.toLowerCase())){
+   const words=part.split(/([A-Za-z]+(?:['’][A-Za-z]+)?)/g).filter(Boolean).map(renderWord).join('');
+   return '<span class="reader-phrase" title="固定短语">'+words+'</span>';
+  }
+  return renderWord(part);
  }).join('');
-}
-let readerPlayback={active:false,index:0,token:0,timer:null};
-function readerStopPlayback(){
- readerPlayback.active=false;readerPlayback.token++;
- if(readerPlayback.timer)clearInterval(readerPlayback.timer);readerPlayback.timer=null;
- if(window.speechSynthesis)window.speechSynthesis.cancel();
- if(endPlayback){const finish=endPlayback;endPlayback=null;finish()}
- if(currentTtsAudio){currentTtsAudio.pause();currentTtsAudio=null}
- if(currentTtsSource){try{currentTtsSource.stop()}catch(e){}currentTtsSource=null}
- if(window.audioPlayer){window.audioPlayer.playing=false;companionSegment='';companionSegmentZh='';companionPublish()}
 }
 async function readerLookupWord(word){
  const cache=state.bible.readerDefinitions||(state.bible.readerDefinitions={}),key=String(word||'').toLowerCase();
@@ -4592,55 +4591,17 @@ async function readerLookupWord(word){
  if(selected&&String(selected.en).toLowerCase()===key){selected.meaning=meaning;const current=document.querySelector('.reader-inline-meaning');if(current)current.textContent=meaning;else renderPreservingScroll()}
  return meaning;
 }
-function readerPausePlayback(){
- if(!readerPlayback.active)return;
- readerPlayback.active=false;readerPlayback.token++;
- if(readerPlayback.timer)clearInterval(readerPlayback.timer);readerPlayback.timer=null;
- if(window.speechSynthesis)window.speechSynthesis.cancel();
- if(endPlayback){const finish=endPlayback;endPlayback=null;finish()}
- if(currentTtsAudio){currentTtsAudio.pause();currentTtsAudio=null}
- if(currentTtsSource){try{currentTtsSource.stop()}catch(e){}currentTtsSource=null}
- if(window.audioPlayer){window.audioPlayer.playing=false;companionPublish()}
- const el=document.getElementById('readerAudioStatus');if(el)el.textContent='已暂停 · 继续播放会从当前章节重新朗读这一节';
-}
-async function readerPlayAll(){
- const chapter=Number(state.bible.readerChapter)||1;
- const verses=(state.bible.revelationVerses||[]).filter(v=>v&&v.en&&String(v.ref||'').trim().split(':')[0]===String(chapter));
- if(!verses.length){if(!revelationLoading)loadRevelation();showToast('正在准备英文全文，请稍后再播放');return}
- readerStopPlayback();readerPlayback.active=true;
- const token=readerPlayback.token,words=verses.flatMap(v=>String(v.en||'').match(/[A-Za-z]+(?:['’][A-Za-z]+)?/g)||[]);
- if(window.audioPlayer){
-  window.audioPlayer.list=words.map(word=>({word,phonetic:READER_IPA[word]||'',meaning:(state.bible.readerDefinitions||{})[word.toLowerCase()]||'',en:'',zh:''}));
-  window.audioPlayer.index=0;window.audioPlayer.playing=true;window.audioPlayer.mode='immersive';
-  companionRequested=true;companionConnect();
- }
- const status=document.getElementById('readerAudioStatus');if(status)status.textContent='正在朗读 · 逐词同步桌面浮窗';
- let offset=words.length?words.length-words.length:0;
- const startAt=Math.max(0,Math.min(verses.length-1,Number(readerPlayback.index)||0));
- for(let k=0;k<startAt;k++)offset+=(String(verses[k].en||'').match(/[A-Za-z]+(?:['’][A-Za-z]+)?/g)||[]).length;
- for(let i=startAt;i<verses.length&&readerPlayback.active&&token===readerPlayback.token;i++){
-  readerPlayback.index=i;
-  const text=String(verses[i].en||'').trim(),tokens=text.match(/[A-Za-z]+(?:['’][A-Za-z]+)?/g)||[];
-  companionSegment=text;companionSegmentZh='';companionPublish();
-  let cursor=0;
-  if(readerPlayback.timer)clearInterval(readerPlayback.timer);
-  readerPlayback.timer=setInterval(()=>{if(!readerPlayback.active||token!==readerPlayback.token)return;if(window.audioPlayer&&words.length){window.audioPlayer.index=Math.min(words.length-1,offset+Math.min(tokens.length-1,cursor++));companionPublish()}},420);
-  await say(text);
-  if(readerPlayback.timer)clearInterval(readerPlayback.timer);readerPlayback.timer=null;offset+=tokens.length;
- }
- if(token===readerPlayback.token){readerPlayback.active=false;if(window.audioPlayer){window.audioPlayer.playing=false;companionSegment='';companionPublish()}const el=document.getElementById('readerAudioStatus');if(el)el.textContent='全文播放完成'}
-}
 function contextReadingView(app){
  const chapter=Math.max(1,Math.min(22,Number(state.bible.readerChapter)||1)),verses=state.bible.revelationVerses||[];
- if(!Array.isArray(verses)||verses.length<400){if(!revelationLoading)loadRevelation();app.innerHTML='<div class="card"><div class="eyebrow">ENGLISH IMMERSION · READING</div><h2 class="section-title">正在准备英文全文</h2><p class="section-sub">正在载入启示录英文全文。完成后即可逐词点击、查询中文释义并播放朗读。</p></div>';return}
+ if(!Array.isArray(verses)||verses.length<400){if(!revelationLoading)loadRevelation();app.innerHTML='<div class="card"><div class="eyebrow">ENGLISH IMMERSION · READING</div><h2 class="section-title">正在准备英文全文</h2><p class="section-sub">正在载入启示录英文全文。完成后即可逐词点击、查询中文释义。</p></div>';return}
  const grouped={};verses.forEach(v=>{const m=String(v.ref||'').match(/(\d+):(\d+)/);if(m)(grouped[Number(m[1])]||(grouped[Number(m[1])]=[])).push(v)});
  const rows=grouped[chapter]||[];if(!rows.length){app.innerHTML='<div class="card"><p>本章英文内容暂不可用。</p></div>';return}
  const article=rows.map(v=>'<p class="reader-verse reader-verse-english"><span class="reader-ref">'+esc(v.ref||'')+'</span>'+readerEnglishTokens(v.en||'',v.ref||'')+'</p>').join('');
  const totalWords=rows.reduce((n,v)=>n+((String(v.en||'').match(/[A-Za-z]+(?:['’][A-Za-z]+)?/g)||[]).length),0),selected=state.bible.readerWord;
  const ratings=[['unknown','陌生'],['familiar','熟悉'],['known','掌握'],['fluent','熟练']];
  const panel=selected?'<div class="reader-detail"><div class="reader-inline-top"><strong>'+esc(selected.en)+'</strong><button class="sound" data-action="reader-pronounce" data-word="'+esc(selected.en)+'">🔊 发音</button></div><div class="reader-inline-phonetic">'+(selected.phonetic?' /'+esc(selected.phonetic)+'/':'')+'</div><div class="reader-inline-meaning">'+esc(selected.meaning||'正在查询中文释义…')+'</div><div class="reader-ratings">'+ratings.map(x=>'<button class="reader-rating '+((state.bible.readerWordLevels||{})[selected.en.toLowerCase()]===x[0]?'active':'')+'" data-action="reader-rate" data-rating="'+x[0]+'" data-word="'+esc(selected.en)+'">'+x[1]+'</button>').join('')+'</div><button class="btn secondary" style="margin-top:9px" data-action="reader-add-word">＋ 加入我的词库</button></div>':'';
- app.innerHTML='<div class="card"><div class="eyebrow">ENGLISH IMMERSION · FULL TEXT</div><div class="row"><div><h2 class="section-title">启示录 · 全英文阅读</h2><p class="section-sub" style="margin:3px 0 0">只保留英文原文 · 点击任意单词查看中文注释</p></div><select id="readerChapter" class="field" aria-label="选择章节">'+Array.from({length:22},(_,i)=>'<option value="'+(i+1)+'" '+(chapter===i+1?'selected':'')+'>Chapter '+(i+1)+'</option>').join('')+'</select></div><div class="reader-audio-controls"><button class="btn primary" data-action="reader-play">▶ 从头播放</button><button class="btn secondary" data-action="reader-resume">Ⅱ 继续播放</button><button class="btn secondary" data-action="reader-pause">暂停</button><button class="btn secondary" data-action="reader-stop">■ 停止</button><span id="readerAudioStatus" class="small muted">可连接 Windows 浮动字幕同步显示词汇</span></div><div class="reader-stats"><span>'+rows.length+' verses</span><span>'+totalWords+' words</span><span>逐词点击 · 中文释义 · 发音</span></div></div><div class="reader-layout"><article class="reader-article">'+article+'</article></div>'+panel+'<p class="small muted" style="padding:0 4px">朗读时会将当前英文句子和逐词播放队列同步到已连接的 Windows 桌面浮动字幕。首次点击单词时会自动查询并缓存中文释义。</p>';
- const select=document.getElementById('readerChapter');if(select)select.addEventListener('change',e=>{readerStopPlayback();state.bible.readerChapter=Number(e.target.value)||1;state.bible.readerWord=null;save();renderPreservingScroll()});
+ app.innerHTML='<div class="card"><div class="eyebrow">ENGLISH IMMERSION · FULL TEXT</div><div class="row"><div><h2 class="section-title">启示录 · 全英文阅读</h2><p class="section-sub" style="margin:3px 0 0">只保留英文原文 · 点击任意单词查看中文注释</p></div><select id="readerChapter" class="field" aria-label="选择章节">'+Array.from({length:22},(_,i)=>'<option value="'+(i+1)+'" '+(chapter===i+1?'selected':'')+'>Chapter '+(i+1)+'</option>').join('')+'</select></div><div class="reader-stats"><span>'+rows.length+' verses</span><span>'+totalWords+' words</span><span>逐词点击 · 中文释义 · 单词发音</span></div></div><div class="reader-layout"><article class="reader-article">'+article+'</article></div>'+panel+'<p class="small muted" style="padding:0 4px">点击任意单词可查看中文释义并听单词发音；带下划线的文字表示常见短语。首次点击单词时会自动查询并缓存中文释义。</p>';
+ const select=document.getElementById('readerChapter');if(select)select.addEventListener('change',e=>{state.bible.readerChapter=Number(e.target.value)||1;state.bible.readerWord=null;save();renderPreservingScroll()});
 }
 function bibleView(app){let p=getPassage(),v=getVerse();if(!v){let message=revelationLoading?'正在加载启示录 22 章全文……':revelationError?'加载失败：'+esc(revelationError):'正在准备经文库';app.innerHTML='<div class="bible-view"><div class="card"><div class="eyebrow">BIBLE ENGLISH · TYPING TUTOR</div><h2 class="section-title">启示录英文全文练习</h2><p class="section-sub">'+message+'</p><button class="btn primary" data-action="load-revelation" '+(revelationLoading?'disabled':'')+'>'+(revelationLoading?'正在加载…':'加载／重试启示录全文')+'</button></div></div>';return}let pos=typingPosition(v),total=Array.from(v.en).length,done=pos===total,terms=v.v||[],completed=p.verses.filter(x=>state.bible.completed.includes(x.ref)).length,select=allPassages().map(x=>'<option value="'+esc(x.id)+'" '+(x.id===p.id?'selected':'')+'>'+esc(x.title)+'</option>').join('');app.innerHTML='<div class="bible-view">'+(revelationError?'<div class="card"><div class="small muted">启示录全文加载暂时失败：'+esc(revelationError)+'</div><button class="btn secondary" data-action="load-revelation">重新加载启示录全文</button></div>':revelationLoading?'<div class="card"><div class="small muted">正在后台载入启示录全文……</div></div>':'')+'<div class="card"><div class="row"><div><div class="eyebrow">BIBLE ENGLISH · TYPING TUTOR</div><strong>圣经英文跟打</strong></div><select class="field" id="passageSelect" style="max-width:58%;padding:8px;font-size:12px">'+select+'</select></div><div class="progress-wrap"><span>进度</span><div class="progress"><div class="bar" style="width:'+Math.round(completed/Math.max(1,p.verses.length)*100)+'%"></div></div><span>'+completed+'/'+p.verses.length+'</span></div></div><div class="card"><div class="row"><span class="verse-ref">'+esc(v.ref)+'</span><span class="tag">'+(state.bible.verse+1)+' / '+p.verses.length+'</span></div><div class="actions"><button class="btn secondary" data-action="verse-play">🔊 播放本节</button>'+(terms.length?'<button class="btn quiet" data-action="verse-add-words">＋ 收集本节词汇</button>':'')+'</div></div><div class="card"><div class="row"><strong>跟打区域</strong><span class="tag">'+(done?'已完成':'逐字输入')+'</span></div><div class="typing-stage" id="typingStage"><div class="typing-display" id="typingDisplay">'+typingMarkup(v,pos,false)+'</div><input id="typingCapture" class="typing-capture" type="text" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" aria-label="在此输入经文文字" inputmode="text"></div><div class="typing-instruction">每个英文单词下方都显示中文含义；点击单词可播放发音并查看词义提示。个别未收录词汇会标注“本词释义暂未收录”。</div><div class="typing-metrics"><div class="metric"><strong id="typeProgress">'+Math.round(pos/Math.max(1,total)*100)+'%</strong><span>完成</span></div><div class="metric"><strong id="typeAccuracy">'+Math.round(pos/Math.max(1,pos+typingErrorCount)*100)+'%</strong><span>准确率</span></div><div class="metric"><strong id="typeChars">'+pos+'/'+total+'</strong><span>字符</span></div></div><div id="typingFeedback" class="feedback '+(done?'good':'')+'">'+(done?'本节输入完成。':'点击区域后直接键入；输入正确会自动推进。')+'</div><div id="typingTranslation" class="typing-translation '+(done?'':'hidden')+'"><strong>'+esc(v.ref)+(v.zh?' · 中文对照':' · 完成提示')+'</strong><p>'+esc(v.zh||'本节英文已完成。点击单词可听发音并查看词义提示。')+'</p></div><div class="row" style="margin-top:8px"><button class="btn quiet" data-action="restart-typing">重练本节</button><button class="btn quiet" data-action="prev-verse" '+(state.bible.verse===0?'disabled':'')+'>← 上一节</button><button class="btn primary" data-action="next-verse" '+(state.bible.verse>=p.verses.length-1?'disabled':'')+'>下一节 →</button></div></div><div class="card"><strong>本节重点词汇</strong><div class="key-words">'+(terms.length?terms.map(t=>'<button class="key-word" data-action="add-one-word" data-word="'+esc(t[0])+'" data-meaning="'+esc(t[1])+'">'+esc(t[0])+' · '+esc(t[1])+'</button>').join(''):'<span class="small muted">单词释义可悬停或点击经文中的单词查看。</span>')+'</div></div><p class="small muted" style="padding:0 4px">启示录英文采用 World English Bible（WEB，公有领域文本），首次打开时联网载入并保存在本机；当前未提供逐节中文译文，单词词义为学习辅助提示。</p></div>';let stage=document.getElementById('typingStage'),input=document.getElementById('typingCapture');stage.addEventListener('click',e=>{if(!e.target.closest('[data-action="bible-word-play"]'))input.focus()});input.addEventListener('input',()=>{let raw=input.value;input.value='';for(let ch of Array.from(raw)){typeBibleCharacter(ch);if(typingError)break}});input.addEventListener('keydown',e=>{if(e.key==='Backspace'){e.preventDefault();backspaceBibleCharacter()}else if(e.key==='Enter'){e.preventDefault()}});document.getElementById('passageSelect').addEventListener('change',e=>{clearTimeout(bibleAdvanceTimer);state.bible.passage=e.target.value;state.bible.verse=0;typingError='';typingErrorCount=0;save();render()})}
 function cloudSyncPanel(){let cfg={};try{cfg=JSON.parse(localStorage.getItem('dailyEnglish.sync.v1')||'{}')||{}}catch(e){}let id=typeof cfg.id==='string'?cfg.id:'';return '<div class="card"><h3>手机 / 电脑云同步</h3><p class="small muted" style="line-height:1.7">首次在一台设备创建配对码，再在另一台设备输入同一个配对码。配对后自动同步学习记录，不需要日常登录。配对码相当于数据钥匙，请勿分享给别人。</p>'+(id?'<div class="small muted">这台设备已保存配对码</div><input class="field" id="savedSyncCode" readonly value="'+esc(id)+'" style="margin:8px 0;font-size:12px"><div class="actions"><button class="btn secondary" data-action="cloud-copy">复制配对码</button><button class="btn danger" data-action="cloud-disconnect">断开本机同步</button></div><p class="small muted">另一台设备进入「我的」→「手机 / 电脑云同步」，输入上面的配对码即可连接。连接时会用云端数据替换另一台设备当前的数据；请先备份那台设备上独立保存的记录。</p>':'<button class="btn primary" style="width:100%" data-action="cloud-create">在这台设备创建配对码</button><div style="margin-top:14px"><label class="label" for="syncCode">已有配对码？在这里输入</label><input class="field" id="syncCode" maxlength="43" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="粘贴另一台设备生成的配对码"><button class="btn secondary" style="width:100%;margin-top:8px" data-action="cloud-connect">连接已有配对码</button></div><p class="small muted" style="margin-top:10px">连接已有配对码时，云端数据会覆盖本机当前数据。若本机已有独立学习记录，请先导出备份。</p>')+'</div>'}
@@ -4725,10 +4686,6 @@ else if(a==='next')newQuestion()
 else if(a==='bible-word-play'){let word=b.dataset.word,meaning=b.dataset.meaning;say(word);showToast(word+'：'+meaning)}
 else if(a==='reader-word'){const key=b.dataset.wordKey||b.dataset.ref+'|'+b.dataset.word;const same=state.bible.readerWord&&state.bible.readerWord.key===key;state.bible.readerWord=same?null:{key,word:b.dataset.word,meaning:b.dataset.meaning,phonetic:b.dataset.phonetic||'',ref:b.dataset.ref,en:b.dataset.word};if(!same){say(b.dataset.word);if(!b.dataset.meaning||b.dataset.meaning==='点击查询中文释义')readerLookupWord(b.dataset.word)}renderPreservingScroll()}
 else if(a==='reader-pronounce'){say(b.dataset.word)}
-else if(a==='reader-play'){readerPlayback.index=0;readerPlayAll()}
-else if(a==='reader-resume'){readerPlayAll()}
-else if(a==='reader-pause'){readerPausePlayback()}
-else if(a==='reader-stop'){readerStopPlayback();const status=document.getElementById('readerAudioStatus');if(status)status.textContent='已停止朗读'}
 else if(a==='reader-rate'){state.bible.readerWordLevels=Object.assign({},state.bible.readerWordLevels||{},{[String(b.dataset.word||'').toLowerCase()]:b.dataset.rating});save();renderPreservingScroll();showToast('熟练度已保存')}
 else if(a==='reader-retry'){window.readerCuvError=false;window.readerCuvLoading=false;renderPreservingScroll()}
 
