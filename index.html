@@ -4619,6 +4619,7 @@ async function readerPlayAll(){
  const startAt=Math.max(0,Math.min(verses.length-1,Number(readerPlayback.index)||0));
  for(let k=0;k<startAt;k++)offset+=(String(verses[k].en||'').match(/[A-Za-z]+(?:['’][A-Za-z]+)?/g)||[]).length;
  for(let i=startAt;i<verses.length&&readerPlayback.active&&token===readerPlayback.token;i++){
+  readerPlayback.index=i;
   const text=String(verses[i].en||'').trim(),tokens=text.match(/[A-Za-z]+(?:['’][A-Za-z]+)?/g)||[];
   companionSegment=text;companionSegmentZh='';companionPublish();
   let cursor=0;
@@ -4729,7 +4730,6 @@ else if(a==='reader-resume'){readerPlayAll()}
 else if(a==='reader-pause'){readerPausePlayback()}
 else if(a==='reader-stop'){readerStopPlayback();const status=document.getElementById('readerAudioStatus');if(status)status.textContent='已停止朗读'}
 else if(a==='reader-rate'){state.bible.readerWordLevels=Object.assign({},state.bible.readerWordLevels||{},{[String(b.dataset.word||'').toLowerCase()]:b.dataset.rating});save();renderPreservingScroll();showToast('熟练度已保存')}
-else if(a==='reader-rate'){state.bible.readerWordLevels=Object.assign({},state.bible.readerWordLevels||{},{[b.dataset.word]:b.dataset.rating});save();renderPreservingScroll();showToast('熟练度已保存')}
 else if(a==='reader-retry'){window.readerCuvError=false;window.readerCuvLoading=false;renderPreservingScroll()}
 
 else if(a==='reader-add-word'){let x=state.bible.readerWord;if(x){let id='bible-'+x.en.toLowerCase().replace(/[^a-z0-9]+/g,'-');if(!allWords().some(w=>w.id===id)){state.custom.push({id,word:x.en,phonetic:'',meaning:x.meaning,level:state.level,category:'启示录词汇',en:x.en,zh:'',isCustom:true});save();showToast('已加入个人词库和复习系统')}else showToast('这个词已经在个人词库中');renderPreservingScroll()}}
