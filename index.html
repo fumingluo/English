@@ -182,6 +182,9 @@
 .audio-player{background:linear-gradient(145deg,#203d34,#365846);color:#f5f7ed;border-radius:20px;padding:19px;margin-top:12px;box-shadow:0 12px 28px #203d3420}
 .audio-kicker{font-size:10px;letter-spacing:1.3px;color:#c1d2bd;font-weight:800}.audio-word{font-size:clamp(30px,8vw,42px);font-weight:850;letter-spacing:-1px;margin:22px 0 4px;overflow-wrap:anywhere}.audio-phonetic{color:#c5d5c8;font-size:13px;min-height:19px}.audio-meaning{font-size:19px;font-weight:750;margin-top:12px;min-height:28px}.audio-track{height:5px;border-radius:99px;background:#ffffff35;margin-top:22px;overflow:hidden}.audio-track span{display:block;height:100%;width:0;background:#d7e5a9;transition:width .2s}.audio-meta{display:flex;justify-content:space-between;color:#c5d5c8;font-size:10px;margin-top:8px}.audio-controls{display:flex;align-items:center;justify-content:center;gap:24px;margin-top:18px}.audio-controls button{border:0;background:transparent;color:white;font-size:22px;min-width:38px;min-height:42px}.audio-controls .audio-main{font-size:38px}.audio-settings{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}.audio-setting{background:#fff;border-radius:13px;padding:11px}.audio-setting label{display:block;font-size:10px;color:var(--muted);margin-bottom:6px}.audio-setting select{width:100%;border:0;background:transparent;color:var(--ink);font-size:12px;outline:none}.audio-mode{display:flex;flex-wrap:wrap;gap:7px;margin-top:10px}.audio-mode button{border:1px solid var(--line);background:white;border-radius:99px;padding:8px 11px;font-size:11px;color:var(--muted)}.audio-mode button.active{background:var(--green);color:white;border-color:var(--green)}.audio-hint{font-size:11px;color:var(--muted);line-height:1.6;margin:11px 2px}
 
+
+.listen-mode-tabs{display:flex;flex-wrap:wrap;gap:7px;margin:14px 0}.listen-mode-tabs .pill{flex:1 1 28%;min-width:92px}.listen-progress{padding:12px;background:#f7f9f5;border:1px solid #e8eee4;border-radius:14px;margin:12px 0}.listen-progress-title{display:flex;justify-content:space-between;gap:8px;align-items:center;font-size:12px}.listen-progress-title span{font-size:10px;color:var(--muted)}.listen-progress-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:7px;margin-top:10px}.listen-progress-cell{background:#fff;border-radius:10px;padding:8px 4px;text-align:center}.listen-progress-cell strong{display:block;font-size:17px;color:var(--green)}.listen-progress-cell span,.listen-progress-cell small{display:block;font-size:10px;color:var(--muted)}.listen-progress-cell small{font-size:9px;margin-top:3px}.listen-shadow-summary{font-size:10px;color:var(--muted);margin:9px 0 0}.listen-visual-word{font-size:clamp(32px,8vw,42px);font-weight:800;text-align:center;padding:22px 8px 10px;overflow-wrap:anywhere}.listen-reveal-btn{width:100%;margin:0 0 8px}.listen-sentence-reveal{padding:12px;border-radius:12px;background:#f6f8f4;margin:8px 0;font-size:14px;line-height:1.7}.listen-sentence-reveal p{color:var(--muted);margin:5px 0 0}.listen-shadow-card{padding:15px;border:1px solid var(--line);border-radius:14px;background:#fafbf8}.listen-shadow-en{font-size:18px;line-height:1.8;font-weight:650}.listen-shadow-zh{font-size:13px;color:var(--muted);line-height:1.7}.listen-shadow-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}.listen-shadow-card .btn{min-height:42px}.listen-answer-panel .listen-answer-word{line-height:1.5;overflow-wrap:anywhere}
+@media(max-width:420px){.listen-progress-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.listen-mode-tabs .pill{flex-basis:44%}}
 </style>
 </head>
 <body>
@@ -3661,8 +3664,8 @@ const KEY='dailyEnglish.v3',OLD_KEY='dailyEnglish.v2',INTERVALS=[{n:1,u:'分钟'
 function today(){const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
 function plusDays(n){const d=new Date();d.setDate(d.getDate()+n);return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
 function esc(v){return String(v==null?'':v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
-function blank(){return {level:'初级',autoPlay:false,view:'learn',cards:{},custom:[],reinforce:{active:false,autoTriggered:false,returnView:'learn',targetIds:[],cursor:0,roundIds:[],roundTargetIds:[],englishOrder:[],chineseOrder:[],selectedEnglish:null,matched:[],mistakes:0,roundComplete:false},daily:{date:'',ids:[],studyQueue:[],index:0,batch:1,excludedIds:[],shortQueue:[],relearnSeq:0,queueVersion:0,relearnQueue:[]},review:{ids:[],index:0,active:false},stats:{streak:0,lastStudy:'',unique:[],correct:0,attempts:0,studyDays:[],typingDone:[],typedChars:0},listenMode:'choice',bible:{passage:'rev-all',verse:0,drafts:{},completed:[],totalTyped:0,extraPassages:[],revelationVerses:[],readerChapter:1,readerLevel:1,readerWordLevels:{},cuvChapters:{}}}}
-function load(){let s=blank();try{let raw=localStorage.getItem(KEY);if(!raw)raw=localStorage.getItem(OLD_KEY);if(raw){let old=JSON.parse(raw);s=Object.assign(s,old);s.stats=Object.assign(blank().stats,old.stats||{});s.daily=Object.assign(blank().daily,old.daily||{});s.review=Object.assign(blank().review,old.review||{});s.reinforce=Object.assign(blank().reinforce,old.reinforce||{});s.bible=Object.assign(blank().bible,old.bible||{});s.cards=old.cards&&typeof old.cards==='object'?old.cards:{};s.custom=Array.isArray(old.custom)?old.custom:[];if(!Array.isArray(s.stats.studyDays))s.stats.studyDays=[];if(!Array.isArray(s.stats.unique))s.stats.unique=[];if(!Array.isArray(s.bible.completed))s.bible.completed=[];if(!Array.isArray(s.bible.revelationVerses))s.bible.revelationVerses=[];Object.keys(s.cards).forEach(k=>{let c=s.cards[k];if(c&&c.stage==null)c.stage=c.rating==='known'?1:0;if(c&&c.seen&&!c.due)c.due=plusDays(1);if(c&&c.struggleCount==null)c.struggleCount=c.rating==='unknown'?1:0;if(c&&c.unknownCount==null)c.unknownCount=c.rating==='unknown'?1:0;if(c&&c.reinforceSuccesses==null)c.reinforceSuccesses=0});}}catch(e){console.warn('Local data recovery:',e)}return s}
+function blank(){return {level:'初级',autoPlay:false,view:'learn',cards:{},custom:[],reinforce:{active:false,autoTriggered:false,returnView:'learn',targetIds:[],cursor:0,roundIds:[],roundTargetIds:[],englishOrder:[],chineseOrder:[],selectedEnglish:null,matched:[],mistakes:0,roundComplete:false},daily:{date:'',ids:[],studyQueue:[],index:0,batch:1,excludedIds:[],shortQueue:[],relearnSeq:0,queueVersion:0,relearnQueue:[]},review:{ids:[],index:0,active:false},stats:{streak:0,lastStudy:'',unique:[],correct:0,attempts:0,studyDays:[],typingDone:[],typedChars:0},listenStats:{wordCorrect:0,wordWrong:0,sentenceCorrect:0,sentenceWrong:0,visualCorrect:0,visualWrong:0,shadowAttempts:0,shadowCompleted:0,scenarioCorrect:0,scenarioWrong:0},listenMode:'choice',bible:{passage:'rev-all',verse:0,drafts:{},completed:[],totalTyped:0,extraPassages:[],revelationVerses:[],readerChapter:1,readerLevel:1,readerWordLevels:{},cuvChapters:{}}}}
+function load(){let s=blank();try{let raw=localStorage.getItem(KEY);if(!raw)raw=localStorage.getItem(OLD_KEY);if(raw){let old=JSON.parse(raw);s=Object.assign(s,old);s.stats=Object.assign(blank().stats,old.stats||{});s.listenStats=Object.assign(blank().listenStats,old.listenStats||{});s.daily=Object.assign(blank().daily,old.daily||{});s.review=Object.assign(blank().review,old.review||{});s.reinforce=Object.assign(blank().reinforce,old.reinforce||{});s.bible=Object.assign(blank().bible,old.bible||{});s.cards=old.cards&&typeof old.cards==='object'?old.cards:{};s.custom=Array.isArray(old.custom)?old.custom:[];if(!Array.isArray(s.stats.studyDays))s.stats.studyDays=[];if(!Array.isArray(s.stats.unique))s.stats.unique=[];if(!Array.isArray(s.bible.completed))s.bible.completed=[];if(!Array.isArray(s.bible.revelationVerses))s.bible.revelationVerses=[];Object.keys(s.cards).forEach(k=>{let c=s.cards[k];if(c&&c.stage==null)c.stage=c.rating==='known'?1:0;if(c&&c.seen&&!c.due)c.due=plusDays(1);if(c&&c.struggleCount==null)c.struggleCount=c.rating==='unknown'?1:0;if(c&&c.unknownCount==null)c.unknownCount=c.rating==='unknown'?1:0;if(c&&c.reinforceSuccesses==null)c.reinforceSuccesses=0});}}catch(e){console.warn('Local data recovery:',e)}return s}
 let state=load(),question=null,saveTimer=null,revelationLoading=false,revelationError='',bibleAdvanceTimer=null,swipeGesture=null,suppressWordCardClickUntil=0,dailyDueBootstrap=false;
 function save(){try{localStorage.setItem(KEY,JSON.stringify(state));if(window.firebaseSync)window.firebaseSync.queue(state)}catch(e){showToast('本机存储空间不足，请先导出备份。')}}
 
@@ -4001,7 +4004,7 @@ async function fallbackSay(text,language=detectTtsLanguage(text),requestId=ttsRe
  if(requestId!==ttsRequestId)return false;
  const u=new SpeechSynthesisUtterance(text);
  u.lang=lang;
- u.rate=lang==='zh-CN'?.96:.88;
+ u.rate=(lang==='zh-CN'?.96:.88)*(window.audioPlayer&&Number(window.audioPlayer.rate)<1?Number(window.audioPlayer.rate):1);
  let voice=null;
  if(lang==='zh-CN'){
   voice=voices.find(v=>/^zh[-_]?CN/i.test(v.lang)&&/Xiaoxiao|晓晓|Yunxi|云希|Xiaoyi|晓伊|Huihui|慧慧|Tingting|婷婷|中文.*女|普通话/i.test(v.name))
@@ -4168,6 +4171,7 @@ async function say(text){
 
 let audioPlayer={list:[],index:0,playing:false,mode:'easy',source:'all',gap:1500,rate:1,loop:false,shuffle:false,token:0};
 window.audioPlayer=audioPlayer;
+async function saySlow(text){const previousRate=audioPlayer.rate;audioPlayer.rate=.78;try{await say(text)}finally{audioPlayer.rate=previousRate;companionPublish()}}
 
 // Windows desktop companion: the webpage remains the only audio player.
 // Once requested, reconnect automatically if the local desktop bridge restarts.
@@ -4296,7 +4300,7 @@ function updateHeader(){document.getElementById('dateLabel').textContent=new Dat
 function render(){if(state.view==='speak'||state.view==='explore')state.view='learn';if(state.view==='bible')state.view='reader';updateHeader();document.querySelectorAll('#nav button').forEach(b=>b.classList.toggle('active',b.dataset.view===state.view));let views={learn:learnView,review:reviewView,listen:listenView,audio:audioView,reader:contextReadingView,mine:mineView,reinforce:reinforceView};(views[state.view]||learnView)(document.getElementById('app'))}
 window.getAppState=function(){return state};
  window.getAllWordsCount=function(){return allWords().length};
-window.applyCloudState=function(data){if(!data||typeof data!=='object')return;let fresh=blank();state=Object.assign(fresh,data);state.stats=Object.assign(blank().stats,data.stats||{});state.daily=Object.assign(blank().daily,data.daily||{});state.review=Object.assign(blank().review,data.review||{});state.bible=Object.assign(blank().bible,data.bible||{});state.reinforce=Object.assign(blank().reinforce,data.reinforce||{});state.cards=data.cards&&typeof data.cards==='object'?data.cards:{};Object.keys(state.cards).forEach(k=>{let c=state.cards[k];if(c&&c.struggleCount==null)c.struggleCount=c.rating==='unknown'?1:0;if(c&&c.unknownCount==null)c.unknownCount=c.rating==='unknown'?1:0;if(c&&c.reinforceSuccesses==null)c.reinforceSuccesses=0});state.custom=Array.isArray(data.custom)?data.custom:[];if(!Array.isArray(state.bible.revelationVerses))state.bible.revelationVerses=[];if(dueWords().length)state.view='learn';dailyDueBootstrap=false;try{localStorage.setItem(KEY,JSON.stringify(state))}catch(e){}render();showToast('已从云端同步最新学习进度')};
+window.applyCloudState=function(data){if(!data||typeof data!=='object')return;let fresh=blank();state=Object.assign(fresh,data);state.stats=Object.assign(blank().stats,data.stats||{});state.listenStats=Object.assign(blank().listenStats,data.listenStats||{});state.daily=Object.assign(blank().daily,data.daily||{});state.review=Object.assign(blank().review,data.review||{});state.bible=Object.assign(blank().bible,data.bible||{});state.reinforce=Object.assign(blank().reinforce,data.reinforce||{});state.cards=data.cards&&typeof data.cards==='object'?data.cards:{};Object.keys(state.cards).forEach(k=>{let c=state.cards[k];if(c&&c.struggleCount==null)c.struggleCount=c.rating==='unknown'?1:0;if(c&&c.unknownCount==null)c.unknownCount=c.rating==='unknown'?1:0;if(c&&c.reinforceSuccesses==null)c.reinforceSuccesses=0});state.custom=Array.isArray(data.custom)?data.custom:[];if(!Array.isArray(state.bible.revelationVerses))state.bible.revelationVerses=[];if(dueWords().length)state.view='learn';dailyDueBootstrap=false;try{localStorage.setItem(KEY,JSON.stringify(state))}catch(e){}render();showToast('已从云端同步最新学习进度')};
 function learnView(app){
  const reinforceBanner=reinforceBannerHTML();
  let list=getDaily(),i=state.daily.index||0;
@@ -4401,22 +4405,44 @@ function reviewView(app){
  app.innerHTML=reinforceBannerHTML()+'<div class="card"><div class="eyebrow">DAILY REVIEW</div><h2 class="section-title">今日复习</h2><p class="section-sub">只复习已经到时间的单词，不提前打乱后续复习计划。</p><div class="stats-row"><div class="stat"><strong>'+due.length+'</strong><span>待复习</span></div><div class="stat"><strong>'+learned+'</strong><span>已学习</span></div></div>'+(due.length?'<div class="row" style="margin:14px 0 8px"><h3 style="margin:0">待复习单词</h3><span class="tag">'+due.length+' 个</span></div>'+preview.map(w=>'<div class="review-item"><div class="row"><strong>'+esc(w.word)+'</strong><span class="tag">'+esc(w.meaning)+'</span></div></div>').join('')+(due.length>preview.length?'<p class="small muted">还有 '+(due.length-preview.length)+' 个单词将在复习过程中出现。</p>':'')+'<button class="btn primary" style="width:100%;margin-top:14px" data-action="start-review">开始今日复习（'+due.length+'）</button>':'<div class="empty" style="margin-top:14px"><div style="font-size:28px">🌿</div><h3>暂时没有到期单词</h3><p>继续学习新词，系统会自动安排下一次复习。</p></div>')+'</div>';
 }
 
-function listenView(app){app.innerHTML='<div class="card"><h2 class="section-title">听力训练</h2><p class="section-sub">每题都可以反复播放。答错后显示单词释义卡，答对只给简短反馈；确认后点击「下一题」继续。</p><div class="tabs"><button class="pill '+(state.listenMode==='choice'?'active':'')+'" data-action="mode" data-mode="choice">听音选中文</button><button class="pill '+(state.listenMode==='dictation'?'active':'')+'" data-action="mode" data-mode="dictation">听写单词</button></div>'+(question?questionHTML():'<div class="empty">🎧<p>准备好开始了吗？</p><button class="btn primary" data-action="start">开始练习</button></div>')+'</div>'}
+function listenProgressHTML(){
+ const p=Object.assign({wordCorrect:0,wordWrong:0,sentenceCorrect:0,sentenceWrong:0,visualCorrect:0,visualWrong:0,shadowAttempts:0,shadowCompleted:0,scenarioCorrect:0,scenarioWrong:0},state.listenStats||{});
+ const pct=(a,b)=>a+b?Math.round(a/(a+b)*100):0;
+ return '<div class="listen-progress"><div class="listen-progress-title"><strong>能力训练记录</strong><span>按训练类型分别统计</span></div><div class="listen-progress-grid">'+[
+  ['听懂单词',pct(p.wordCorrect,p.wordWrong),p.wordCorrect+p.wordWrong],
+  ['听懂句子',pct(p.sentenceCorrect,p.sentenceWrong),p.sentenceCorrect+p.sentenceWrong],
+  ['视觉认读',pct(p.visualCorrect,p.visualWrong),p.visualCorrect+p.visualWrong],
+  ['场景反应',pct(p.scenarioCorrect,p.scenarioWrong),p.scenarioCorrect+p.scenarioWrong]
+ ].map(x=>'<div class="listen-progress-cell"><strong>'+x[1]+'%</strong><span>'+x[0]+'</span><small>'+x[2]+' 次</small></div>').join('')+'</div><p class="listen-shadow-summary">跟读完成 '+(p.shadowCompleted||0)+' / '+(p.shadowAttempts||0)+' 次 · 跟读为自我确认，不等同于自动发音评分</p></div>';
+}
+function listenView(app){
+ const modes=[['choice','盲听单词'],['sentence','盲听句子'],['visual','视觉认读'],['shadow','跟读模仿'],['scenario','场景反应'],['dictation','听写单词']];
+ app.innerHTML='<div class="card"><div class="eyebrow">LISTEN FIRST · AUDIO BEFORE TEXT</div><h2 class="section-title">听力训练</h2><p class="section-sub">先听声音，再理解意思。盲听题默认隐藏英文；答错后显示释义，答对轻微提示并自动进入下一题。</p>'+listenProgressHTML()+'<div class="tabs listen-mode-tabs">'+modes.map(m=>'<button class="pill '+(state.listenMode===m[0]?'active':'')+'" data-action="mode" data-mode="'+m[0]+'">'+m[1]+'</button>').join('')+'</div>'+(question?questionHTML():'<div class="empty">🎧<p>选择一种训练方式，准备好后开始。</p><button class="btn primary" data-action="start">开始练习</button></div>')+'</div>';
+}
 function listenAnswerPanel(q){
  if(!q.done||q.correct)return '';
+ if(q.mode==='scenario'){
+  const answer=q.options[q.correctIndex];
+  return '<div class="listen-answer-panel"><div class="listen-answer-meaning">你听到的意思</div><div class="listen-answer-meaning">'+esc(q.promptZh||'')+'</div><div class="listen-answer-meaning">正确回应</div><div class="listen-answer-word">'+esc(answer.en)+'</div><div class="listen-answer-meaning">'+esc(answer.zh)+'</div><div class="listen-repeat-hint">情境：'+esc(q.context)+'</div></div><button class="btn secondary listen-next-btn" data-action="play">重听问题</button><button class="btn quiet listen-next-btn" data-action="play-slow">慢速播放</button><button class="btn primary listen-next-btn" data-action="next">下一题</button>';
+ }
  const w=q.word;
- return '<div class="listen-answer-panel listen-wrong-answer" data-action="play" role="button" tabindex="0" aria-label="点击卡片任意位置重听单词"><div class="listen-answer-word">'+esc(w.word)+'</div><div class="listen-answer-phonetic">'+esc(w.phonetic||'暂未提供音标')+'</div><div class="listen-answer-meaning">'+esc(w.meaning)+'</div><div class="listen-repeat-hint">🔊 点击卡片任意位置，反复听单词发音</div></div><button class="btn primary listen-next-btn" data-action="next">下一题</button>';
+ return '<div class="listen-answer-panel listen-wrong-answer" data-action="play" role="button" tabindex="0" aria-label="点击卡片任意位置重听">'+(q.mode==='sentence'?'<div class="listen-answer-meaning">句子原文</div><div class="listen-answer-word">'+esc(q.sentence)+'</div><div class="listen-answer-meaning">'+esc(q.sentenceZh||'')+'</div><div class="listen-answer-phonetic">重点词：'+esc(w.word)+' · '+esc(w.meaning)+'</div>':'<div class="listen-answer-word">'+esc(w.word)+'</div><div class="listen-answer-phonetic">'+esc(w.phonetic||'暂未提供音标')+'</div><div class="listen-answer-meaning">'+esc(w.meaning)+'</div>')+'<div class="listen-repeat-hint">🔊 点击卡片任意位置，反复听发音</div></div><button class="btn quiet listen-next-btn" data-action="play-slow">慢速播放</button><button class="btn primary listen-next-btn" data-action="next">下一题</button>';
 }
 function questionHTML(){
- const q=question;
+ const q=question,mode=q.mode||'word';
  if(q.done&&!q.correct)return listenAnswerPanel(q);
- const audio=q.done?'':'<button type="button" class="listen-audio-trigger" data-action="play"><strong>🔊 播放 / 重听</strong><small>可以反复点击，不限次数</small></button>';
- if(state.listenMode==='choice')return audio+'<div class="choice-list">'+q.options.map(w=>'<button class="choice '+(q.done?(w.id===q.word.id?'correct':''):'')+'" data-action="choose" data-id="'+esc(w.id)+'" '+(q.done?'disabled':'')+'>'+esc(w.meaning)+'</button>').join('')+'</div>';
- return audio+'<div class="form-grid"><label class="label" for="dictation">听音输入英文单词</label><input id="dictation" class="field '+(q.done?'listen-input-correct':'')+'" autocomplete="off" placeholder="Type what you hear" value="'+esc(q.typedAnswer||'')+'" '+(q.done?'disabled':'')+'> '+(q.done?'<span class="listen-correct-mark">✓</span>':'<button class="btn primary" data-action="check">检查答案</button>')+'</div>';
+ if(q.done&&q.correct)return '<div class="feedback good listen-correct-feedback">✓ 正确，马上进入下一题</div>';
+ if(mode==='shadow')return '<div class="listen-shadow-card"><div class="listen-shadow-en">'+esc(q.sentence)+'</div><button class="btn quiet" data-action="listen-reveal">'+(q.revealed?'隐藏中文':'显示中文翻译')+'</button>'+(q.revealed?'<p class="listen-shadow-zh">'+esc(q.sentenceZh||'')+'</p>':'')+'<div class="listen-shadow-actions"><button class="btn secondary" data-action="play">🔊 重听原声</button><button class="btn quiet" data-action="play-slow">慢速播放</button><button class="btn primary" data-action="shadow-done">我已跟读</button></div><p class="small muted">先听完整句子，再模仿节奏、重音和语调；跟读完成由你自己确认。</p></div>';
+ if(mode==='scenario')return '<button class="listen-audio-trigger" data-action="play"><strong>🔊 播放对话</strong><small>先听懂对方在说什么</small></button><button class="btn quiet listen-reveal-btn" data-action="play-slow">慢速播放 0.78×</button><div class="choice-list">'+q.options.map((o,i)=>'<button class="choice" data-action="choose" data-id="'+i+'">'+esc(o.en)+'</button>').join('')+'</div>';
+ if(mode==='visual')return '<div class="listen-visual-word">'+esc(q.word.word)+'</div><div class="listen-audio-trigger"><strong>视觉认读 · 不播放声音</strong><small>看英文，选择中文含义</small></div><div class="choice-list">'+q.options.map(w=>'<button class="choice" data-action="choose" data-id="'+esc(w.id)+'">'+esc(w.meaning)+'</button>').join('')+'</div>';
+ const audio='<button type="button" class="listen-audio-trigger" data-action="play"><strong>🔊 '+(mode==='sentence'?'播放完整句子':'播放 / 重听单词')+'</strong><small>先听声音，不依赖拼写</small></button><button class="btn quiet listen-reveal-btn" data-action="play-slow">慢速播放 0.78×</button>';
+ if(mode==='sentence')return audio+'<button class="btn quiet listen-reveal-btn" data-action="listen-reveal">'+(q.revealed?'隐藏英文原句':'显示英文原句')+'</button>'+(q.revealed?'<div class="listen-sentence-reveal"><strong>'+esc(q.sentence)+'</strong><p>'+esc(q.sentenceZh||'')+'</p></div>':'')+'<div class="choice-list">'+q.options.map(w=>'<button class="choice" data-action="choose" data-id="'+esc(w.id)+'">'+esc(w.zh||w.meaning)+'</button>').join('')+'</div>';
+ if(mode==='choice')return audio+'<div class="choice-list">'+q.options.map(w=>'<button class="choice" data-action="choose" data-id="'+esc(w.id)+'">'+esc(w.meaning)+'</button>').join('')+'</div>';
+ return audio+'<div class="form-grid"><label class="label" for="dictation">听音输入英文单词</label><input id="dictation" class="field" autocomplete="off" placeholder="Type what you hear" value="'+esc(q.typedAnswer||'')+'"><button class="btn primary" data-action="check">检查答案</button></div>';
 }
 function listenWordWeight(w){
  const card=state.cards[w.id]||{};
- const listenMiss=Math.max(0,Number(card.listenWrongCount)||0);
+ const listenMiss=Math.max(0,Number(card.listenWrongCount)||0)+Math.max(0,Number(card.listenSentenceWrongCount)||0);
  const studyMiss=Math.max(0,Number(card.struggleCount)||0);
  const unknownCount=Math.max(0,Number(card.unknownCount)||0);
  return 1+Math.min(18,listenMiss*3)+Math.min(15,studyMiss*3)+Math.min(8,unknownCount);
@@ -4432,29 +4458,63 @@ function pickWeightedListenWords(pool,count){
  }
  return chosen;
 }
+const LISTEN_SCENARIOS=[
+ {context:'餐厅点餐',prompt:'Could I get a table for two, please?',promptZh:'我可以要一张两人桌吗？',options:[{en:'Of course. Right this way.',zh:'当然可以，请这边走。'},{en:'I went there yesterday.',zh:'我昨天去过那里。'},{en:'It is twenty minutes long.',zh:'它有二十分钟长。'}],correctIndex:0},
+ {context:'日常聊天',prompt:'How was your weekend?',promptZh:'你周末过得怎么样？',options:[{en:'It was great, thanks for asking.',zh:'很不错，谢谢你问我。'},{en:'Turn left at the corner.',zh:'在拐角处左转。'},{en:'I need a larger size.',zh:'我需要大一号的。'}],correctIndex:0},
+ {context:'问路出行',prompt:'Excuse me, how do I get to the nearest subway station?',promptZh:'请问，最近的地铁站怎么走？',options:[{en:'Go straight and turn right.',zh:'直走然后右转。'},{en:'I would like a cup of tea.',zh:'我想要一杯茶。'},{en:'The meeting starts at nine.',zh:'会议九点开始。'}],correctIndex:0},
+ {context:'工作交流',prompt:'Could you send me the updated file?',promptZh:'你能把更新后的文件发给我吗？',options:[{en:'Sure. I will send it this afternoon.',zh:'当然，我今天下午发给你。'},{en:'The weather is getting colder.',zh:'天气正在变冷。'},{en:'I usually take the bus.',zh:'我通常坐公交车。'}],correctIndex:0}
+];
 function newQuestion(){
  const all=allWords().filter(w=>w&&w.id&&String(w.word||'').trim()&&String(w.meaning||'').trim());
- if(!all.length)return;
- const learned=all.filter(w=>state.cards[w.id]&&state.cards[w.id].seen);
- const targetPool=learned.length?learned:all;
- const word=pickWeightedListenWords(targetPool,1)[0];
- let optionsPool=learned.filter(w=>w.id!==word.id);
- if(optionsPool.length<3){
-  const extra=all.filter(w=>w.id!==word.id&&!optionsPool.some(x=>x.id===w.id));
-  optionsPool=optionsPool.concat(extra);
+ if(!all.length){showToast('词库为空，请先添加或导入单词');return}
+ const mode=state.listenMode==='choice'?'word':state.listenMode;
+ if(mode==='scenario'){
+  const scenario=LISTEN_SCENARIOS[Math.floor(Math.random()*LISTEN_SCENARIOS.length)];
+  const shuffled=scenario.options.map((o,i)=>Object.assign({},o,{_sourceIndex:i})).sort(()=>Math.random()-.5);
+  question={mode:'scenario',context:scenario.context,prompt:scenario.prompt,promptZh:scenario.promptZh,options:shuffled,correctIndex:shuffled.findIndex(o=>o._sourceIndex===scenario.correctIndex),done:false,correct:false,selected:null};
+  render();if(state.view==='listen')say(question.prompt);return;
  }
- const others=pickWeightedListenWords(optionsPool,3);
- question={word,options:[word].concat(others).sort(()=>Math.random()-.5),done:false,correct:false,selected:null};
+ const learned=all.filter(w=>state.cards[w.id]&&state.cards[w.id].seen);
+ const base=learned.length?learned:all;
+ let pool=base;
+ const sentencePool=all.filter(w=>w.en&&String(w.en).trim()&&String(w.zh||'').trim());
+ if(mode==='sentence'||mode==='shadow')pool=base.filter(w=>w.en&&String(w.en).trim()&&String(w.zh||'').trim());
+ if(!pool.length&&(mode==='sentence'||mode==='shadow'))pool=sentencePool;
+ if(!pool.length)pool=all;
+ if(!pool.length){showToast('当前词库还没有带英文例句和中文翻译的词条');return}
+ const word=pickWeightedListenWords(pool,1)[0];
+ let optionsPool=(mode==='sentence'?sentencePool:learned).filter(w=>w.id!==word.id);
+ if(optionsPool.length<3){const fallback=(mode==='sentence'?sentencePool:all).filter(w=>w.id!==word.id&&!optionsPool.some(x=>x.id===w.id));optionsPool=optionsPool.concat(fallback)}
+ const options=[word].concat(pickWeightedListenWords(optionsPool,3));
+ if(mode==='sentence'||mode==='shadow')question={mode,word,sentence:word.en,sentenceZh:word.zh,options:options.sort(()=>Math.random()-.5),revealed:false,done:false,correct:false,selected:null};
+ else question={mode,word,options:options.sort(()=>Math.random()-.5),done:false,correct:false,selected:null};
  render();
- if(state.view==='listen')say(word.word);
+ if(state.view==='listen')say(mode==='sentence'||mode==='shadow'?word.en:mode==='visual'?'':word.word);
 }
 function recordListenResult(q){
- const card=state.cards[q.word.id]||{};
- if(q.correct)card.listenCorrectCount=(Number(card.listenCorrectCount)||0)+1;
- else card.listenWrongCount=(Number(card.listenWrongCount)||0)+1;
- card.lastListenAt=new Date().toISOString();
- if(!q.correct)card.lastListenWrongAt=card.lastListenAt;
- state.cards[q.word.id]=card;
+ state.listenStats=Object.assign(blank().listenStats,state.listenStats||{});
+ const key=q.mode||'word',ok=!!q.correct;
+ const pairs={word:['wordCorrect','wordWrong'],sentence:['sentenceCorrect','sentenceWrong'],visual:['visualCorrect','visualWrong'],scenario:['scenarioCorrect','scenarioWrong']};
+ if(pairs[key])state.listenStats[pairs[key][ok?0:1]]=(Number(state.listenStats[pairs[key][ok?0:1]])||0)+1;
+ if(key==='shadow'){
+  state.listenStats.shadowAttempts=(Number(state.listenStats.shadowAttempts)||0)+1;
+  if(ok)state.listenStats.shadowCompleted=(Number(state.listenStats.shadowCompleted)||0)+1;
+ }
+ if(q.word){
+  const card=state.cards[q.word.id]||{};
+  if(key==='shadow'){
+   card.shadowingAttempts=(Number(card.shadowingAttempts)||0)+1;
+   if(ok)card.shadowingCompleted=(Number(card.shadowingCompleted)||0)+1;
+  }else{
+   const field=key==='sentence'?'listenSentence':key==='visual'?'visual':'listen';
+   const metric=field+(ok?'CorrectCount':'WrongCount');
+   card[metric]=(Number(card[metric])||0)+1;
+   if(key==='sentence'&&ok&&!q.revealed)card.listenSentenceUnassistedCorrectCount=(Number(card.listenSentenceUnassistedCorrectCount)||0)+1;
+  }
+  card.lastListenAt=new Date().toISOString();
+  if(!ok)card.lastListenWrongAt=card.lastListenAt;
+  state.cards[q.word.id]=card;
+ }
 }
 function advanceListenAfterAnswer(q){
  if(!q||!q.correct)return;
@@ -4699,9 +4759,13 @@ else if(a==='review-rate'){let id=state.review.ids[state.review.index];if(id){le
 else if(a==='end-review'){state.review.active=false;save();render()}
 else if(a==='mode'){state.listenMode=b.dataset.mode;question=null;save();render()}
 else if(a==='start')newQuestion()
-else if(a==='play'&&question)say(question.word.word)
-else if(a==='choose'&&question&&!question.done){let q=question;q.selected=b.dataset.id;q.correct=q.selected===q.word.id;q.done=true;recordListenResult(q);state.stats.attempts++;if(q.correct)state.stats.correct++;markActivity();render();advanceListenAfterAnswer(q)}
-else if(a==='check'&&question&&!question.done){let q=question;q.typedAnswer=document.getElementById('dictation').value.trim();q.correct=q.typedAnswer.toLowerCase()===q.word.word.toLowerCase();q.done=true;recordListenResult(q);state.stats.attempts++;if(q.correct)state.stats.correct++;markActivity();render();advanceListenAfterAnswer(q)}
+else if(a==='play'&&question)say(question.prompt||question.sentence||(question.word&&question.word.word)||'')
+else if(a==='play-slow'&&question)saySlow(question.prompt||question.sentence||(question.word&&question.word.word)||'')
+else if(a==='listen-reveal'&&question){question.revealed=!question.revealed;render()}
+else if(a==='shadow-repeat'&&question)say(question.sentence||'')
+else if(a==='shadow-done'&&question&&!question.done){let q=question;q.correct=true;q.done=true;recordListenResult(q);markActivity();save();render();advanceListenAfterAnswer(q)}
+else if(a==='choose'&&question&&!question.done){let q=question;q.selected=b.dataset.id;q.correct=q.mode==='scenario'?Number(q.selected)===Number(q.correctIndex):q.selected===q.word.id;q.done=true;recordListenResult(q);state.stats.attempts++;if(q.correct)state.stats.correct++;markActivity();save();render();advanceListenAfterAnswer(q)}
+else if(a==='check'&&question&&!question.done&&question.word){let q=question,field=document.getElementById('dictation');q.typedAnswer=field?field.value.trim():'';q.correct=q.typedAnswer.toLowerCase()===q.word.word.toLowerCase();q.done=true;recordListenResult(q);state.stats.attempts++;if(q.correct)state.stats.correct++;markActivity();save();render();advanceListenAfterAnswer(q)}
 else if(a==='next')newQuestion()
 else if(a==='bible-word-play'){let word=b.dataset.word,meaning=b.dataset.meaning;say(word);showToast(word+'：'+meaning)}
 else if(a==='reader-word'){const key=b.dataset.wordKey||b.dataset.ref+'|'+b.dataset.word;const same=state.bible.readerWord&&state.bible.readerWord.key===key;state.bible.readerWord=same?null:{key,word:b.dataset.word,meaning:b.dataset.meaning,phonetic:b.dataset.phonetic||'',ref:b.dataset.ref,en:b.dataset.word};if(!same){say(b.dataset.word);if(!b.dataset.meaning||b.dataset.meaning==='点击查询中文释义')readerLookupWord(b.dataset.word)}renderPreservingScroll()}

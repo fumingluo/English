@@ -1,0 +1,24 @@
+name: English regression checks
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main, feature/listening-first-overhaul]
+  workflow_dispatch:
+
+jobs:
+  browser-smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Install browser test runner
+        run: npm install --no-save playwright
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+      - name: Run syntax and browser regression tests
+        run: node tests/english-smoke.mjs
