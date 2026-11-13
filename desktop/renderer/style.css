@@ -1,26 +1,30 @@
 *{box-sizing:border-box}
-html,body{margin:0;width:100%;height:100%;overflow:hidden;background:transparent;font-family:Inter,"Segoe UI","Microsoft YaHei",sans-serif;color:#f5f7f4}
+html,body{margin:0;width:100%;height:100%;overflow:hidden;background:transparent;font-family:Inter,"Segoe UI","Microsoft YaHei",sans-serif;color:#000}
 body{-webkit-app-region:drag}
-.ticker{position:relative;width:100%;height:100%;padding:10px 16px 9px;border:1px solid transparent;border-radius:15px;background:transparent;box-shadow:none;display:flex;flex-direction:column;justify-content:center;transition:background .2s ease,border-color .2s ease,box-shadow .2s ease}
-.ticker:hover{background:rgba(18,25,23,.90);border-color:rgba(255,255,255,.16);box-shadow:0 5px 22px rgba(0,0,0,.2)}
-.hover-tools{position:absolute;top:5px;right:9px;left:14px;height:17px;display:flex;align-items:center;gap:9px;opacity:0;pointer-events:none;transition:opacity .18s ease;z-index:3}
+.ticker{position:relative;width:100%;height:100%;padding:8px 14px;border:1px solid transparent;border-radius:16px;background:transparent;box-shadow:none;display:flex;align-items:center;justify-content:center;transition:background .22s ease,border-color .22s ease,box-shadow .22s ease}
+.ticker:hover{background:rgba(255,255,255,.93);border-color:rgba(25,30,26,.14);box-shadow:0 5px 20px rgba(0,0,0,.13)}
+.hover-tools{position:absolute;top:5px;left:12px;right:10px;height:16px;display:flex;align-items:center;gap:9px;opacity:0;pointer-events:none;transition:opacity .18s ease;z-index:8}
 .ticker:hover .hover-tools{opacity:1;pointer-events:auto}
-.brand{font-size:8px;font-weight:800;letter-spacing:1.5px;color:#a8c8b1}
-.status{font-size:9px;color:#aebbb2}
-.hide{margin-left:auto;border:0;background:transparent;color:#d5ded8;font-size:17px;line-height:15px;cursor:pointer;padding:0 3px;-webkit-app-region:no-drag}
-.lyrics-viewport{position:relative;width:100%;height:170px;overflow:hidden;mask-image:linear-gradient(to bottom,transparent 0%,#000 13%,#000 87%,transparent 100%);-webkit-mask-image:linear-gradient(to bottom,transparent 0%,#000 13%,#000 87%,transparent 100%)}
-.lyric-track{position:absolute;inset:0;display:flex;flex-direction:column;will-change:transform}
-.lyric-row{position:relative;flex:0 0 34px;height:34px;display:flex;align-items:center;justify-content:center;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;transition:opacity .3s ease,filter .3s ease}
-.lyric-row.edge{font-size:13px;font-weight:450;color:rgba(238,245,239,.23);filter:blur(.65px);opacity:.34}
-.lyric-row.adjacent{font-size:15px;font-weight:550;color:rgba(238,245,239,.56);opacity:.68}
-.lyric-row.current{gap:8px;color:#fff;opacity:1;filter:none;overflow:visible}
-.live-dot{width:6px;height:6px;flex:0 0 6px;border-radius:50%;background:#8e9a91;opacity:.7}
-.ticker.playing .live-dot{background:#75e0a0;opacity:1;box-shadow:0 0 9px rgba(117,224,160,.8);animation:pulse 1.5s ease-in-out infinite}
-.current-word{max-width:calc(100% - 24px);overflow:hidden;text-overflow:ellipsis;font-size:22px;font-weight:780;letter-spacing:-.45px;line-height:25px;background:linear-gradient(95deg,#fff 0%,#b9f3d0 32%,#a9c9ff 68%,#f0c9ff 100%);background-size:220% auto;background-clip:text;-webkit-background-clip:text;color:transparent;animation:gradient 5s linear infinite}
-.current-meaning{position:absolute;left:18px;right:18px;top:25px;text-align:center;overflow:hidden;text-overflow:ellipsis;font-size:10.5px;line-height:12px;color:rgba(238,245,239,.86);font-weight:450}
-.lyric-track.advance{animation:lyric-rise .36s cubic-bezier(.22,.75,.25,1) forwards}
-.progress{position:absolute;right:13px;bottom:5px;font-size:8px;color:rgba(220,230,223,.42);opacity:0;transition:opacity .18s}
+.brand{font-size:8px;font-weight:800;letter-spacing:1.5px;color:#222}
+.status{font-size:9px;color:#303630}
+.hide{margin-left:auto;border:0;background:transparent;color:#111;font-size:17px;line-height:15px;cursor:pointer;padding:0 3px;-webkit-app-region:no-drag}
+.lyrics-viewport{position:relative;width:100%;height:170px;overflow:hidden;perspective:520px;perspective-origin:50% 48%;mask-image:linear-gradient(to bottom,transparent 0%,#000 12%,#000 88%,transparent 100%);-webkit-mask-image:linear-gradient(to bottom,transparent 0%,#000 12%,#000 88%,transparent 100%)}
+.lyric-track{position:absolute;inset:0;display:block;transform-style:preserve-3d}
+.lyric-row{--row-y:0px;--row-z:0px;--row-scale:1;--row-opacity:1;--row-blur:0px;position:absolute;top:calc(50% - 17px);left:0;width:100%;height:34px;display:flex;align-items:center;justify-content:center;white-space:nowrap;transform-origin:50% 50%;transform:translate3d(0,var(--row-y),var(--row-z)) scale(var(--row-scale));opacity:var(--row-opacity);filter:blur(var(--row-blur));backface-visibility:hidden;will-change:transform,opacity,filter;pointer-events:none}
+.lyric-track.rolling .lyric-row{transition:transform .78s cubic-bezier(.2,.78,.2,1),opacity .78s cubic-bezier(.2,.78,.2,1),filter .78s cubic-bezier(.2,.78,.2,1)}
+.lyric-row.current{z-index:5}
+.lyric-row.adjacent{z-index:4}
+.lyric-row.edge{z-index:3}
+.lyric-row.far{z-index:1}
+.live-dot{display:none;width:7px;height:7px;flex:0 0 7px;align-self:center;margin-right:9px;border-radius:50%;background:#68716b;opacity:.72}
+.lyric-row.current .live-dot{display:block}
+.ticker.playing .live-dot{background:#218c4b;opacity:1;box-shadow:0 0 9px rgba(33,140,75,.42);animation:pulse 1.6s ease-in-out infinite}
+.row-content{display:flex;align-items:baseline;justify-content:center;gap:9px;width:max-content;max-width:calc(100% - 24px);white-space:nowrap;line-height:1.2}
+.row-word{font-size:1em;font-weight:800;letter-spacing:-.35px;color:#000;text-shadow:0 1px 2px rgba(255,255,255,.82)}
+.row-meaning{font-size:.72em;font-weight:650;color:#000;text-shadow:0 1px 2px rgba(255,255,255,.82)}
+.row-meaning[hidden]{display:none}
+.progress{position:absolute;right:13px;bottom:4px;font-size:8px;color:rgba(0,0,0,.58);opacity:0;transition:opacity .18s;z-index:8}
 .ticker:hover .progress{opacity:1}
-@keyframes lyric-rise{from{transform:translateY(0)}to{transform:translateY(-34px)}}
-@keyframes gradient{to{background-position:220% center}}
-@keyframes pulse{50%{opacity:.45;transform:scale(.82)}}
+@keyframes pulse{50%{opacity:.42;transform:scale(.82)}}
+@media(max-width:360px){.row-content{gap:6px}.row-word{letter-spacing:-.5px}}
+@media(prefers-reduced-motion:reduce){.lyric-track.rolling .lyric-row,.ticker,.hover-tools,.progress{transition:none}.ticker.playing .live-dot{animation:none}}
