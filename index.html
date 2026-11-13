@@ -4164,7 +4164,7 @@ window.audioPlayer=audioPlayer;
 // Windows desktop companion: the webpage remains the only audio player.
 // Once requested, reconnect automatically if the local desktop bridge restarts.
 let companionSocket=null, companionRetry=null, companionRequested=false, companionSegment='', companionSegmentZh='', companionQueueSignature='', companionRetryDelay=1000;
-function companionSetStatus(message){const el=document.getElementById('companionSyncStatus');if(el)el.textContent=message;}
+function companionSetStatus(message){const el=document.getElementById('companionSyncStatus');if(el)el.textContent=message;const readerStatus=document.getElementById('readerAudioStatus');if(readerStatus&&!readerPlayback.active)readerStatus.textContent=message;}
 function companionPublish(){
  const socket=companionSocket;
  if(!socket||socket.readyState!==WebSocket.OPEN)return;
@@ -4605,7 +4605,7 @@ function readerPausePlayback(){
 }
 async function readerPlayAll(){
  const chapter=Number(state.bible.readerChapter)||1;
- const verses=(state.bible.revelationVerses||[]).filter(v=>v&&v.en&&new RegExp('(?:^|\\\\s)'+chapter+':').test(String(v.ref||'')));
+ const verses=(state.bible.revelationVerses||[]).filter(v=>v&&v.en&&String(v.ref||'').trim().split(':')[0]===String(chapter));
  if(!verses.length){if(!revelationLoading)loadRevelation();showToast('正在准备英文全文，请稍后再播放');return}
  readerStopPlayback();readerPlayback.active=true;
  const token=readerPlayback.token,words=verses.flatMap(v=>String(v.en||'').match(/[A-Za-z]+(?:['’][A-Za-z]+)?/g)||[]);
