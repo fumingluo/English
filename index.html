@@ -4004,7 +4004,7 @@ async function fallbackSay(text,language=detectTtsLanguage(text),requestId=ttsRe
  if(requestId!==ttsRequestId)return false;
  const u=new SpeechSynthesisUtterance(text);
  u.lang=lang;
- u.rate=lang==='zh-CN'?.96:.88;
+ u.rate=(lang==='zh-CN'?.96:.88)*(window.audioPlayer&&Number(window.audioPlayer.rate)<1?Number(window.audioPlayer.rate):1);
  let voice=null;
  if(lang==='zh-CN'){
   voice=voices.find(v=>/^zh[-_]?CN/i.test(v.lang)&&/Xiaoxiao|晓晓|Yunxi|云希|Xiaoyi|晓伊|Huihui|慧慧|Tingting|婷婷|中文.*女|普通话/i.test(v.name))
