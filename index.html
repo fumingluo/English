@@ -4607,7 +4607,7 @@ async function readerLookupWord(word){
 }
 function contextReadingView(app){
  const chapter=Math.max(1,Math.min(22,Number(state.bible.readerChapter)||1)),verses=state.bible.revelationVerses||[];
- if(!Array.isArray(verses)||verses.length<400){if(!revelationLoading)loadRevelation();app.innerHTML='<div class="card"><div class="eyebrow">ENGLISH IMMERSION · READING</div><h2 class="section-title">正在准备英文全文</h2><p class="section-sub">正在载入启示录英文全文。完成后即可逐词点击、查询中文释义。</p></div>';return}
+ if(!Array.isArray(verses)||verses.length<400){if(revelationError){app.innerHTML='<div class="card"><div class="eyebrow">ENGLISH IMMERSION · READING</div><h2 class="section-title">英文全文暂时无法载入</h2><p class="section-sub">'+esc(revelationError)+'</p><button class="btn primary" data-action="reader-retry">重新加载全文</button></div>';return}if(!revelationLoading)loadRevelation();app.innerHTML='<div class="card"><div class="eyebrow">ENGLISH IMMERSION · READING</div><h2 class="section-title">正在准备英文全文</h2><p class="section-sub">正在载入启示录英文全文。完成后即可逐词点击、查询中文释义。</p></div>';return}
  const grouped={};verses.forEach(v=>{const m=String(v.ref||'').match(/(\d+):(\d+)/);if(m)(grouped[Number(m[1])]||(grouped[Number(m[1])]=[])).push(v)});
  const rows=grouped[chapter]||[];if(!rows.length){app.innerHTML='<div class="card"><p>本章英文内容暂不可用。</p></div>';return}
  const article=rows.map(v=>'<p class="reader-verse reader-verse-english"><span class="reader-ref">'+esc(v.ref||'')+'</span>'+readerEnglishTokens(v.en||'',v.ref||'')+'</p>').join('');
@@ -4699,7 +4699,7 @@ else if(a==='bible-word-play'){let word=b.dataset.word,meaning=b.dataset.meaning
 else if(a==='reader-word'){const key=b.dataset.wordKey||b.dataset.ref+'|'+b.dataset.word;const same=state.bible.readerWord&&state.bible.readerWord.key===key;state.bible.readerWord=same?null:{key,word:b.dataset.word,meaning:b.dataset.meaning,phonetic:b.dataset.phonetic||'',ref:b.dataset.ref,en:b.dataset.word};if(!same){say(b.dataset.word);if(!b.dataset.meaning||b.dataset.meaning==='点击查询中文释义')readerLookupWord(b.dataset.word)}renderPreservingScroll()}
 else if(a==='reader-pronounce'){say(b.dataset.word)}
 else if(a==='reader-rate'){state.bible.readerWordLevels=Object.assign({},state.bible.readerWordLevels||{},{[String(b.dataset.word||'').toLowerCase()]:b.dataset.rating});save();renderPreservingScroll();showToast('熟练度已保存')}
-else if(a==='reader-retry'){window.readerCuvError=false;window.readerCuvLoading=false;renderPreservingScroll()}
+else if(a==='reader-retry'){revelationError='';revelationLoading=false;loadRevelation()}
 
 else if(a==='reader-add-word'){let x=state.bible.readerWord;if(x){let id='bible-'+x.en.toLowerCase().replace(/[^a-z0-9]+/g,'-');if(!allWords().some(w=>w.id===id)){state.custom.push({id,word:x.en,phonetic:'',meaning:x.meaning,level:state.level,category:'启示录词汇',en:x.en,zh:'',isCustom:true});save();showToast('已加入个人词库和复习系统')}else showToast('这个词已经在个人词库中');renderPreservingScroll()}}
 else if(a==='reader-prev'||a==='reader-next'){state.bible.readerChapter=Math.max(1,Math.min(22,(Number(state.bible.readerChapter)||1)+(a==='reader-next'?1:-1)));state.bible.readerWord=null;save();renderPreservingScroll()}
