@@ -4555,8 +4555,8 @@ function readerWordMarkup(term,ref,wordKey){
 }
 const READER_PHRASES=['the seven churches','the word of God','the testimony of Jesus','the Alpha and the Omega','the first and the last','the tree of life','the book of life','the holy city','the New Jerusalem','the Lord God','the throne of God','the Lamb of God','King of kings','Lord of lords','day and night','he who has an ear','those who overcome','the Spirit says','the angel of the Lord','the lake of fire'];
 function readerEnglishTokens(source,ref){
- const phrasePattern=READER_PHRASES.slice().sort((a,b)=>b.length-a.length).map(x=>x.replace(/[.*+?^${}()|[\\]\\\\]/g,'\\\\$&')).join('|');
- const parts=String(source||'').split(new RegExp('('+phrasePattern+'|[A-Za-z]+(?:[’\\']?[A-Za-z]+)?|[^A-Za-z]+)','gi')).filter(Boolean);
+ const phrasePattern=READER_PHRASES.slice().sort((a,b)=>b.length-a.length).join('|');
+ const parts=String(source||'').split(new RegExp("("+phrasePattern+"|[A-Za-z]+(?:['’][A-Za-z]+)?|[^A-Za-z]+)","gi")).filter(Boolean);
  let wordIndex=0;
  const renderWord=part=>{
   if(!/^[A-Za-z]+(?:['’][A-Za-z]+)?$/.test(part))return esc(part);
