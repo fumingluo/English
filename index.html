@@ -79,9 +79,15 @@
 .reader-verse{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;font-size:17px;line-height:2.15;margin:0 0 14px;color:#283629}
 .reader-token{cursor:pointer;margin:0 1px;padding:0 1px;border:0;background:transparent;color:inherit;font:inherit;line-height:inherit;border-radius:4px}.reader-token:hover,.reader-token.selected{background:#f5edcf;color:#765c20}.reader-token.status-familiar{color:#315b91}.reader-token.status-known{color:#426b45}.reader-token.status-fluent{color:#758276}
 .reader-ref{display:inline-block;font:700 10px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:#8b9688;margin:0 7px 0 0;vertical-align:middle}
-.reader-word{display:inline;border:0!important;border-radius:0!important;background:transparent!important;color:inherit!important;padding:0!important;margin:0 1px!important;font:inherit;font-weight:400;line-height:inherit;text-decoration:none!important;box-shadow:none!important}
-.reader-word:hover,.reader-word.selected{background:transparent!important;color:inherit!important;outline:none!important;text-decoration:underline!important;text-decoration-color:#9aaa94!important;text-underline-offset:3px}
-.reader-word.status-familiar,.reader-word.status-known,.reader-word.status-fluent{background:transparent!important;color:inherit!important;text-decoration:none!important;font-weight:400}
+.reader-word{display:inline;border:0!important;border-radius:0!important;background:transparent!important;color:inherit;padding:0!important;margin:0 1px!important;font:inherit;font-weight:400;line-height:inherit;text-decoration:none!important;box-shadow:none!important;position:relative;z-index:1;transform:translateY(0) scale(1);transform-origin:center;transition:transform .18s cubic-bezier(.2,.75,.25,1),color .18s ease,text-shadow .18s ease;will-change:transform}
+.reader-word:hover,.reader-word:focus-visible{background:transparent!important;outline:none!important;color:var(--green)!important;transform:translateY(-2px) scale(1.055);text-shadow:0 2px 7px #263b2926;z-index:5}
+.reader-word.selected{background:transparent!important;outline:none!important;text-decoration:underline!important;text-decoration-color:#9aaa94!important;text-underline-offset:4px;transform:translateY(-1px)}
+.reader-word.status-unlearned{color:#29352b}
+.reader-word.status-familiar{color:#3977b8}
+.reader-word.status-known{color:#43834d}
+.reader-word.status-fluent{color:#9a783c}
+.reader-word.selected{font-weight:600}
+@media(prefers-reduced-motion:reduce){.reader-word{transition:none;transform:none!important}}
 .reader-phrase{border-bottom:1px solid #9aaa94;padding-bottom:1px;white-space:normal}
 .reader-controls{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:10px 0}
 .reader-controls select{max-width:180px}
@@ -4563,7 +4569,9 @@ function readerEnglishTokens(source,ref){
   const term=READER_TERMS.find(x=>x.en.toLowerCase()===part.toLowerCase());
   const meaning=term?term.meaning:'点击查询中文释义';
   const key=ref+'|'+(wordIndex++)+'|'+part.toLowerCase();
-  return '<button type="button" class="reader-word reader-token" data-action="reader-word" data-word-key="'+esc(key)+'" data-word="'+esc(part)+'" data-meaning="'+esc(meaning)+'" data-phonetic="'+esc(READER_IPA[part]||'')+'" data-ref="'+esc(ref)+'" title="点击查看中文释义并播放发音">'+esc(part)+'</button>';
+  const progress=readerWordProgress(part);
+  const selected=state.bible.readerWord&&state.bible.readerWord.key===key;
+  return '<button type="button" class="reader-word reader-token status-'+progress.status+(selected?' selected':'')+'" data-action="reader-word" data-word-key="'+esc(key)+'" data-word="'+esc(part)+'" data-meaning="'+esc(meaning)+'" data-phonetic="'+esc(READER_IPA[part]||'')+'" data-ref="'+esc(ref)+'" title="点击查看中文释义并播放发音">'+esc(part)+'</button>';
  };
  return parts.map(part=>{
   if(READER_PHRASES.some(p=>p.toLowerCase()===part.toLowerCase())){
