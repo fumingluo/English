@@ -5,8 +5,8 @@ import vm from 'node:vm';
 import { chromium } from 'playwright';
 
 const html = await readFile(new URL('../index.html', import.meta.url), 'utf8');
-const classicScripts = [...html.matchAll(/<script\\b([^>]*)>([\\s\\S]*?)<\\/script>/gi)]
-  .filter(([, attrs]) => !/\\btype\\s*=\\s*["']module["']/i.test(attrs))
+const classicScripts = [...html.matchAll(/<script\b([^>]*)>([\s\S]*?)<\/script>/gi)]
+  .filter(([, attrs]) => !/\btype\s*=\s*["']module["']/i.test(attrs))
   .map(([, , body]) => body);
 assert.ok(classicScripts.length >= 1, 'main application script must exist');
 classicScripts.forEach((source, index) => new vm.Script(source, { filename: `inline-${index + 1}.js` }));
@@ -28,7 +28,7 @@ const browser = await chromium.launch({ headless: true, args: ['--no-sandbox'] }
 const page = await browser.newPage();
 const pageErrors = [];
 page.on('pageerror', error => pageErrors.push(error.message));
-await page.route(/^https?:\\/\\/(?!127\\.0\\.0\\.1)/, route => route.abort());
+await page.route(/^https?:\/\/(?!127\.0\.0\.1)/, route => route.abort());
 
 try {
   await page.goto(`http://127.0.0.1:${port}/`, { waitUntil: 'domcontentloaded' });
