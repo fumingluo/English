@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>English 浮动字幕</title>
+<title>English 单词悬浮助手</title>
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -11,22 +11,18 @@
   <div class="hover-tools">
     <span class="brand">ENGLISH</span>
     <span class="status" id="status">等待网页连接</span>
-    <button class="hide" id="hide" title="隐藏悬浮字幕">×</button>
+    <button class="hide" id="hide" title="隐藏悬浮窗">×</button>
   </div>
-  <section class="lyrics-viewport" aria-live="polite">
+  <section class="lyrics-viewport" aria-live="polite" aria-atomic="true">
     <div class="lyric-track" id="lyricTrack">
-      <div class="lyric-row edge" id="row0"></div>
-      <div class="lyric-row adjacent" id="row1"></div>
-      <div class="lyric-row current" id="row2">
-        <span class="live-dot" id="liveDot"></span>
-        <span class="current-word" id="currentWord">Ready?</span>
-        <span class="current-meaning" id="currentMeaning"></span>
-      </div>
-      <div class="lyric-row adjacent" id="row3"></div>
-      <div class="lyric-row edge" id="row4"></div>
+      <div class="lyric-row far" data-offset="-3"><span class="live-dot"></span><span class="row-content"><span class="row-word"></span><span class="row-meaning"></span></span></div>
+      <div class="lyric-row edge" data-offset="-2"><span class="live-dot"></span><span class="row-content"><span class="row-word"></span><span class="row-meaning"></span></span></div>
+      <div class="lyric-row adjacent" data-offset="-1"><span class="live-dot"></span><span class="row-content"><span class="row-word"></span><span class="row-meaning"></span></span></div>
+      <div class="lyric-row current" data-offset="0"><span class="live-dot" id="liveDot"></span><span class="row-content"><span class="row-word"></span><span class="row-meaning"></span></span></div>
+      <div class="lyric-row adjacent" data-offset="1"><span class="live-dot"></span><span class="row-content"><span class="row-word"></span><span class="row-meaning"></span></span></div>
+      <div class="lyric-row edge" data-offset="2"><span class="live-dot"></span><span class="row-content"><span class="row-word"></span><span class="row-meaning"></span></span></div>
+      <div class="lyric-row far" data-offset="3"><span class="live-dot"></span><span class="row-content"><span class="row-word"></span><span class="row-meaning"></span></span></div>
     </div>
-    <div class="fade-top"></div>
-    <div class="fade-bottom"></div>
   </section>
   <span class="progress" id="progress"></span>
 </main>
