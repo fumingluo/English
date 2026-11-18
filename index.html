@@ -3915,7 +3915,7 @@ function reinforceView(app){
 function recordRecallAnswer(id,answer){
  const w=wordById(id),r=state.reinforce;if(!w||!r.active||nextRecallTarget()?.id!==id)return false;
  const rec=recallRecord(id),card=state.cards[id]||{},now=Date.now();
- const norm=x=>String(x||'').normalize('NFKC').trim().split(/\\s+/).join(' ').toLowerCase();
+ const norm=x=>String(x||'').normalize('NFKC').trim().split(/\s+/).join(' ').toLowerCase();
  const correct=norm(answer)===norm(w.word);
  card.reinforceAttempts=(Number(card.reinforceAttempts)||0)+1;
  if(correct){
@@ -4365,6 +4365,7 @@ function schedule(id,rating,fromReview){
   revealed:false,reviewRevealed:false,autoSpoken:false,
   unknownCount,struggleCount,
   reinforceSuccesses:isAgain?0:(Number(c.reinforceSuccesses)||0),
+  recall:isAgain?{step:0,nextAt:0,completed:false,errors:Number(c.recall?.errors)||0}:(c.recall||undefined),
   lastUnknownAt:isAgain?now.toISOString():(c.lastUnknownAt||'')};
  markActivity();
  if(!fromReview){
