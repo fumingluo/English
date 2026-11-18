@@ -3893,96 +3893,45 @@ function morphologyHTML(wordOrEntry){
 }
 
 function allWords(){return FAMILY_ALBUM_WORDS.concat(WORDS,state.custom||[])}function wordById(id){return allWords().find(w=>w.id===id)}function wordExampleHTML(w){let en=String(w.en||'').trim(),zh=String(w.zh||'').trim();if(!en)return '';return '<div class="example"><p>'+esc(en)+'</p>'+(zh&&zh!==String(w.meaning||'').trim()?'<p class="zh">'+esc(zh)+'</p>':'')+'</div>'}
-function getStubbornWords(){
- return allWords().filter(w=>{
-  const c=state.cards[w.id]||{};
-  return Number(c.struggleCount)>=REINFORCE_THRESHOLD&&Number(c.reinforceSuccesses||0)<2;
- }).sort((a,b)=>{
-  const ac=state.cards[a.id]||{},bc=state.cards[b.id]||{};
-  return (Number(bc.struggleCount)||0)-(Number(ac.struggleCount)||0);
- });
-}
-function reinforceBannerHTML(){
- const count=getStubbornWords().length;
- return count?'<div class="reinforce-banner"><div><strong>🔥 顽固词强化 · '+count+' 个待巩固</strong><p>同一个词的记忆困难值达到 '+REINFORCE_THRESHOLD+' 后，就会出现在这里。</p></div><button class="btn secondary" data-action="start-reinforce">开始小游戏</button></div>':'';
-}
-function shuffleReinforceIds(ids){const out=ids.slice();for(let i=out.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[out[i],out[j]]=[out[j],out[i]]}return out}
-function orderReinforceTargets(words){let pending=words.slice(),ordered=[];while(pending.length){const usedMeanings=new Set(),usedWords=new Set(),group=[],rest=[];pending.forEach(w=>{const meaning=String(w.meaning||'').trim().toLowerCase(),word=String(w.word||'').trim().toLowerCase();if(group.length<4&&!usedMeanings.has(meaning)&&!usedWords.has(word)){group.push(w);usedMeanings.add(meaning);usedWords.add(word)}else rest.push(w)});if(!group.length)group.push(rest.shift());ordered.push(...group);pending=rest}return ordered}
-function startReinforcement(targetIds,autoTriggered){
- const hard=Array.isArray(targetIds)?targetIds.map(wordById).filter(Boolean):getStubbornWords();
- if(!hard.length){showToast('目前还没有需要强化的顽固词');return}
- const returnView=state.view==='review'?'review':'learn';
- state.reinforce={active:true,autoTriggered:!!autoTriggered,returnView:returnView,targetIds:orderReinforceTargets(hard).map(w=>w.id),cursor:0,roundIds:[],roundTargetIds:[],englishOrder:[],chineseOrder:[],selectedEnglish:null,matched:[],mistakes:0,roundComplete:false};
- state.view='reinforce';
- prepareReinforcementRound();
- save();render();
-}
-function prepareReinforcementRound(){
- const r=state.reinforce;
- const targets=(r.targetIds||[]).slice(Number(r.cursor)||0,(Number(r.cursor)||0)+4);
- if(!targets.length){r.roundComplete=true;return}
- const targetSet=new Set(r.targetIds||[]);
- const usedMeanings=new Set(targets.map(id=>String(wordById(id)?.meaning||'').trim().toLowerCase()).filter(Boolean));
- const usedWords=new Set(targets.map(id=>String(wordById(id)?.word||'').trim().toLowerCase()).filter(Boolean));
- const candidates=shuffleReinforceIds(allWords().filter(w=>!targets.includes(w.id)&&!targetSet.has(w.id)&&String(w.meaning||'').trim()&&((state.cards[w.id]&&state.cards[w.id].seen)||w.level===state.level)));
- const fillerIds=[];
- for(const word of candidates){
-  const key=String(word.meaning||'').trim().toLowerCase();
-  const wordKey=String(word.word||'').trim().toLowerCase();
-  if(usedMeanings.has(key)||usedWords.has(wordKey))continue;
-  usedMeanings.add(key);usedWords.add(wordKey);fillerIds.push(word.id);
-  if(fillerIds.length>=4-targets.length)break;
- }
- if(fillerIds.length<4-targets.length){
-  for(const word of shuffleReinforceIds(allWords().filter(w=>!targets.includes(w.id)&&!targetSet.has(w.id)&&!fillerIds.includes(w.id)&&String(w.meaning||'').trim()))){
-   const key=String(word.meaning||'').trim().toLowerCase();
-   const wordKey=String(word.word||'').trim().toLowerCase();
-   if(usedMeanings.has(key)||usedWords.has(wordKey))continue;
-   usedMeanings.add(key);usedWords.add(wordKey);fillerIds.push(word.id);
-   if(fillerIds.length>=4-targets.length)break;
-  }
- }
- const ids=targets.concat(fillerIds);
- r.roundIds=ids;
- r.roundTargetIds=targets;
- r.englishOrder=shuffleReinforceIds(ids);
- r.chineseOrder=shuffleReinforceIds(ids);
- r.selectedEnglish=null;
- r.matched=[];
- r.mistakes=0;
- r.roundComplete=false;
-}
-function reinforceView(app){
- const r=state.reinforce||blank().reinforce,targets=(r.targetIds||[]);
- if(!r.active){
-  app.innerHTML='<div class="card empty"><h2>顽固词强化</h2><p>从单词学习页进入强化小游戏。</p><button class="btn primary" data-action="reinforce-exit">返回单词学习</button></div>';
-  return;
- }
- if(r.roundComplete){
-  if(r.autoTriggered){
-   const perfect=(Number(r.mistakes)||0)===0;
-   app.innerHTML='<div class="card reinforce-result"><div class="result-icon">'+(perfect?'🏆':'💪')+'</div><div class="eyebrow">AUTOMATIC WORD REINFORCEMENT</div><h2>'+(perfect?'强化闯关完成':'本轮练习已记录')+'</h2><p>'+(perfect?'你无错误完成了重点词配对，已记录一次强化成功。':'本轮出现 '+r.mistakes+' 次错误，因此不会计入无错误通关。这个词仍保留在强化列表中。')+'</p><div class="stats-row"><div class="stat"><strong>'+r.matched.length+' / '+r.roundIds.length+'</strong><span>配对数量</span></div><div class="stat"><strong>'+r.mistakes+'</strong><span>错误尝试</span></div><div class="stat"><strong>'+(state.cards[r.roundTargetIds[0]]?.reinforceSuccesses||0)+'</strong><span>无错误通关</span></div></div><button class="btn primary" style="width:100%;margin-top:14px" data-action="reinforce-exit">返回学习</button></div>';
-   return;
-  }
-  const finished=(Number(r.cursor)||0)>=targets.length,remaining=getStubbornWords().length;
-  app.innerHTML='<div class="card reinforce-result"><div class="result-icon">'+(finished?'🏆':'✅')+'</div><div class="eyebrow">WORD CONNECTION</div><h2>'+(finished?'本轮强化完成':'本组配对完成')+'</h2><p>'+(finished?'你已经完成本轮顽固词配对。'+(remaining?'还有 '+remaining+' 个词需要继续强化。':'这一轮没有待强化词了。'):'这组词已经全部配对。继续下一组，直到完成所有顽固词。')+'</p><div class="stats-row"><div class="stat"><strong>'+r.matched.length+' / '+r.roundIds.length+'</strong><span>配对数量</span></div><div class="stat"><strong>'+r.mistakes+'</strong><span>错误尝试</span></div><div class="stat"><strong>'+targets.length+'</strong><span>本轮顽固词</span></div></div><button class="btn primary" style="width:100%;margin-top:14px" data-action="'+(!finished?'reinforce-next':(remaining?'reinforce-restart':'reinforce-exit'))+'">'+(!finished?'下一组顽固词':(remaining?'再练一轮':'返回单词学习'))+'</button></div>';
-  return;
- }
- const matched=new Set(r.matched||[]),targetSet=new Set(r.roundTargetIds||[]);
- const english=(r.englishOrder||[]).map(id=>{
-  const w=wordById(id);if(!w)return '';
-  const done=matched.has(id),selected=r.selectedEnglish===id;
-  return '<button type="button" class="reinforce-option'+(done?' matched':'')+(selected?' selected':'')+'" data-action="reinforce-en" data-id="'+esc(id)+'" '+(done?'disabled':'')+'><strong>'+esc(w.word)+'</strong><small>'+(targetSet.has(id)?'🔥 重点强化':'听发音 · 选择中文')+'</small></button>';
- }).join('');
- const chinese=(r.chineseOrder||[]).map(id=>{
-  const w=wordById(id);if(!w)return '';
-  const done=matched.has(id);
-  return '<button type="button" class="reinforce-option'+(done?' matched':'')+'" data-action="reinforce-zh" data-id="'+esc(id)+'" '+(done?'disabled':'')+'><strong>'+esc(w.meaning)+'</strong><small>'+(done?'已配对':'选择对应英文')+'</small></button>';
- }).join('');
- const targetDone=(r.matched||[]).filter(id=>targetSet.has(id)).length;
- app.innerHTML='<div class="card reinforce-card"><div class="row"><div><div class="eyebrow">STUBBORN WORD TRAINING</div><h2 class="section-title" style="margin:5px 0">顽固词 · 中英连连看</h2></div><span class="tag">'+Math.min((Number(r.cursor)||0)+1,targets.length)+' / '+targets.length+'</span></div><p class="section-sub">先点左边英文听发音，再点右边对应的中文。重点强化词带有 🔥 标记。</p><div class="row"><span class="small muted">本组重点词 '+targetDone+' / '+(r.roundTargetIds||[]).length+'</span><span class="small muted">已配对 '+matched.size+' / '+r.roundIds.length+'</span></div><div class="reinforce-columns"><div class="reinforce-column"><div class="reinforce-column-title">ENGLISH · 点击听读音</div>'+english+'</div><div class="reinforce-column"><div class="reinforce-column-title">中文释义 · 找到对应项</div>'+chinese+'</div></div><div class="reinforce-game-foot"><span>错误尝试：'+r.mistakes+'</span><button class="btn quiet small" data-action="reinforce-exit">退出强化</button></div></div>';
-}
 
+const RECALL_DELAYS=[60000,600000,3600000];
+function recallRecord(id){const c=state.cards[id]||(state.cards[id]={});return c.recall||(c.recall={step:0,nextAt:0,completed:false,errors:0});}
+function getStubbornWords(){return allWords().filter(w=>{const c=state.cards[w.id]||{};return Number(c.struggleCount)>=REINFORCE_THRESHOLD&&!c.recall?.completed})}
+function reinforceBannerHTML(){const words=getStubbornWords();return words.length?'<div class="reinforce-banner"><div><strong>🔥 主动回忆 · '+words.length+' 个顽固词</strong><p>看中文或听发音拼写英文，按1分钟、10分钟、1小时复现。</p></div><button class="btn secondary" data-action="start-reinforce">开始强制回忆</button></div>':''}
+function startReinforcement(ids,auto){const words=Array.isArray(ids)?ids.map(wordById).filter(Boolean):getStubbornWords();if(!words.length){showToast('没有待强化单词');return;}state.reinforce={...blank().reinforce,active:true,autoTriggered:!!auto,returnView:state.view==='review'?'review':'learn',targetIds:[...new Set(words.map(w=>w.id))]};state.view='reinforce';save();render();}
+function nextRecallTarget(){const now=Date.now();return (state.reinforce.targetIds||[]).map(wordById).filter(Boolean).find(w=>{const r=recallRecord(w.id);return !r.completed&&(!r.nextAt||r.nextAt<=now)})}
+function finishRecallSession(){const r=state.reinforce;r.active=false;state.view=r.returnView==='review'?'review':'learn';save();render();}
+function reinforceView(app){
+ const r=state.reinforce||blank().reinforce,w=r.active?nextRecallTarget():null;
+ if(!r.active){app.innerHTML='<div class="card empty"><h2>主动回忆</h2><button class="btn primary" data-action="reinforce-exit">返回学习</button></div>';return;}
+ if(!w){
+  const pending=(r.targetIds||[]).map(recallRecord).filter(x=>!x.completed);
+  const next=pending.length?Math.min(...pending.map(x=>x.nextAt)):0;
+  app.innerHTML='<div class="card reinforce-card"><h2 class="section-title">'+(pending.length?'等待间隔重现':'全部已巩固')+'</h2><p class="section-sub">'+(pending.length?'下次复现：'+new Date(next).toLocaleString('zh-CN',{hour:'2-digit',minute:'2-digit'}):'目标单词已进入正常复习')+'</p><button class="btn primary" data-action="reinforce-exit">返回学习</button><button class="btn quiet" data-action="reinforce-refresh">检查到期</button></div>';return;
+ }
+ const p=recallRecord(w.id),stage=['首次回忆','1分钟复现','10分钟复现','1小时复现'][p.step];
+ app.innerHTML='<div class="card reinforce-card"><div class="row"><h2 class="section-title">主动回忆 · 拼写挑战</h2><span class="tag">'+esc(stage)+'</span></div><p class="section-sub">不显示英文答案或拼写提示，独立拼写。</p><div class="card" style="margin:12px 0;text-align:center;overflow-wrap:anywhere"><strong>'+esc(w.meaning)+'</strong></div><button class="btn secondary" data-action="reinforce-speak" data-id="'+esc(w.id)+'">🔊 听发音</button><form id="recallTypingForm" autocomplete="off" style="margin-top:14px"><input type="hidden" name="id" value="'+esc(w.id)+'"><input class="field" name="answer" type="text" autocapitalize="off" autocomplete="off" autocorrect="off" spellcheck="false" required maxlength="120" placeholder="输入完整英文"><button class="btn primary" style="width:100%;margin-top:10px" type="submit">确认拼写</button></form><div class="reinforce-game-foot"><span>已通过 '+p.step+' / 4 阶段</span><button class="btn quiet small" data-action="reinforce-exit">退出</button></div></div>';
+}
+function recordRecallAnswer(id,answer){
+ const w=wordById(id),r=state.reinforce;if(!w||!r.active||nextRecallTarget()?.id!==id)return false;
+ const rec=recallRecord(id),card=state.cards[id]||{},now=Date.now();
+ const norm=x=>String(x||'').normalize('NFKC').trim().split(/\\s+/).join(' ').toLowerCase();
+ const correct=norm(answer)===norm(w.word);
+ card.reinforceAttempts=(Number(card.reinforceAttempts)||0)+1;
+ if(correct){
+  rec.step=Math.min(4,(Number(rec.step)||0)+1);
+  if(rec.step===4){
+   rec.completed=true;rec.nextAt=0;rec.completedAt=now;card.reinforceSuccesses=2;card.struggleCount=0;
+   try{const input={...migrateFsrsCard({...card}),due:new Date(card.due||now),last_review:card.last_review?new Date(card.last_review):undefined};
+    const next=FSRS_ENGINE.fsrs().next(input,new Date(now),FSRS_ENGINE.Rating.Easy).card;
+    Object.assign(card,next,{due:new Date(next.due).toISOString(),dueAt:new Date(next.due).getTime(),last_review:new Date(now).toISOString(),fsrsVersion:6,fsrsRating:4});
+   }catch(e){console.warn('Recall FSRS fallback',e);card.dueAt=now+60000;card.due=new Date(card.dueAt).toISOString();}
+  }else rec.nextAt=now+RECALL_DELAYS[rec.step-1];
+ }else{rec.errors=(Number(rec.errors)||0)+1;rec.step=0;rec.nextAt=now+60000;card.struggleCount=Math.max(REINFORCE_THRESHOLD,Number(card.struggleCount)||0);}
+ card.recall=rec;card.lastReinforcedAt=new Date(now).toISOString();state.cards[id]=card;save();render();
+ showToast(correct?(rec.completed?'已巩固，回归FSRS':'拼写正确，等待间隔复现'):'拼写错误，1分钟后重新挑战');
+ return correct;
+}
 function dueWords(){const now=Date.now();return allWords().filter(w=>{let c=state.cards[w.id];if(!c||!c.seen)return false;let dueAt=Number(c.dueAt);if(Number.isFinite(dueAt)&&dueAt>0)return dueAt<=now;if(!c.due)return false;let legacy=String(c.due);let dueTime=legacy.includes('T')?new Date(legacy).getTime():new Date(legacy+'T00:00:00').getTime();return Number.isFinite(dueTime)&&dueTime<=now})}
 function dueLabel(c){if(!c)return'—';let t=Number(c.dueAt);if(!Number.isFinite(t)||t<=0){if(!c.due)return'—';t=String(c.due).includes('T')?new Date(c.due).getTime():new Date(c.due+'T00:00:00').getTime()}if(!Number.isFinite(t))return String(c.due||'—');let d=new Date(t);return d.toLocaleString('zh-CN',{month:'numeric',day:'numeric',hour:'2-digit',minute:'2-digit'})}
 function newWords(){return allWords().filter(w=>(w.category==='走遍美国'||w.level===state.level)&&(!state.cards[w.id]||!state.cards[w.id].seen))}
@@ -4791,48 +4740,9 @@ else if(a==='reveal'){let w=getDaily()[state.daily.index];if(w){say(w.word);stat
 else if(a==='rate'){let w=getDaily()[state.daily.index];if(w)schedule(w.id,b.dataset.rating,false)}
 else if(a==='skip'){let entry=state.daily.studyQueue&&state.daily.studyQueue[state.daily.index],id=entry&&entry.id;if(id&&entry.kind==='new'){if(!Array.isArray(state.daily.excludedIds))state.daily.excludedIds=[];if(!state.daily.excludedIds.includes(id))state.daily.excludedIds.push(id)}state.daily.index++;save();render()}
 else if(a==='start-reinforce')startReinforcement()
-else if(a==='reinforce-exit'){const returnView=state.reinforce&&state.reinforce.autoTriggered?state.reinforce.returnView:'learn';state.reinforce.active=false;state.view=returnView==='review'?'review':'learn';save();render()}
-else if(a==='reinforce-next'){prepareReinforcementRound();save();render()}
-else if(a==='reinforce-restart')startReinforcement()
-else if(a==='reinforce-en'){
- const r=state.reinforce,id=b.dataset.id;
- if(r&&r.active&&!r.roundComplete&&!(r.matched||[]).includes(id)){
-  r.selectedEnglish=id;const w=wordById(id);if(w)say(w.word);save();render();
- }
-}
-else if(a==='reinforce-zh'){
- const r=state.reinforce,id=b.dataset.id;
- if(!r||!r.active||r.roundComplete||(r.matched||[]).includes(id))return;
- if(!r.selectedEnglish){showToast('先选择左边的英文单词');return}
- if(r.selectedEnglish===id){
-  if(!Array.isArray(r.matched))r.matched=[];
-  r.matched.push(id);r.selectedEnglish=null;
-  if(r.matched.length===r.roundIds.length){
-   (r.roundTargetIds||[]).forEach(targetId=>{
-    const card=state.cards[targetId]||{};
-    card.reinforceAttempts=(Number(card.reinforceAttempts)||0)+1;
-    if((Number(r.mistakes)||0)===0)card.reinforceSuccesses=(Number(card.reinforceSuccesses)||0)+1;
-    card.lastReinforcedAt=new Date().toISOString();
-    state.cards[targetId]=card;
-   });
-   r.cursor=(Number(r.cursor)||0)+(r.roundTargetIds||[]).length;
-   r.roundComplete=true;
-   if(r.autoTriggered){
-    const returnView=r.returnView==='review'?'review':'learn';
-    r.active=false;
-    state.view=returnView;
-    const next=nextCardForSpeech();
-    if(next)state.cards[next.id]=Object.assign({},state.cards[next.id]||{},{autoSpoken:true});
-    save();render();
-    if(next)say(next.word);
-    return;
-   }
-  }
-  save();render();
- }else{
-  r.mistakes=(Number(r.mistakes)||0)+1;r.selectedEnglish=null;save();render();showToast('还没配对成功，再听一遍英文，试着建立联系');
- }
-}
+else if(a==='reinforce-exit')finishRecallSession()
+else if(a==='reinforce-refresh'){save();render()}
+else if(a==='reinforce-speak'){const w=wordById(b.dataset.id);if(w)say(w.word)}
 else if(a==='go-review'){state.view='review';render()}
 else if(a==='continue-learning')continueLearning()
 else if(a==='auto-review-reveal'){let w=dueWords()[0];if(w){say(w.word);state.cards[w.id]=Object.assign({},state.cards[w.id]||{},{reviewRevealed:true});save();render()}}
@@ -4876,6 +4786,7 @@ else if(a==='reset-data'){if(confirm('确定清空本机学习数据、复习记
 document.getElementById('nav').addEventListener('click',e=>{let b=e.target.closest('[data-view]');if(!b)return;state.view=b.dataset.view;question=null;save();render()});
 document.getElementById('app').addEventListener('change',e=>{if(e.target.id==='audioMode'){if(audioPlayer.playing)audioStop();audioPlayer.mode=e.target.value;audioRender()}else if(e.target.id==='audioGap'){audioPlayer.gap=Number(e.target.value);audioRender()}else if(e.target.id==='audioRate'){audioPlayer.rate=Number(e.target.value);audioRender()}else if(e.target.id==='audioLoop'){audioPlayer.loop=e.target.value==='1';audioRender()}});
 document.getElementById('app').addEventListener('click',e=>{let b=e.target.closest('[data-action]');if(b){action(b);return}let card=e.target.closest('.minimal-word-card[data-swipe-card]');if(card&&Date.now()>suppressWordCardClickUntil){let w=wordById(card.dataset.swipeId);if(w)say(w.word)}});
+document.addEventListener('submit',e=>{if(e.target?.id!=='recallTypingForm')return;e.preventDefault();const fd=new FormData(e.target);recordRecallAnswer(String(fd.get('id')||''),String(fd.get('answer')||''));});
 document.addEventListener('click',e=>{if(!state.bible.readerWord||state.view!=='reader')return;if(e.target.closest('.reader-word-wrap')||e.target.closest('[data-action="reader-word"]'))return;state.bible.readerWord=null;renderPreservingScroll()});
 function swipeDirection(dx,dy){return Math.abs(dx)>Math.abs(dy)?(dx>0?'right':'left'):(dy<0?'up':'down')}
 function paintSwipe(g,dx,dy){let card=g.area,dir=swipeDirection(dx,dy),angle=Math.max(-11,Math.min(11,dx*.04));if(g.lastDir!==dir){card.classList.remove('drag-right','drag-left','drag-up','drag-down');card.classList.add('drag-'+dir);g.lastDir=dir}card.style.transform='translate3d('+dx+'px,'+dy+'px,0) rotate('+angle+'deg)'}
