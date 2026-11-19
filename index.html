@@ -4215,7 +4215,7 @@ function audioWords(){
 }
 function audioMeaning(w){return String(w.meaning||w.zh||'').trim()}
 function audioRender(){
- if(audioPlayer.readerPlayback&&state.view==='reader'){companionPublish();return}
+ if((audioPlayer.readerPlayback&&state.view==='reader')||(audioPlayer.reviewPlayback&&state.view==='review')){companionPublish();return}
  const app=document.getElementById('app'),w=audioPlayer.list[audioPlayer.index],total=audioPlayer.list.length;
  const pct=total?Math.round((audioPlayer.index+1)/total*100):0;
  const modeNames={easy:'轻松磨耳朵',recall:'主动回忆',immersive:'英语沉浸'};
@@ -4272,9 +4272,9 @@ async function audioRun(token){
   else{audioPlayer.playing=false;break}
   audioRender();
  }
- if(token===audioPlayer.token){audioPlayer.playing=false;audioPlayer.readerPlayback=false;audioRender();companionPublish();if(state.view==='reader')renderPreservingScroll()}
+ if(token===audioPlayer.token){audioPlayer.playing=false;audioPlayer.readerPlayback=false;audioPlayer.reviewPlayback=false;audioRender();companionPublish();if(state.view==='reader')renderPreservingScroll();else if(state.view==='review')render()}
 }
-function audioStart(){if(!audioPlayer.list.length){audioPlayer.list=audioWords();audioPlayer.index=0}if(!audioPlayer.list.length){showToast('这个播放列表还没有已学词汇');return}audioPlayer.playing=true;companionPublish();const token=++audioPlayer.token;audioRun(token)}
+function audioStart(){companionConnect();if(!audioPlayer.list.length){audioPlayer.list=audioWords();audioPlayer.index=0}if(!audioPlayer.list.length){showToast('这个播放列表还没有已学词汇');return}audioPlayer.playing=true;companionPublish();const token=++audioPlayer.token;audioRun(token)}
 function audioStop(){audioPlayer.playing=false;audioPlayer.token++;ttsRequestId++;if(endPlayback){endPlayback();endPlayback=null}if(window.speechSynthesis)window.speechSynthesis.cancel();if(currentTtsAudio){currentTtsAudio.pause();currentTtsAudio=null}if(currentTtsSource){try{currentTtsSource.stop()}catch(e){}currentTtsSource=null}audioRender();companionPublish()}
 function audioView(app){audioPlayer.list=audioWords();audioPlayer.index=Math.min(audioPlayer.index,Math.max(0,audioPlayer.list.length-1));audioRender()}
 
@@ -4389,6 +4389,14 @@ function schedule(id,rating,fromReview){
  if(next)state.cards[next.id]={...(state.cards[next.id]||{}),autoSpoken:true};
  save();render();if(next&&!next.bibleCard)say(next.word);
 }
+function reviewPlayLearned(){
+ const list=allWords().filter(w=>!w.bibleCard&&w.word&&state.cards[w.id]?.seen);
+ if(!list.length){showToast('还没有已学英语单词');return}
+ if(audioPlayer.playing){audioPlayer.readerPlayback=false;audioPlayer.reviewPlayback=false;audioStop()}
+ audioPlayer.list=list;audioPlayer.index=0;audioPlayer.mode='immersive';audioPlayer.gap=900;audioPlayer.loop=false;
+ audioPlayer.readerPlayback=false;audioPlayer.reviewPlayback=true;audioStart();render();
+}
+function reviewStopLearned(){audioPlayer.reviewPlayback=false;if(audioPlayer.playing)audioStop();render()}
 function reviewView(app){
  const due=dueWords();
  if(state.review.active){
@@ -4400,7 +4408,7 @@ function reviewView(app){
   if(w){
    const c=state.cards[w.id]||{};
    const struggleHint=Number(c.struggleCount)>0?'<div class="small muted" style="text-align:center;margin:5px 0">记忆困难值：'+Math.min(REINFORCE_THRESHOLD,Number(c.struggleCount))+' / '+REINFORCE_THRESHOLD+'</div>':'';
-   app.innerHTML=reinforceBannerHTML()+struggleHint+'<div class="card review-session-head"><div class="row"><span class="eyebrow">TODAY\'S REVIEW</span><span class="tag">'+(idx+1)+' / '+ids.length+'</span></div><div class="review-session-track"><span style="width:'+Math.min(100,Math.round((idx/Math.max(1,ids.length))*100))+'%"></span></div></div><article class="card word-card minimal-word-card" data-swipe-card data-swipe-enabled="true" data-swipe-animated="true swipe-enter" data-swipe-id="'+esc(w.id)+'" data-swipe-mode="review"><button class="word-button" data-action="say" data-id="'+esc(w.id)+'">'+wordDisplayHTML(w.word)+'</button><div class="word-phonetic">'+esc(w.phonetic||'音标暂缺')+'</div>'+(c.reviewRevealed?'<div class="answer"><div class="meaning">'+esc(w.meaning)+'</div>'+wordExampleHTML(w)+morphologyHTML(w)+'</div>':'<button class="btn secondary reveal-word-btn" data-action="review-reveal">查看释义</button>')+'</article>'+(c.reviewRevealed?fsrsRatingsHTML('review-rate'):'')+'<button class="btn quiet" style="width:100%;margin-top:12px" data-action="end-review">暂时结束复习</button>';
+   app.innerHTML=reinforceBannerHTML()+struggleHint+'<div class="row" style="gap:8px;margin:8px 0"><button class="btn secondary" data-action="review-play-current" data-id="'+esc(w.id)+'">🔊 播放当前单词 · 浮窗同步</button></div><div class="card review-session-head"><div class="row"><span class="eyebrow">TODAY\'S REVIEW</span><span class="tag">'+(idx+1)+' / '+ids.length+'</span></div><div class="review-session-track"><span style="width:'+Math.min(100,Math.round((idx/Math.max(1,ids.length))*100))+'%"></span></div></div><article class="card word-card minimal-word-card" data-swipe-card data-swipe-enabled="true" data-swipe-animated="true swipe-enter" data-swipe-id="'+esc(w.id)+'" data-swipe-mode="review"><button class="word-button" data-action="say" data-id="'+esc(w.id)+'">'+wordDisplayHTML(w.word)+'</button><div class="word-phonetic">'+esc(w.phonetic||'音标暂缺')+'</div>'+(c.reviewRevealed?'<div class="answer"><div class="meaning">'+esc(w.meaning)+'</div>'+wordExampleHTML(w)+morphologyHTML(w)+'</div>':'<button class="btn secondary reveal-word-btn" data-action="review-reveal">查看释义</button>')+'</article>'+(c.reviewRevealed?fsrsRatingsHTML('review-rate'):'')+'<button class="btn quiet" style="width:100%;margin-top:12px" data-action="end-review">暂时结束复习</button>';
    return;
   }
   state.review.active=false;
@@ -4412,7 +4420,7 @@ function reviewView(app){
  const learnedWords=allWords().filter(w=>state.cards[w.id]?.seen),difficult=learnedWords.filter(w=>(Number(state.cards[w.id]?.struggleCount)||0)>0),tab=state.reviewHubTab||'home';
  const tiles=[['due','📅 到期复习',due.length],['cloze','🧩 完形词',learnedWords.length],['difficult','🔥 难词强化',difficult.length],['special','🎯 专项复习',learnedWords.length],['all','📚 全部已学卡片',learnedWords.length],['bible','📖 圣经记忆记录',learnedWords.filter(w=>w.bibleCard).length]];
  const top='<div class="card"><div class="row"><h2 class="section-title">复习中心</h2>'+(tab!=='home'?'<button class="btn quiet" data-action="review-hub" data-tab="home">返回</button>':'')+'</div></div>';
- if(tab==='home'){app.innerHTML=reinforceBannerHTML()+top+'<div class="review-hub-grid">'+tiles.map(t=>'<button class="review-hub-tile" data-action="review-hub" data-tab="'+t[0]+'"><strong>'+t[1]+'</strong><span>'+t[2]+' 个</span></button>').join('')+'</div>';return;}
+ if(tab==='home'){app.innerHTML=reinforceBannerHTML()+top+'<div class="card"><div class="row" style="gap:8px;flex-wrap:wrap"><button class="btn primary" data-action="review-play-learned">▶ 连续播放已学单词 · 浮窗同步</button><button class="btn secondary" data-action="review-stop-learned">■ 停止播放</button></div></div><div class="review-hub-grid">'+tiles.map(t=>'<button class="review-hub-tile" data-action="review-hub" data-tab="'+t[0]+'"><strong>'+t[1]+'</strong><span>'+t[2]+' 个</span></button>').join('')+'</div>';return;}
  if(tab==='all'||tab==='bible'){const q=String(state.reviewSearch||'').toLowerCase(),filtered=learnedWords.filter(w=>(tab!=='bible'||w.bibleCard)&&(w.word+' '+w.meaning).toLowerCase().includes(q));app.innerHTML=top+'<div class="card"><input class="field" id="reviewSearch" placeholder="搜索单词或释义" value="'+esc(state.reviewSearch||'')+'"><p>共 '+filtered.length+' 个</p><div class="review-word-list">'+filtered.slice(0,150).map(w=>'<button class="review-word-row" data-action="review-word" data-id="'+esc(w.id)+'"><strong>'+esc(w.word)+'</strong><span>'+esc(w.meaning)+'</span></button>').join('')+'</div>'+(filtered.length>150?'<p>仅显示前150项，请搜索缩小范围</p>':'')+'</div>';return;}
  if(tab==='cloze'){const words=learnedWords.filter(w=>!w.bibleCard&&w.en),w=wordById(state.reviewClozeId)||words[0];if(!w){app.innerHTML=top+'<div class="card">请先学习带例句的单词。</div>';return;}state.reviewClozeId=w.id;const sentence=String(w.en).replace(new RegExp(w.word,'ig'),'______');app.innerHTML=top+'<div class="card"><h3>完形词复习</h3><p class="reinforce-prompt">'+esc(sentence)+'</p><p>'+esc(w.zh||'')+'</p>'+(state.reviewClozeRevealed?'<div class="answer">'+esc(w.word)+' · '+esc(w.meaning)+'</div>':'')+'<button class="btn secondary" data-action="cloze-reveal">查看答案</button><button class="btn primary" data-action="cloze-next">下一题</button></div>';return;}
  if(tab==='special'){const cats=[...new Set(learnedWords.map(w=>w.category||'其他'))];app.innerHTML=top+'<div class="review-hub-grid">'+cats.map(cat=>'<button class="review-hub-tile" data-action="review-special" data-category="'+esc(cat)+'">'+esc(cat)+'</button>').join('')+'</div>';return;}
@@ -4701,16 +4709,18 @@ let readerSpeechOverride=null;
 async function readerSpeak(text,meaning,ref){
  const phrase=String(text||'').trim();if(!phrase)return;
  if(audioPlayer.playing)readerStopChapter();
+ companionConnect();
  const current={word:phrase,meaning:String(meaning||''),phonetic:String(ref||'')};
  readerSpeechOverride=current;companionPublish();
  try{await say(phrase)}finally{if(readerSpeechOverride===current){readerSpeechOverride=null;companionPublish()}}
 }
 function readerPlayChapter(){
+ companionConnect();
  let verses=state.bible.revelationVerses||[];const chapter=Number(state.bible.readerChapter)||1;
  const rows=verses.filter(v=>Number((String(v.ref||'').match(/(\d+):(\d+)/)||[])[1])===chapter);
  if(!rows.length){showToast('本章经文尚未加载');return}
  if(audioPlayer.playing){audioPlayer.readerPlayback=false;audioStop()}
- audioPlayer.list=rows.map((v,i)=>({id:'reader:'+chapter+':'+i,word:v.en||'',meaning:'',phonetic:v.ref||'',en:'',zh:''}));
+ audioPlayer.list=rows.flatMap((v,i)=>String(v.en||'').match(/[A-Za-z]+(?:['’][A-Za-z]+)?|[^A-Za-z\s]+/g)?.filter(t=>/[A-Za-z]/.test(t)).map((word,j)=>({id:'reader:'+chapter+':'+i+':'+j,word,meaning:'',phonetic:v.ref||'',en:'',zh:''}))||[]);
  audioPlayer.index=0;audioPlayer.mode='immersive';audioPlayer.gap=450;audioPlayer.loop=false;
  audioPlayer.readerPlayback=true;audioStart();showToast('正在逐节播放，并同步桌面浮窗');
 }
@@ -4793,7 +4803,9 @@ else if(a==='go-review'){state.view='review';render()}
 else if(a==='continue-learning')continueLearning()
 else if(a==='auto-review-reveal'){let w=dueWords()[0];if(w){say(w.word);state.cards[w.id]=Object.assign({},state.cards[w.id]||{},{reviewRevealed:true});save();render()}}
  else if(a==='auto-review-rate'){let w=dueWords()[0];if(w)schedule(w.id,b.dataset.rating,'auto')}
- else if(a==='reader-play-chapter')readerPlayChapter()
+ else if(a==='review-play-learned')reviewPlayLearned()
+else if(a==='review-stop-learned')reviewStopLearned()
+else if(a==='reader-play-chapter')readerPlayChapter()
 else if(a==='reader-stop-chapter')readerStopChapter()
 else if(a==='learn-mode'){state.learnBible=b.dataset.mode==='bible';state.view='learn';save();render()}
 else if(a==='bible-learn-reveal'){const m=bibleMemoryData(),id='bible:'+m.book+':'+m.chapter;state.cards[id]={...(state.cards[id]||{}),revealed:true};save();render()}
@@ -4801,6 +4813,7 @@ else if(a==='bible-learn-rate'){const m=bibleMemoryData(),id='bible:'+m.book+':'
 else if(a==='bible-learn-prev')bibleLearnMove(-1)
 else if(a==='bible-learn-next')bibleLearnMove(1)
 else if(a==='review-hub'){state.reviewHubTab=b.dataset.tab;save();render()}
+else if(a==='review-play-current'){const w=wordById(b.dataset.id);if(w)readerSpeak(w.word,w.meaning,w.phonetic||'')}
 else if(a==='review-word'){const w=wordById(b.dataset.id);if(w){state.review={ids:[w.id],index:0,active:true};save();render()}}
 else if(a==='review-start-list'){const ids=(b.dataset.ids||'').split(',').filter(id=>wordById(id));if(ids.length){state.review={ids,index:0,active:true};save();render()}}
 else if(a==='review-special'){state.reviewHubTab='special:'+b.dataset.category;save();render()}
