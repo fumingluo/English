@@ -3917,6 +3917,24 @@ function makeNewStudyEntry(id){return {id:id,kind:'new',attempt:0,token:'new:'+i
 function makeDueStudyEntry(w){const c=state.cards[w.id]||{};return {id:w.id,kind:'due',attempt:0,token:'due:'+w.id+':'+String(c.dueAt||c.due||'')}}
 function makeRelearnStudyEntry(item){return {id:item.id,kind:'relearn',attempt:Number(item.attempt)||1,token:item.token||('relearn:'+item.id+':'+(item.attempt||1))}}
 function dueTimestamp(w){const c=state.cards[w.id]||{},n=Number(c.dueAt);return Number.isFinite(n)&&n>0?n:(c.due?new Date(String(c.due).includes('T')?c.due:c.due+'T00:00:00').getTime():0)}
+function interleaveStudyEntries(entries){
+ const english=[],bible=[];
+ for(const entry of entries){(String(entry.id).startsWith('bible:')?bible:english).push(entry)}
+ const out=[];let nextBible=bible.length>0&&english.length>0&&String(entries[0]?.id||'').startsWith('bible:');
+ while(english.length||bible.length){
+  if(nextBible&&bible.length)out.push(bible.shift());
+  else if(!nextBible&&english.length)out.push(english.shift());
+  else if(bible.length)out.push(bible.shift());
+  else out.push(english.shift());
+  nextBible=!nextBible;
+ }
+ return out;
+}
+function rebalancePendingStudyQueue(){
+ const q=state.daily.studyQueue||[],i=Math.max(0,Math.min(Number(state.daily.index)||0,q.length));
+ const pending=q.slice(i),mixed=interleaveStudyEntries(pending);
+ if(pending.some((entry,j)=>entry!==mixed[j])){state.daily.studyQueue=q.slice(0,i).concat(mixed);save()}
+}
 function promoteDueWords(){
  const due=dueWords().sort((a,b)=>dueTimestamp(a)-dueTimestamp(b));
  if(!due.length)return 0;
@@ -3924,7 +3942,7 @@ function promoteDueWords(){
  due.forEach(w=>{const c=state.cards[w.id]||{};state.cards[w.id]=Object.assign({},c,{revealed:false,reviewRevealed:false})});
  const index=Math.max(0,Math.min(Number(state.daily.index)||0,state.daily.studyQueue.length));
  const completed=state.daily.studyQueue.slice(0,index),pending=state.daily.studyQueue.slice(index).filter(entry=>!dueIds.has(entry.id));
- state.daily.studyQueue=completed.concat(due.map(makeDueStudyEntry),pending);
+ state.daily.studyQueue=completed.concat(interleaveStudyEntries(due.map(makeDueStudyEntry).concat(pending)));
  state.daily.shortQueue=(state.daily.shortQueue||[]).filter(item=>!dueIds.has(item.id));
  save();
  return due.length;
@@ -3934,7 +3952,7 @@ function getDaily(){
  if(isNewDay){
   const pool=newWords(),scripture=pool.filter(w=>w.bibleCard),english=pool.filter(w=>!w.bibleCard),ids=[];let ei=0,bi=0;while(ids.length<20&&(ei<english.length||bi<scripture.length)){if(ei<english.length)ids.push(english[ei++].id);if(ids.length<20&&bi<scripture.length)ids.push(scripture[bi++].id)}
   const due=dueWords().sort((a,b)=>dueTimestamp(a)-dueTimestamp(b));
-  state.daily={date:today(),ids:ids,studyQueue:due.map(makeDueStudyEntry).concat(ids.map(makeNewStudyEntry)),index:0,batch:1,newTotal:ids.length,excludedIds:[],shortQueue:[],relearnSeq:0,queueVersion:4,relearnQueue:[]};
+  state.daily={date:today(),ids:ids,studyQueue:interleaveStudyEntries(due.map(makeDueStudyEntry).concat(ids.map(makeNewStudyEntry))),index:0,batch:1,newTotal:ids.length,excludedIds:[],shortQueue:[],relearnSeq:0,queueVersion:5,relearnQueue:[]};
   save();
  }else{
   if(!Array.isArray(state.daily.excludedIds))state.daily.excludedIds=[];
@@ -3944,7 +3962,7 @@ function getDaily(){
    state.daily.index=0;
    state.daily.newTotal=(state.daily.ids||[]).length;
   }
-  if(state.daily.queueVersion!==4)state.daily.queueVersion=4;
+  if(state.daily.queueVersion!==5){state.daily.queueVersion=5;rebalancePendingStudyQueue()}
   state.daily.relearnSeq=Number(state.daily.relearnSeq)||0;
   state.daily.index=Math.max(0,Math.min(Number(state.daily.index)||0,state.daily.studyQueue.length));
  }
@@ -3966,7 +3984,7 @@ function advanceShortQueue(){
   if(item.after===0){matured.push(item);return false}
   return true;
  });
- if(matured.length)state.daily.studyQueue.splice(state.daily.index,0,...matured.map(makeRelearnStudyEntry));
+ if(matured.length)state.daily.studyQueue.splice(state.daily.index,0,...matured.map(makeRelearnStudyEntry));rebalancePendingStudyQueue();
 }
 function enqueueShortRelearn(entry,rating){
  if(!entry)return;
@@ -4306,7 +4324,7 @@ function learnView(app){
  }
 }
 
-function continueLearning(){getDaily();if(!Array.isArray(state.daily.excludedIds))state.daily.excludedIds=[];state.daily.excludedIds.push(...(state.daily.ids||[]).filter(id=>!state.cards[id]||!state.cards[id].seen));const excluded=new Set([...(state.daily.ids||[]),...(state.daily.excludedIds||[])]);const batch=newWords().filter(w=>!excluded.has(w.id)).slice(0,20);if(!batch.length){showToast('当前词库没有更多未学新词，请切换英语水平或先加入新词');return}state.daily.ids=batch.map(w=>w.id);state.daily.studyQueue=batch.map(w=>makeNewStudyEntry(w.id));state.daily.newTotal=batch.length;state.daily.index=0;state.daily.batch=(Number(state.daily.batch)||1)+1;save();render()}
+function continueLearning(){getDaily();if(!Array.isArray(state.daily.excludedIds))state.daily.excludedIds=[];state.daily.excludedIds.push(...(state.daily.ids||[]).filter(id=>!state.cards[id]||!state.cards[id].seen));const excluded=new Set([...(state.daily.ids||[]),...(state.daily.excludedIds||[])]);const remainingPool=newWords().filter(w=>!excluded.has(w.id)),english=remainingPool.filter(w=>!w.bibleCard),bible=remainingPool.filter(w=>w.bibleCard),batch=[];let ei=0,bi=0;while(batch.length<20&&(ei<english.length||bi<bible.length)){if(ei<english.length)batch.push(english[ei++]);if(batch.length<20&&bi<bible.length)batch.push(bible[bi++])}if(!batch.length){showToast('当前词库没有更多未学新词，请切换英语水平或先加入新词');return}state.daily.ids=batch.map(w=>w.id);state.daily.studyQueue=interleaveStudyEntries(batch.map(w=>makeNewStudyEntry(w.id)));state.daily.newTotal=batch.length;state.daily.index=0;state.daily.batch=(Number(state.daily.batch)||1)+1;save();render()}
 function goPreviousWord(mode){if(mode==='auto-review'){showToast('待复习单词请前往复习页面');return}let index=mode==='review'?(state.review.index||0):(state.daily.index||0);if(index<=0){showToast('已经是第一个单词');return}if(mode==='review')state.review.index=index-1;else state.daily.index=index-1;save();render()}
 function nextCardForSpeech(){
  if(state.view==='learn'){
