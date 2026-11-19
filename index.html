@@ -3898,7 +3898,7 @@ function allWords(){return FAMILY_ALBUM_WORDS.concat(WORDS,state.custom||[],bibl
 const REINFORCE_REQUIRED=2,REINFORCE_STEPS=[600000,3600000];
 function isReinforceCandidate(c){return (Number(c?.struggleCount)||0)>=REINFORCE_THRESHOLD&&(Number(c?.reinforceSuccesses)||0)<REINFORCE_REQUIRED}
 function getStubbornWords(){return allWords().filter(w=>!w.bibleCard&&isReinforceCandidate(state.cards[w.id]))}
-function reinforceBannerHTML(){const count=getStubbornWords().length;return count?'<div class="reinforce-banner"><div><strong>🔥 顽固词强化 · '+count+' 个待巩固</strong><p>四选一闯关，答对后间隔重现，连续两次正确解除顽固标签。</p></div><button class="btn secondary" data-action="start-reinforce">开始挑战</button></div>':''}
+function reinforceBannerHTML(){const n=getStubbornWords().length;return n?'<div class="reinforce-banner"><span>顽固词 '+n+' 个 · 已增加重现频率</span><button class="btn secondary" data-action="review-stubborn">主动复习</button></div>':''}
 function reinforceMeta(id){const c=state.cards[id]||(state.cards[id]={});if(!c.reinforceQuiz||typeof c.reinforceQuiz!=='object')c.reinforceQuiz={correct:Math.min(REINFORCE_REQUIRED,Number(c.reinforceSuccesses)||0),dueAt:0,attempts:0};return c.reinforceQuiz}
 function reinforceDistance(a,b){const x=String(a.word||'').toLowerCase(),y=String(b.word||'').toLowerCase();let score=0;if(a.category&&a.category===b.category)score+=5;if(a.level&&a.level===b.level)score+=3;const common=x.match(/^[a-z]{3,}/)?.[0]||'';if(common&&y.startsWith(common.slice(0,Math.min(4,common.length))))score+=7;const suffix=x.slice(-3);if(suffix.length===3&&y.endsWith(suffix))score+=3;const ax=x.split(''),by=y.split('');let dist=Array.from({length:by.length+1},(_,i)=>i);for(let i=1;i<=ax.length;i++){let next=[i];for(let j=1;j<=by.length;j++)next[j]=Math.min(next[j-1]+1,dist[j]+1,dist[j-1]+(ax[i-1]===by[j-1]?0:1));dist=next;}score+=Math.max(0,8-dist[by.length]);const am=String(a.meaning||'').split(/[；，、,;\s]/)[0],bm=String(b.meaning||'').split(/[；，、,;\s]/)[0];if(am.length>1&&bm.includes(am))score+=5;return score;}
 function reinforceOptions(w,level){const candidates=allWords().filter(x=>x.id!==w.id&&String(level===1?x.meaning:x.word||'').trim()&&String(x.meaning||'').trim());const sorted=candidates.map(x=>({w:x,score:reinforceDistance(w,x)})).sort((a,b)=>b.score-a.score||String(a.w.id).localeCompare(String(b.w.id)));const chosen=[],seen=new Set([String(level===1?w.meaning:w.word).trim().toLowerCase()]);for(const item of sorted){const val=String(level===1?item.w.meaning:item.w.word).trim().toLowerCase();if(seen.has(val))continue;seen.add(val);chosen.push(item.w);if(chosen.length===3)break;}if(chosen.length<3)return null;return [w,...chosen].map(x=>({id:x.id,label:String(level===1?x.meaning:x.word)})).sort(()=>Math.random()-.5);}
@@ -3990,11 +3990,11 @@ function enqueueShortRelearn(entry,rating){
  if(!entry)return;
  let after=0,attempt=(Number(entry.attempt)||0)+1;
  if(entry.kind==='new'||entry.kind==='due'){
-  if(rating==='unknown'||rating==='again')after=3;
-  else if(rating==='vague'||rating==='hard')after=5;
+  if(rating==='unknown'||rating==='again')after=2;
+  else if(rating==='vague'||rating==='hard')after=3;
  }else if(entry.kind==='relearn'){
-  if((rating==='unknown'||rating==='again')&&attempt<=3)after=2;
-  else if((rating==='vague'||rating==='hard')&&attempt<=2)after=4;
+  if((rating==='unknown'||rating==='again')&&attempt<=5)after=2;
+  else if((rating==='vague'||rating==='hard')&&attempt<=4)after=3;
  }
  if(!after)return;
  state.daily.relearnSeq=(Number(state.daily.relearnSeq)||0)+1;
@@ -4161,10 +4161,10 @@ function companionSetStatus(message){const el=document.getElementById('companion
 function companionPublish(){
  const socket=companionSocket;
  if(!socket||socket.readyState!==WebSocket.OPEN)return;
- const w=audioPlayer.list[audioPlayer.index];
- const queue=audioPlayer.list.map(item=>({word:item.word||'',phonetic:item.phonetic||'',meaning:audioMeaning(item),example:item.en||'',exampleZh:item.en?item.zh||'':''}));
+ const w=readerSpeechOverride||audioPlayer.list[audioPlayer.index];
+ const queue=(readerSpeechOverride?[readerSpeechOverride]:audioPlayer.list).map(item=>({word:item.word||'',phonetic:item.phonetic||'',meaning:audioMeaning(item),example:item.en||'',exampleZh:item.en?item.zh||'':''}));
  const signature=JSON.stringify(queue);
- const payload={type:'state',word:w?.word||'',phonetic:w?.phonetic||'',meaning:w?audioMeaning(w):'',example:w?.en||'',exampleZh:w?.en?w.zh||'':'',mode:audioPlayer.mode||'easy',gap:Number(audioPlayer.gap)||1500,rate:Number(audioPlayer.rate)||1,loop:!!audioPlayer.loop,segment:companionSegment,segmentZh:companionSegmentZh,playing:!!audioPlayer.playing,index:audioPlayer.index||0,total:audioPlayer.list.length||0};
+ const payload={type:'state',word:w?.word||'',phonetic:w?.phonetic||'',meaning:w?audioMeaning(w):'',example:w?.en||'',exampleZh:w?.en?w.zh||'':'',mode:audioPlayer.mode||'easy',gap:Number(audioPlayer.gap)||1500,rate:Number(audioPlayer.rate)||1,loop:!!audioPlayer.loop,segment:companionSegment,segmentZh:companionSegmentZh,playing:!!(audioPlayer.playing||readerSpeechOverride),index:readerSpeechOverride?0:audioPlayer.index||0,total:readerSpeechOverride?1:audioPlayer.list.length||0};
  if(signature!==companionQueueSignature){payload.queue=queue;companionQueueSignature=signature}
  try{socket.send(JSON.stringify(payload));}
  catch(error){console.warn('English companion publish failed:',error);try{socket.close()}catch(_){}}
@@ -4215,6 +4215,7 @@ function audioWords(){
 }
 function audioMeaning(w){return String(w.meaning||w.zh||'').trim()}
 function audioRender(){
+ if(audioPlayer.readerPlayback&&state.view==='reader'){companionPublish();return}
  const app=document.getElementById('app'),w=audioPlayer.list[audioPlayer.index],total=audioPlayer.list.length;
  const pct=total?Math.round((audioPlayer.index+1)/total*100):0;
  const modeNames={easy:'轻松磨耳朵',recall:'主动回忆',immersive:'英语沉浸'};
@@ -4271,7 +4272,7 @@ async function audioRun(token){
   else{audioPlayer.playing=false;break}
   audioRender();
  }
- if(token===audioPlayer.token){audioPlayer.playing=false;audioRender();companionPublish()}
+ if(token===audioPlayer.token){audioPlayer.playing=false;audioPlayer.readerPlayback=false;audioRender();companionPublish();if(state.view==='reader')renderPreservingScroll()}
 }
 function audioStart(){if(!audioPlayer.list.length){audioPlayer.list=audioWords();audioPlayer.index=0}if(!audioPlayer.list.length){showToast('这个播放列表还没有已学词汇');return}audioPlayer.playing=true;companionPublish();const token=++audioPlayer.token;audioRun(token)}
 function audioStop(){audioPlayer.playing=false;audioPlayer.token++;ttsRequestId++;if(endPlayback){endPlayback();endPlayback=null}if(window.speechSynthesis)window.speechSynthesis.cancel();if(currentTtsAudio){currentTtsAudio.pause();currentTtsAudio=null}if(currentTtsSource){try{currentTtsSource.stop()}catch(e){}currentTtsSource=null}audioRender();companionPublish()}
@@ -4366,7 +4367,7 @@ function schedule(id,rating,fromReview){
  const previousStruggle=Math.max(0,Number(c.struggleCount)||0);
  const struggleCount=isAgain?previousStruggle+1:(grade>=3?Math.max(0,previousStruggle-1):previousStruggle);
  const unknownCount=(Number(c.unknownCount)||0)+(isAgain?1:0);
- const shouldAutoReinforce=isAgain&&struggleCount>=REINFORCE_THRESHOLD;
+ const shouldAutoReinforce=false;
  const oldRating=isAgain?'unknown':isHard?'vague':'known';
  state.cards[id]={...c,...nextCard,due:new Date(dueAt).toISOString(),dueAt,
   last_review:new Date(nextCard.last_review||now).toISOString(),last:now.toISOString(),
@@ -4383,7 +4384,7 @@ function schedule(id,rating,fromReview){
   enqueueShortRelearn(entry,rating);
  }else if(fromReview===true||fromReview==='review')state.review.index++;
  if(state.view==='learn'&&!state.learnBible)promoteDueWords();
- if(shouldAutoReinforce&&!String(id).startsWith('bible:')){save();startReinforcement([id],true);return;}
+
  const next=fromReview==='bible'?null:nextCardForSpeech();
  if(next)state.cards[next.id]={...(state.cards[next.id]||{}),autoSpoken:true};
  save();render();if(next&&!next.bibleCard)say(next.word);
@@ -4696,25 +4697,33 @@ async function readerLookupWord(word){
  return meaning;
 }
 
+let readerSpeechOverride=null;
+async function readerSpeak(text,meaning,ref){
+ const phrase=String(text||'').trim();if(!phrase)return;
+ if(audioPlayer.playing)readerStopChapter();
+ const current={word:phrase,meaning:String(meaning||''),phonetic:String(ref||'')};
+ readerSpeechOverride=current;companionPublish();
+ try{await say(phrase)}finally{if(readerSpeechOverride===current){readerSpeechOverride=null;companionPublish()}}
+}
 function readerPlayChapter(){
  let verses=state.bible.revelationVerses||[];const chapter=Number(state.bible.readerChapter)||1;
  const rows=verses.filter(v=>Number((String(v.ref||'').match(/(\d+):(\d+)/)||[])[1])===chapter);
  if(!rows.length){showToast('本章经文尚未加载');return}
- if(audioPlayer.playing)audioStop();
+ if(audioPlayer.playing){audioPlayer.readerPlayback=false;audioStop()}
  audioPlayer.list=rows.map((v,i)=>({id:'reader:'+chapter+':'+i,word:v.en||'',meaning:'',phonetic:v.ref||'',en:'',zh:''}));
  audioPlayer.index=0;audioPlayer.mode='immersive';audioPlayer.gap=450;audioPlayer.loop=false;
  audioPlayer.readerPlayback=true;audioStart();showToast('正在逐节播放，并同步桌面浮窗');
 }
-function readerStopChapter(){if(audioPlayer.playing)audioStop();audioPlayer.readerPlayback=false;render()}
+function readerStopChapter(){audioPlayer.readerPlayback=false;if(audioPlayer.playing)audioStop();render()}
 function contextReadingView(app){
  let verses=state.bible.revelationVerses||[];
  if(!Array.isArray(verses)||verses.length<400){loadRevelation();verses=state.bible.revelationVerses||[]}
  const chapter=Math.max(1,Math.min(22,Number(state.bible.readerChapter)||1));
  const grouped={};verses.forEach(v=>{const m=String(v.ref||'').match(/(\d+):(\d+)/);if(m)(grouped[Number(m[1])]||(grouped[Number(m[1])]=[])).push(v)});
  const rows=grouped[chapter]||[];if(!rows.length){app.innerHTML='<div class="card"><p>本章英文内容暂不可用。</p></div>';return}
- const article=rows.map(v=>'<p class="reader-verse reader-verse-english"><span class="reader-ref">'+esc(v.ref||'')+'</span>'+readerEnglishTokens(v.en||'',v.ref||'')+'</p>').join('');
+ const article=rows.map(v=>'<p class="reader-verse reader-verse-english"><button type="button" class="btn quiet small" data-action="reader-verse-play" data-ref="'+esc(v.ref||'')+'" title="播放本节经文">🔊 '+esc(v.ref||'')+'</button> '+readerEnglishTokens(v.en||'',v.ref||'')+'</p>').join('');
  const totalWords=rows.reduce((n,v)=>n+((String(v.en||'').match(/[A-Za-z]+(?:['’][A-Za-z]+)?/g)||[]).length),0),selected=state.bible.readerWord;
- app.innerHTML='<div class="card"><div class="eyebrow">ENGLISH IMMERSION · FULL TEXT</div><div class="row"><div><h2 class="section-title">启示录 · 全英文阅读</h2><p class="section-sub" style="margin:3px 0 0">只保留英文原文 · 点击任意单词查看中文注释</p></div><select id="readerChapter" class="field" aria-label="选择章节">'+Array.from({length:22},(_,i)=>'<option value="'+(i+1)+'" '+(chapter===i+1?'selected':'')+'>Chapter '+(i+1)+'</option>').join('')+'</select></div><div class="reader-stats"><span>'+rows.length+' verses</span><span>'+totalWords+' words</span><span>逐词点击 · 中文释义 · 单词发音</span></div></div><div class="reader-layout"><article class="reader-article">'+article+'</article></div><p class="small muted" style="padding:0 4px">点击任意单词可查看中文释义并听单词发音；带下划线的文字表示常见短语。首次点击单词时会自动查询并缓存中文释义。</p>';
+ app.innerHTML='<div class="card"><div class="eyebrow">ENGLISH IMMERSION · FULL TEXT</div><div class="row"><div><h2 class="section-title">启示录 · 全英文阅读</h2><p class="section-sub" style="margin:3px 0 0">只保留英文原文 · 点击任意单词查看中文注释</p></div><select id="readerChapter" class="field" aria-label="选择章节">'+Array.from({length:22},(_,i)=>'<option value="'+(i+1)+'" '+(chapter===i+1?'selected':'')+'>Chapter '+(i+1)+'</option>').join('')+'</select></div><div class="row" style="margin:12px 0;gap:8px"><button class="btn primary" data-action="reader-play-chapter">▶ 播放本章 · 同步浮动字幕</button><button class="btn secondary" data-action="reader-stop-chapter">■ 停止</button></div><div class="reader-stats"><span>'+rows.length+' verses</span><span>'+totalWords+' words</span><span>逐词点击 · 中文释义 · 单词发音</span></div></div><div class="reader-layout"><article class="reader-article">'+article+'</article></div><p class="small muted" style="padding:0 4px">点击任意单词可查看中文释义并听单词发音；带下划线的文字表示常见短语。首次点击单词时会自动查询并缓存中文释义。</p>';
  const select=document.getElementById('readerChapter');if(select)select.addEventListener('change',e=>{if(audioPlayer.readerPlayback)readerStopChapter();state.bible.readerChapter=Number(e.target.value)||1;state.bible.readerWord=null;save();renderPreservingScroll()});
 }
 function openAddWordModal(){
@@ -4774,7 +4783,7 @@ else if(a==='example'){let w=wordById(b.dataset.id);if(w)say(w.en||w.word)}
 else if(a==='reveal'){let w=getDaily()[state.daily.index];if(w){say(w.word);state.cards[w.id]=Object.assign({},state.cards[w.id]||{},{revealed:true});save();render()}}
 else if(a==='rate'){let w=getDaily()[state.daily.index];if(w)schedule(w.id,b.dataset.rating,false)}
 else if(a==='skip'){let entry=state.daily.studyQueue&&state.daily.studyQueue[state.daily.index],id=entry&&entry.id;if(id&&entry.kind==='new'){if(!Array.isArray(state.daily.excludedIds))state.daily.excludedIds=[];if(!state.daily.excludedIds.includes(id))state.daily.excludedIds.push(id)}state.daily.index++;save();render()}
-else if(a==='start-reinforce')startReinforcement()
+else if(a==='review-stubborn'||a==='start-reinforce'){const ids=getStubbornWords().map(w=>w.id);if(ids.length){state.review={ids,index:0,active:true};state.view='review';save();render()}else showToast('目前没有顽固词')}
 else if(a==='reinforce-exit')finishRecallSession()
 else if(a==='reinforce-refresh'){state.reinforce.answeredIds=[];save();render()}
 else if(a==='reinforce-speak'){const w=wordById(b.dataset.id);if(w)say(w.word)}
@@ -4817,9 +4826,10 @@ else if(a==='choose'&&question&&!question.done){let q=question;q.selected=b.data
 else if(a==='check'&&question&&!question.done&&question.word){let q=question,field=document.getElementById('dictation');q.typedAnswer=field?field.value.trim():'';q.correct=q.typedAnswer.toLowerCase()===q.word.word.toLowerCase();q.done=true;recordListenResult(q);state.stats.attempts++;if(q.correct)state.stats.correct++;markActivity();save();render();advanceListenAfterAnswer(q)}
 else if(a==='next')newQuestion()
 else if(a==='bible-word-play'){let word=b.dataset.word,meaning=b.dataset.meaning;say(word);showToast(word+'：'+meaning)}
-else if(a==='reader-word'){const key=b.dataset.wordKey||b.dataset.ref+'|'+b.dataset.word;const same=state.bible.readerWord&&state.bible.readerWord.key===key;state.bible.readerWord=same?null:{key,word:b.dataset.word,meaning:b.dataset.meaning,phonetic:b.dataset.phonetic||'',ref:b.dataset.ref,en:b.dataset.word};if(!same){say(b.dataset.word);if(!b.dataset.meaning||b.dataset.meaning==='点击查询中文释义')readerLookupWord(b.dataset.word)}renderPreservingScroll()}
-else if(a==='reader-pronounce'){say(b.dataset.word)}
+else if(a==='reader-word'){const key=b.dataset.wordKey||b.dataset.ref+'|'+b.dataset.word;const same=state.bible.readerWord&&state.bible.readerWord.key===key;state.bible.readerWord=same?null:{key,word:b.dataset.word,meaning:b.dataset.meaning,phonetic:b.dataset.phonetic||'',ref:b.dataset.ref,en:b.dataset.word};if(!same){readerSpeak(b.dataset.word,b.dataset.meaning,b.dataset.ref);if(!b.dataset.meaning||b.dataset.meaning==='点击查询中文释义')readerLookupWord(b.dataset.word)}renderPreservingScroll()}
+else if(a==='reader-pronounce'){readerSpeak(b.dataset.word,state.bible.readerWord?.meaning||'',state.bible.readerWord?.ref||'')}
 else if(a==='reader-rate'){state.bible.readerWordLevels=Object.assign({},state.bible.readerWordLevels||{},{[String(b.dataset.word||'').toLowerCase()]:b.dataset.rating});save();renderPreservingScroll();showToast('熟练度已保存')}
+else if(a==='reader-verse-play'){const v=(state.bible.revelationVerses||[]).find(v=>v.ref===b.dataset.ref);if(v)readerSpeak(v.en||'','',v.ref)}
 else if(a==='reader-retry'){loadRevelation();renderPreservingScroll()}
 
 else if(a==='reader-add-word'){let x=state.bible.readerWord;if(x){let id='bible-'+x.en.toLowerCase().replace(/[^a-z0-9]+/g,'-');if(!allWords().some(w=>w.id===id)){state.custom.push({id,word:x.en,phonetic:'',meaning:x.meaning,level:state.level,category:'启示录词汇',en:x.en,zh:'',isCustom:true});save();showToast('已加入个人词库和复习系统')}else showToast('这个词已经在个人词库中');renderPreservingScroll()}}
