@@ -211,7 +211,6 @@
 <nav class="nav"><div class="nav-inner" id="nav">
  <button data-view="learn" class="active"><b>📖</b>单词</button>
  <button data-view="review"><b>🔁</b>复习</button>
- <button data-view="bible-memory"><b>📚</b>圣经记忆</button>
  <button data-view="reader"><b>📜</b>语境阅读</button>
  <button data-view="mine"><b>✍️</b>我的</button>
 </div></nav>
@@ -4261,11 +4260,24 @@ function audioStop(){audioPlayer.playing=false;audioPlayer.token++;ttsRequestId+
 function audioView(app){audioPlayer.list=audioWords();audioPlayer.index=Math.min(audioPlayer.index,Math.max(0,audioPlayer.list.length-1));audioRender()}
 
 function updateHeader(){document.getElementById('dateLabel').textContent=new Date().toLocaleDateString('zh-CN',{month:'long',day:'numeric',weekday:'short'});let learned=Object.keys(state.cards).filter(k=>state.cards[k]&&state.cards[k].seen).length;document.getElementById('summaryStats').innerHTML='<div class="stat"><strong>🔥 '+(state.stats.streak||0)+'</strong><span>连续学习天数</span></div><div class="stat"><strong>📚 '+learned+'</strong><span>累计学习词数</span></div>';document.querySelector('.shell').classList.toggle('compact-page',state.view!=='learn')}
-function render(){if(state.view==='speak'||state.view==='explore')state.view='learn';if(state.view==='bible')state.view='bible-memory';if(state.view==='listen'||state.view==='audio')state.view='review';updateHeader();document.querySelectorAll('#nav button').forEach(b=>b.classList.toggle('active',b.dataset.view===state.view));let views={learn:learnView,review:reviewView,'bible-memory':bibleMemoryView,reader:contextReadingView,mine:mineView,reinforce:reinforceView};(views[state.view]||learnView)(document.getElementById('app'))}
+function render(){if(state.view==='speak'||state.view==='explore')state.view='learn';if(state.view==='bible'||state.view==='bible-memory'){state.view='learn';state.learnBible=true;}if(state.view==='listen'||state.view==='audio')state.view='review';updateHeader();document.querySelectorAll('#nav button').forEach(b=>b.classList.toggle('active',b.dataset.view===state.view));let views={learn:learnView,review:reviewView,reader:contextReadingView,mine:mineView,reinforce:reinforceView};(views[state.view]||learnView)(document.getElementById('app'))}
 window.getAppState=function(){return state};
  window.getAllWordsCount=function(){return allWords().length};
 window.applyCloudState=function(data){if(!data||typeof data!=='object')return;let fresh=blank();state=Object.assign(fresh,data);state.stats=Object.assign(blank().stats,data.stats||{});state.listenStats=Object.assign(blank().listenStats,data.listenStats||{});state.daily=Object.assign(blank().daily,data.daily||{});state.review=Object.assign(blank().review,data.review||{});state.bible=Object.assign(blank().bible,data.bible||{});state.reinforce=Object.assign(blank().reinforce,data.reinforce||{});state.cards=data.cards&&typeof data.cards==='object'?data.cards:{};Object.keys(state.cards).forEach(k=>{let c=state.cards[k];if(c&&c.struggleCount==null)c.struggleCount=c.rating==='unknown'?1:0;if(c&&c.unknownCount==null)c.unknownCount=c.rating==='unknown'?1:0;if(c&&c.reinforceSuccesses==null)c.reinforceSuccesses=0});Object.values(state.cards).forEach(migrateFsrsCard);state.custom=Array.isArray(data.custom)?data.custom:[];if(!Array.isArray(state.bible.revelationVerses))state.bible.revelationVerses=[];if(dueWords().length)state.view='learn';dailyDueBootstrap=false;try{localStorage.setItem(KEY,JSON.stringify(state))}catch(e){}render();showToast('已从云端同步最新学习进度')};
+
+function bibleLearningView(app){
+ const m=bibleMemoryData(),book=BIBLE_MEMORY_BOOKS[m.book]||BIBLE_MEMORY_BOOKS[0],id='bible:'+m.book+':'+m.chapter;
+ const title=BIBLE_MEMORY_TITLES[m.book+':'+m.chapter]||'本章概要尚未收录';
+ const c=state.cards[id]||{},due=Number(c.dueAt)||0;
+ const bookButtons=BIBLE_MEMORY_BOOKS.map(b=>'<option value="'+b.id+'" '+(b.id===m.book?'selected':'')+'>'+esc(b.name)+'</option>').join('');
+ const chapters=Array.from({length:book.chapters},(_,i)=>'<option value="'+(i+1)+'" '+(m.chapter===i+1?'selected':'')+'>第'+(i+1)+'章</option>').join('');
+ const question=book.name+' 第'+m.chapter+'章',known=!!BIBLE_MEMORY_TITLES[m.book+':'+m.chapter];
+ app.innerHTML='<div class="card"><div class="row"><h2 class="section-title">📖 圣经记忆卡</h2><button class="btn quiet" data-action="learn-mode" data-mode="english">英语单词</button></div><p class="section-sub">像单词卡一样：先回忆，再查看释义，最后评价熟悉程度。</p><div class="row" style="flex-wrap:wrap"><select class="field" id="bibleLearnBook" aria-label="选择书卷">'+bookButtons+'</select><select class="field" id="bibleLearnChapter" aria-label="选择章节">'+chapters+'</select></div></div><article class="card word-card minimal-word-card"><div class="word-button" style="text-align:center">'+esc(question)+'</div>'+(c.revealed?'<div class="answer"><div class="meaning">'+esc(title)+'</div>'+(known?'':'<p class="small muted">本章内容尚未整理，不参与记忆评分。</p>')+'</div>':'<button class="btn secondary reveal-word-btn" data-action="bible-learn-reveal">查看释义</button>')+'</article>'+(c.revealed&&known?fsrsRatingsHTML('bible-learn-rate'):'')+'<div class="row" style="justify-content:space-between;flex-wrap:wrap"><button class="btn quiet" data-action="bible-learn-prev">上一章</button><span class="small muted">'+(c.seen?'已学习 · '+(due?dueLabel(c):'待复习'):'未学习')+'</span><button class="btn quiet" data-action="bible-learn-next">下一章</button></div>';
+}
+function bibleLearnMove(delta){const m=bibleMemoryData();m.chapter+=delta;if(m.chapter<1){if(m.book>0){m.book--;m.chapter=BIBLE_MEMORY_BOOKS[m.book].chapters}else m.chapter=1}else if(m.chapter>BIBLE_MEMORY_BOOKS[m.book].chapters){if(m.book<65){m.book++;m.chapter=1}else m.chapter=22}save();render();}
+function bibleLearnModeHTML(){return '<div class="row" style="justify-content:center;gap:8px;margin:8px 0 14px"><button class="btn secondary" data-action="learn-mode" data-mode="english">英语单词</button><button class="btn secondary" data-action="learn-mode" data-mode="bible">圣经记忆</button></div>'}
 function learnView(app){
+ if(state.learnBible){bibleLearningView(app);return;}
  const reinforceBanner=reinforceBannerHTML();
  let list=getDaily(),i=state.daily.index||0;
  while(i<list.length&&list[i]._dailyEntry.kind==='new'&&state.cards[list[i].id]&&state.cards[list[i].id].seen){i++;state.daily.index=i;save()}
@@ -4274,7 +4286,7 @@ function learnView(app){
  let remaining=availableNewWords().length;
  if(!w){
   const canContinue=remaining>0;
-  app.innerHTML=reinforceBanner+'<div class="card empty"><div style="font-size:32px">🎉</div><h2>这一组新词学完了</h2><p>'+(canContinue?'这组单词和短期重学都完成了。继续下一组，会再加入最多 20 个尚未学过的新词。':'当前词库中暂时没有更多未学新词。你也可以进入复习计划巩固记忆。')+'</p><div class="actions">'+(canContinue?'<button class="btn primary" data-action="continue-learning">继续学习下一组（最多 20 个）</button>':'<button class="btn secondary" data-action="go-review">查看复习计划</button>')+'</div></div>';
+  app.innerHTML=bibleLearnModeHTML()+reinforceBanner+'<div class="card empty"><div style="font-size:32px">🎉</div><h2>这一组新词学完了</h2><p>'+(canContinue?'这组单词和短期重学都完成了。继续下一组，会再加入最多 20 个尚未学过的新词。':'当前词库中暂时没有更多未学新词。你也可以进入复习计划巩固记忆。')+'</p><div class="actions">'+(canContinue?'<button class="btn primary" data-action="continue-learning">继续学习下一组（最多 20 个）</button>':'<button class="btn secondary" data-action="go-review">查看复习计划</button>')+'</div></div>';
   return;
  }
  const entry=w._dailyEntry,currentBatch=Number(state.daily.batch)||1;
@@ -4285,7 +4297,7 @@ function learnView(app){
  let c=state.cards[w.id]||{};
  const struggleHint=Number(c.struggleCount)>0?'<div class="small muted" style="text-align:center;margin:5px 0 0">记忆困难值：'+Math.min(REINFORCE_THRESHOLD,Number(c.struggleCount))+' / '+REINFORCE_THRESHOLD+'</div>':'';
  let html=reinforceBanner+progress+sourceLabel+struggleHint+'<article class="card word-card minimal-word-card" data-swipe-card data-swipe-enabled="true" data-swipe-animated="true swipe-enter" data-swipe-id="'+esc(w.id)+'" data-swipe-mode="daily"><button class="word-add-button" type="button" aria-label="添加单词" title="添加单词" data-action="open-add-word">＋</button><button class="word-button" data-action="say" data-id="'+esc(w.id)+'">'+wordDisplayHTML(w.word)+'</button><div class="word-phonetic">'+esc(w.phonetic||'暂未提供音标')+'</div><button class="word-pronounce-btn" data-action="say" data-id="'+esc(w.id)+'">🔊 重听发音</button>'+(c.revealed?'<div class="answer"><div class="meaning">'+esc(w.meaning)+'</div>'+wordExampleHTML(w)+morphologyHTML(w)+'</div>':'<button class="btn secondary reveal-word-btn" data-action="reveal">查看释义</button>')+'</article>'+(c.revealed?fsrsRatingsHTML('rate'):'');
- app.innerHTML=html;
+ app.innerHTML=bibleLearnModeHTML()+html;
  if(state.autoPlay&&!c.autoSpoken){
   const id=w.id,token=entry.token;
   state.cards[id]=Object.assign({},state.cards[id]||{},{autoSpoken:true});
@@ -4314,6 +4326,7 @@ function schedule(id,rating,fromReview){
   if(entry.kind==='new'&&c.seen)return;
   if((entry.kind==='relearn'||entry.kind==='due')&&!c.seen)return;
  }
+ if(fromReview==='bible'&&!String(id).startsWith('bible:'))return;
  const now=new Date(),grade=fsrsRatingValue(rating),isAgain=grade===1,isHard=grade===2;
  const historical=c.seen?migrateFsrsCard({...c}):c;
  let nextCard;
@@ -4351,9 +4364,9 @@ function schedule(id,rating,fromReview){
   advanceShortQueue();
   enqueueShortRelearn(entry,rating);
  }else if(fromReview===true||fromReview==='review')state.review.index++;
- if(state.view==='learn')promoteDueWords();
- if(shouldAutoReinforce){save();startReinforcement([id],true);return;}
- const next=nextCardForSpeech();
+ if(state.view==='learn'&&!state.learnBible)promoteDueWords();
+ if(shouldAutoReinforce&&!String(id).startsWith('bible:')){save();startReinforcement([id],true);return;}
+ const next=fromReview==='bible'?null:nextCardForSpeech();
  if(next)state.cards[next.id]={...(state.cards[next.id]||{}),autoSpoken:true};
  save();render();if(next)say(next.word);
 }
@@ -4742,7 +4755,12 @@ else if(a==='go-review'){state.view='review';render()}
 else if(a==='continue-learning')continueLearning()
 else if(a==='auto-review-reveal'){let w=dueWords()[0];if(w){say(w.word);state.cards[w.id]=Object.assign({},state.cards[w.id]||{},{reviewRevealed:true});save();render()}}
  else if(a==='auto-review-rate'){let w=dueWords()[0];if(w)schedule(w.id,b.dataset.rating,'auto')}
- else if(a==='review-hub'){state.reviewHubTab=b.dataset.tab;save();render()}
+ else if(a==='learn-mode'){state.learnBible=b.dataset.mode==='bible';state.view='learn';save();render()}
+else if(a==='bible-learn-reveal'){const m=bibleMemoryData(),id='bible:'+m.book+':'+m.chapter;state.cards[id]={...(state.cards[id]||{}),revealed:true};save();render()}
+else if(a==='bible-learn-rate'){const m=bibleMemoryData(),id='bible:'+m.book+':'+m.chapter;schedule(id,b.dataset.rating,'bible');bibleLearnMove(1)}
+else if(a==='bible-learn-prev')bibleLearnMove(-1)
+else if(a==='bible-learn-next')bibleLearnMove(1)
+else if(a==='review-hub'){state.reviewHubTab=b.dataset.tab;save();render()}
 else if(a==='review-word'){const w=wordById(b.dataset.id);if(w){state.review={ids:[w.id],index:0,active:true};save();render()}}
 else if(a==='review-start-list'){const ids=(b.dataset.ids||'').split(',').filter(id=>wordById(id));if(ids.length){state.review={ids,index:0,active:true};save();render()}}
 else if(a==='review-special'){state.reviewHubTab='special:'+b.dataset.category;save();render()}
@@ -4791,6 +4809,7 @@ else if(a==='reset-data'){if(confirm('确定清空本机学习数据、复习记
 }
 document.getElementById('nav').addEventListener('click',e=>{let b=e.target.closest('[data-view]');if(!b)return;state.view=b.dataset.view;question=null;save();render()});
 document.getElementById('app').addEventListener('input',e=>{if(e.target.id==='reviewSearch'){state.reviewSearch=e.target.value;const start=e.target.selectionStart;render();const input=document.getElementById('reviewSearch');if(input){input.focus();input.setSelectionRange(start,start)}}});
+document.getElementById('app').addEventListener('change',e=>{if(e.target.id==='bibleLearnBook'){const m=bibleMemoryData();m.book=Number(e.target.value);m.chapter=1;save();render()}else if(e.target.id==='bibleLearnChapter'){bibleMemoryData().chapter=Number(e.target.value);save();render()}});
 document.getElementById('app').addEventListener('change',e=>{if(e.target.id==='audioMode'){if(audioPlayer.playing)audioStop();audioPlayer.mode=e.target.value;audioRender()}else if(e.target.id==='audioGap'){audioPlayer.gap=Number(e.target.value);audioRender()}else if(e.target.id==='audioRate'){audioPlayer.rate=Number(e.target.value);audioRender()}else if(e.target.id==='audioLoop'){audioPlayer.loop=e.target.value==='1';audioRender()}});
 document.getElementById('app').addEventListener('click',e=>{let b=e.target.closest('[data-action]');if(b){action(b);return}let card=e.target.closest('.minimal-word-card[data-swipe-card]');if(card&&Date.now()>suppressWordCardClickUntil){let w=wordById(card.dataset.swipeId);if(w)say(w.word)}});
 document.addEventListener('change',e=>{if(e.target?.id==='reinforceL3'){state.reinforce.level3=e.target.checked;save();render();}});
