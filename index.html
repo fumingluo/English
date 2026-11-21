@@ -230,6 +230,24 @@
 .example-word-detail{display:inline-block;vertical-align:baseline;margin:0 3px;padding:1px 6px;border-radius:5px;background:rgba(73,137,82,.10);color:var(--green);font-size:.85em;line-height:1.5;max-width:100%;overflow-wrap:anywhere;animation:example-meaning-in .16s ease-out}
 @keyframes example-meaning-in{from{opacity:.4;transform:translateY(3px)}to{opacity:1;transform:translateY(0)}}
 @media(prefers-reduced-motion:reduce){.example-tap-word{transition:none}}
+
+/* Add-word modal: coherent dark surfaces, without bright white or saturated blocks */
+:root[data-theme="dark"] .word-add-backdrop{background:rgba(3,9,6,.76);backdrop-filter:blur(5px);-webkit-backdrop-filter:blur(5px)}
+:root[data-theme="dark"] .word-add-dialog{background:#19251e;color:#e2ebe3;border:1px solid #35483a;box-shadow:0 24px 64px rgba(0,0,0,.48)}
+:root[data-theme="dark"] .word-add-dialog h2{color:#e9f1e9}
+:root[data-theme="dark"] .word-add-dialog .field,
+:root[data-theme="dark"] .word-add-dialog input,
+:root[data-theme="dark"] .word-add-dialog textarea,
+:root[data-theme="dark"] .word-add-dialog select{background:#202f25!important;color:#e5eee5!important;border:1px solid #3a4c3f!important;box-shadow:none}
+:root[data-theme="dark"] .word-add-dialog .field:focus{outline:2px solid #6d9876;outline-offset:1px;border-color:#6d9876!important}
+:root[data-theme="dark"] .word-add-dialog .field::placeholder{color:#889e8c}
+:root[data-theme="dark"] .word-add-dialog .btn.quiet{background:transparent;color:#b9cbbd;border:1px solid #35483a}
+:root[data-theme="dark"] .word-add-dialog .btn.secondary{background:#2b4032;color:#d4e6d6;border:1px solid #3b5643;box-shadow:none}
+:root[data-theme="dark"] .word-add-dialog .btn.primary{background:#426b4c;color:#f4faf4;border:1px solid #517a59;box-shadow:none}
+:root[data-theme="dark"] .word-add-dialog .btn:hover{filter:brightness(1.09)}
+:root[data-theme="dark"] .word-add-dialog .small,
+:root[data-theme="dark"] .word-add-dialog .muted{color:#a1b4a4}
+:root[data-theme="dark"] .word-add-dialog #quickWordPreview{border-top:1px solid #34463a;padding-top:10px}
 </style>
 </head>
 <body>
