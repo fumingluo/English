@@ -4053,7 +4053,7 @@ function mobileNativeSay(text,language,requestId){
   endPlayback=stop;
   u.onend=()=>finish(true);u.onerror=()=>finish(false);
   if(requestId!==ttsRequestId)return finish(false);
-  try{synth.speak(u);if(synth.paused)synth.resume()}catch(e){finish(false)}
+  try{synth.cancel();synth.speak(u);if(synth.paused)synth.resume()}catch(e){finish(false)}
  });
 }
 async function fallbackSay(text,language=detectTtsLanguage(text),requestId=ttsRequestId){
@@ -4134,6 +4134,14 @@ async function trimTtsCache(){
 }
 let endPlayback=null;
 let ttsRequestId=0;
+let mobileSpeechReady=false;
+function unlockMobileSpeech(){
+ if(!/iPhone|iPad|iPod/i.test(navigator.userAgent)||!window.speechSynthesis)return;
+ mobileSpeechReady=true;
+ try{const synth=window.speechSynthesis;if(synth.paused)synth.resume()}catch(_){}
+}
+document.addEventListener('touchend',unlockMobileSpeech,{passive:true});
+document.addEventListener('click',unlockMobileSpeech,true);
 async function say(text){
  const phrase=String(text||'').trim();if(!phrase)return;
  const requestId=++ttsRequestId;
@@ -4143,7 +4151,8 @@ async function say(text){
  if(currentTtsObjectUrl){URL.revokeObjectURL(currentTtsObjectUrl);currentTtsObjectUrl=null;}
  if(window.speechSynthesis)window.speechSynthesis.cancel();
  const language=detectTtsLanguage(phrase);
- if([...phrase].length>180){if(/iPhone|iPad|iPod|Android/i.test(navigator.userAgent))await mobileNativeSay(phrase,language,requestId);else await fallbackSay(phrase,language,requestId);return;}
+ if(/iPhone|iPad|iPod/i.test(navigator.userAgent)){const ok=await mobileNativeSay(phrase,language,requestId);if(ok||requestId!==ttsRequestId)return;showToast('系统朗读失败，尝试在线语音');}
+ if([...phrase].length>180){await fallbackSay(phrase,language,requestId);return;}
  const tl=language==='zh-CN'?'zh-CN':'en';
  const url='https://translate.googleapis.com/translate_tts?ie=UTF-8&client=gtx&tl='+tl+'&q='+encodeURIComponent(phrase);
  try{
@@ -4169,7 +4178,7 @@ async function say(text){
  }catch(error){
   if(requestId!==ttsRequestId)return;
   // Google may reject unauthenticated requests; do not surface HTTP errors.
-  if(/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)){await mobileNativeSay(phrase,language,requestId)}else await fallbackSay(phrase,language,requestId);
+  await fallbackSay(phrase,language,requestId);
  }
 }
 
@@ -4199,6 +4208,7 @@ function companionScheduleReconnect(){
  companionRetry=setTimeout(()=>{companionRetry=null;companionConnect()},delay);
 }
 function companionConnect(){
+ if(/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)){companionSetStatus('手机无法连接电脑的本机地址；跨设备同步需要独立的安全中继');return}
  companionRequested=true;
  if(companionSocket&&[WebSocket.OPEN,WebSocket.CONNECTING].includes(companionSocket.readyState)){
   if(companionSocket.readyState===WebSocket.OPEN)companionPublish();
