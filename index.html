@@ -4806,21 +4806,49 @@ function contextReadingView(app){
  app.innerHTML='<div class="card"><div class="eyebrow">ENGLISH IMMERSION · FULL TEXT</div><div class="row"><div><h2 class="section-title">启示录 · 全英文阅读</h2><p class="section-sub" style="margin:3px 0 0">只保留英文原文 · 点击任意单词查看中文注释</p></div><select id="readerChapter" class="field" aria-label="选择章节">'+Array.from({length:22},(_,i)=>'<option value="'+(i+1)+'" '+(chapter===i+1?'selected':'')+'>Chapter '+(i+1)+'</option>').join('')+'</select></div><div class="row" style="margin:12px 0;gap:8px"><button class="btn primary" data-action="reader-play-chapter">▶ 播放本章 · 同步浮动字幕</button><button class="btn secondary" data-action="reader-stop-chapter">■ 停止</button></div><div class="reader-stats"><span>'+rows.length+' verses</span><span>'+totalWords+' words</span><span>逐词点击 · 中文释义 · 单词发音</span></div></div><div class="reader-layout"><article class="reader-article">'+article+'</article></div><p class="small muted" style="padding:0 4px">点击任意单词可查看中文释义并听单词发音；带下划线的文字表示常见短语。首次点击单词时会自动查询并缓存中文释义。</p>';
  const select=document.getElementById('readerChapter');if(select)select.addEventListener('change',e=>{if(audioPlayer.readerPlayback)readerStopChapter();state.bible.readerChapter=Number(e.target.value)||1;state.bible.readerWord=null;save();renderPreservingScroll()});
 }
+function parsePastedScripture(raw){
+ let t=String(raw||'').trim().replace(/\r/g,'');if(!t)return {verse:'',reference:''};
+ const refPattern='(?:[1-3一二三]?\\s*[\\u4e00-\\u9fff]{1,9}|[1-3]?\\s*[A-Za-z]+(?:\\s+[A-Za-z]+){0,3})\\s*\\d{1,3}\\s*[:：章]\\s*\\d{1,3}(?:\\s*[-–—至~]\\s*\\d{1,3})?(?:\\s*节)?';
+ const re=new RegExp(refPattern,'g'),matches=[...t.matchAll(re)];
+ if(!matches.length)return {verse:t,reference:''};
+ const match=matches[matches.length-1],reference=match[0].replace(/\\s+/g,' ').trim();
+ let verse=(t.slice(0,match.index)+' '+t.slice(match.index+match[0].length)).trim();
+ verse=verse.replace(/^[\\s【\[（(「『]+|[\\s】\]）)」』]+$/g,'').trim();
+ verse=verse.replace(/^[：:、.．\s]+|[：:、.．\s]+$/g,'').trim();
+ return {verse,reference};
+}
+function addScriptureQuickCard(verse,reference){
+ verse=String(verse||'').trim();reference=String(reference||'').trim();
+ if(!verse||!reference)return false;
+ const norm=v=>v.replace(/[\\s，。,.：:；;（）()【】\[\]]/g,'').toLowerCase();
+ if(state.custom.some(w=>w.scriptureQuick&&norm(w.meaning)===norm(reference)&&norm(w.word)===norm(verse))){showToast('这段经文已经添加过了');return false}
+ getDaily();
+ const id='scripture-'+Date.now()+'-'+Math.random().toString(36).slice(2,8);
+ state.custom.push({id,word:verse,meaning:reference,phonetic:'圣经出处记忆',en:'',zh:'',level:state.level,category:'圣经经文',isCustom:true,bibleCard:true,scriptureQuick:true});
+ state.daily.ids.push(id);
+ state.daily.studyQueue.splice(Math.max(0,Number(state.daily.index)||0),0,makeNewStudyEntry(id));
+ save();markActivity();return true;
+}
 function openAddWordModal(){
  if(document.getElementById('wordAddBackdrop'))return;
  const backdrop=document.createElement('div');
  backdrop.id='wordAddBackdrop';backdrop.className='word-add-backdrop';
  backdrop.innerHTML='<section class="word-add-dialog" role="dialog" aria-modal="true" aria-labelledby="wordAddTitle"><div class="row"><h2 id="wordAddTitle">添加单词</h2><button type="button" class="btn quiet" data-close-add-word>关闭</button></div><form id="quickWordForm" class="form-grid">'+
-  '<label class="label">英文单词 / 词组 *<input class="field" name="word" maxlength="80" required autocomplete="off"></label>'+
+  '<div class="row" style="gap:8px;margin:8px 0"><button class="btn secondary" type="button" data-add-mode="scripture">📜 粘贴经文</button><button class="btn quiet" type="button" data-add-mode="word">📖 添加单词</button></div><div id="scriptureQuickArea" class="form-grid"><label class="label">粘贴圣经软件复制的经文（包含出处）<textarea class="field" id="scripturePaste" rows="5" placeholder="例如：神爱世人，甚至将他的独生子赐给他们…… 约翰福音3:16"></textarea></label><label class="label">经文内容<textarea class="field" id="scriptureText" rows="4"></textarea></label><label class="label">经文出处<input class="field" id="scriptureReference" placeholder="例如：约翰福音3:16"></label><p class="small muted" id="scriptureParseHint">粘贴后自动拆分；保存前可以核对或修改。</p><button class="btn primary" type="button" id="scriptureSave">一键保存为记忆卡</button></div><div id="wordAdvancedArea" style="display:none"><label class="label">英文单词 / 词组 *<input class="field" name="word" maxlength="80" required autocomplete="off"></label>'+
   '<label class="label">音标<input class="field" name="phonetic" maxlength="80"></label>'+
   '<label class="label">中文释义 *<textarea class="field" name="meaning" maxlength="500" required rows="2"></textarea></label>'+
   '<label class="label">英文例句<textarea class="field" name="en" maxlength="300" rows="2"></textarea></label>'+
   '<label class="label">例句中文翻译<textarea class="field" name="zh" maxlength="300" rows="2"></textarea></label>'+
   '<label class="label">难度等级<select class="field" name="level"><option>初级</option><option>中级</option><option>高级</option></select></label>'+
-  '<button class="btn primary" type="submit">保存并立即学习</button></form></section>';
+  '<button class="btn primary" type="submit">保存并立即学习</button></div></form></section>';
  document.body.appendChild(backdrop);
  backdrop.querySelector('[name="level"]').value=state.level;
- backdrop.querySelector('[name="word"]').focus();
+ const paste=backdrop.querySelector('#scripturePaste'),verse=backdrop.querySelector('#scriptureText'),ref=backdrop.querySelector('#scriptureReference');
+ const setMode=mode=>{backdrop.querySelector('#scriptureQuickArea').style.display=mode==='scripture'?'grid':'none';backdrop.querySelector('#wordAdvancedArea').style.display=mode==='word'?'block':'none';backdrop.querySelectorAll('[data-add-mode]').forEach(b=>b.className='btn '+(b.dataset.addMode===mode?'secondary':'quiet'));backdrop.querySelector('#wordAddTitle').textContent=mode==='scripture'?'快速添加经文':'添加单词';backdrop.querySelectorAll('#wordAdvancedArea [required]').forEach(e=>e.disabled=mode!=='word');try{localStorage.setItem('dailyEnglish.addMode',mode)}catch(_){}};
+ setMode(localStorage.getItem('dailyEnglish.addMode')||'scripture');
+ paste.addEventListener('input',()=>{const parsed=parsePastedScripture(paste.value);verse.value=parsed.verse;ref.value=parsed.reference;backdrop.querySelector('#scriptureParseHint').textContent=parsed.reference?'已识别出处，请确认内容后保存':'尚未识别到章节，请在出处栏手动填写';});
+ backdrop.querySelectorAll('[data-add-mode]').forEach(b=>b.addEventListener('click',()=>setMode(b.dataset.addMode)));
+ backdrop.querySelector('#scriptureSave').addEventListener('click',()=>{if(!verse.value.trim()||!ref.value.trim()){showToast('请确认经文内容和章节出处');return}if(addScriptureQuickCard(verse.value,ref.value)){paste.value='';verse.value='';ref.value='';backdrop.querySelector('#scriptureParseHint').textContent='已保存，可以继续粘贴下一段经文';paste.focus();render();showToast('已保存经文记忆卡，继续粘贴下一条')}});
  backdrop.addEventListener('click',e=>{if(e.target===backdrop||e.target.closest('[data-close-add-word]'))backdrop.remove()});
  backdrop.addEventListener('submit',e=>{
   if(e.target.id!=='quickWordForm')return;e.preventDefault();
