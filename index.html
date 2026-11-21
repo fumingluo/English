@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#f7f7f2">
+<meta name="theme-color" content="#f7f7f2" id="appThemeColor">
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
@@ -205,11 +205,29 @@
 @media(max-width:380px){.rating-grid.desktop-ratings .rating{font-size:10px;padding:6px 1px}.rating-grid.desktop-ratings .rating small{font-size:8px}}
 .reinforce-choices{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:16px 0}.reinforce-choice{min-width:0;width:100%;overflow-wrap:anywhere;min-height:66px;padding:12px;border:1px solid var(--line,#d6e7dc);border-radius:12px;background:var(--card,#fff);color:inherit;cursor:pointer}.reinforce-choice.correct{background:#d7f5e3;border-color:#32a36b;color:#176c40}.reinforce-choice.incorrect{background:#ffe1e1;border-color:#d85c5c;color:#a32727}.reinforce-prompt{display:flex;gap:12px;align-items:center;justify-content:center;min-height:100px;text-align:center;overflow-wrap:anywhere;font-size:22px}@media(max-width:400px){.reinforce-choices{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.reinforce-choice{padding:9px 6px;font-size:14px}}
 .review-hub-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:12px 0}.review-hub-tile{min-width:0;text-align:left;border:1px solid #d5e7db;border-radius:14px;padding:16px;background:#fff;display:flex;flex-direction:column;gap:8px;color:inherit}.review-word-list{max-height:65vh;overflow:auto}.review-word-row{display:flex;justify-content:space-between;gap:12px;width:100%;text-align:left;padding:12px;border:0;border-bottom:1px solid #e5eee7;background:transparent;overflow-wrap:anywhere}.bible-book-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:7px;max-height:280px;overflow:auto}.bible-chapter-grid{display:grid;grid-template-columns:repeat(8,minmax(0,1fr));gap:6px;max-height:220px;overflow:auto}.bible-book,.bible-chapter{min-width:0;padding:9px 3px;border:1px solid #d5e7db;border-radius:8px;background:#fff;color:inherit;overflow-wrap:anywhere}.bible-book.selected,.bible-chapter.selected{background:#d6f3e1;border-color:#58a978}.bible-memory-card{text-align:center;overflow-wrap:anywhere}@media(max-width:400px){.bible-book-grid{grid-template-columns:repeat(3,minmax(0,1fr))}.bible-chapter-grid{grid-template-columns:repeat(6,minmax(0,1fr))}.review-hub-tile{padding:12px 9px}}
+
+/* Explicit appearance for Safari and iOS Home Screen standalone mode. */
+:root{color-scheme:light}
+:root[data-theme="dark"]{color-scheme:dark;--ink:#e9f1e9;--muted:#a9b9aa;--green:#74a97e;--green2:#a5d0aa;--pale:#263d30;--paper:#111b16;--line:#34473b;--shadow:0 8px 26px #0005;--red:#e6a59a;--gold:#dfbe79}
+:root[data-theme="dark"] .stat,:root[data-theme="dark"] .card,:root[data-theme="dark"] .rating,:root[data-theme="dark"] .field,:root[data-theme="dark"] .choice{background:#1c2a22;color:var(--ink)}
+:root[data-theme="dark"] .example,:root[data-theme="dark"] .quiet,:root[data-theme="dark"] .tag,:root[data-theme="dark"] .listen-audio-trigger,:root[data-theme="dark"] .listen-answer-panel{background:#26372b;color:var(--ink)}
+:root[data-theme="dark"] .nav{background:#17241ff2}
+:root[data-theme="dark"] .nav button{color:#b0c2b2}
+:root[data-theme="dark"] .nav button.active{background:#304a37;color:#d7f0da}
+:root[data-theme="dark"] .primary{background:#396b49;color:#fff}
+:root[data-theme="dark"] .secondary{background:#2d4734;color:#d0ead2}
+:root[data-theme="dark"] .gold{background:#443923;color:#f3d99a}
+:root[data-theme="dark"] .danger{background:#4b2c2b;color:#f1b9b0}
+:root[data-theme="dark"] .good,:root[data-theme="dark"] .choice.correct{background:#25452d;color:#d6f4d8}
+:root[data-theme="dark"] .bad,:root[data-theme="dark"] .choice.wrong{background:#4b302d;color:#f6c7be}
+:root[data-theme="dark"] input,:root[data-theme="dark"] textarea,:root[data-theme="dark"] select{background:#1c2a22;color:#e9f1e9;border-color:#405548}
+:root[data-theme="dark"] .progress{background:#344638}
+:root[data-theme="dark"] .sound{color:#e4f6e5}
 </style>
 </head>
 <body>
 <div class="shell">
- <div class="topbar"><div class="brand">Daily <span>English.</span></div><div class="row" style="gap:8px"><button class="btn quiet" data-action="cloud-panel" style="padding:6px 9px;font-size:12px">☁️ 同步</button><div class="date-label" id="dateLabel"></div></div></div>
+ <div class="topbar"><div class="brand">Daily <span>English.</span></div><div class="row" style="gap:8px"><button class="btn quiet" id="themeToggle" data-action="theme-toggle" aria-label="切换外观" title="外观：跟随系统">🌓</button><button class="btn quiet" data-action="cloud-panel" style="padding:6px 9px;font-size:12px">☁️ 同步</button><div class="date-label" id="dateLabel"></div></div></div>
  <div class="stats-row" id="summaryStats"></div>
  <main id="app" aria-live="polite"></main>
 </div>
@@ -4311,6 +4329,18 @@ function audioStart(){companionConnect();if(!audioPlayer.list.length){audioPlaye
 function audioStop(){audioPlayer.playing=false;audioPlayer.token++;ttsRequestId++;if(endPlayback){endPlayback();endPlayback=null}if(window.speechSynthesis)window.speechSynthesis.cancel();if(currentTtsAudio){currentTtsAudio.pause();currentTtsAudio=null}if(currentTtsSource){try{currentTtsSource.stop()}catch(e){}currentTtsSource=null}audioRender();companionPublish()}
 function audioView(app){audioPlayer.list=audioWords();audioPlayer.index=Math.min(audioPlayer.index,Math.max(0,audioPlayer.list.length-1));audioRender()}
 
+const THEME_KEY='dailyEnglish.appearance.v1';
+function appearanceMode(){try{return localStorage.getItem(THEME_KEY)||'auto'}catch(_){return 'auto'}}
+function applyAppearance(){
+ const mode=appearanceMode(),systemDark=window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches;
+ const dark=mode==='dark'||(mode==='auto'&&systemDark);
+ document.documentElement.dataset.theme=dark?'dark':'light';
+ const meta=document.getElementById('appThemeColor');if(meta)meta.content=dark?'#111b16':'#f7f7f2';
+ const btn=document.getElementById('themeToggle');if(btn){btn.textContent=mode==='auto'?'🌓':mode==='dark'?'🌙':'☀️';btn.title='外观：'+(mode==='auto'?'跟随系统':mode==='dark'?'深色':'浅色');btn.setAttribute('aria-label',btn.title+'，点击切换')}
+}
+function cycleAppearance(){const mode=appearanceMode(),next=mode==='auto'?'dark':mode==='dark'?'light':'auto';try{localStorage.setItem(THEME_KEY,next)}catch(_){}applyAppearance();showToast('外观：'+(next==='auto'?'跟随系统':next==='dark'?'深色':'浅色'))}
+applyAppearance();
+if(window.matchMedia){const mq=window.matchMedia('(prefers-color-scheme: dark)');if(mq.addEventListener)mq.addEventListener('change',applyAppearance);else if(mq.addListener)mq.addListener(applyAppearance)}
 function cloudPanel(){
  const prior=document.getElementById('cloudSyncPanel');if(prior){prior.remove();return}
  const saved=JSON.parse(localStorage.getItem('dailyEnglish.sync.v1')||'null');
@@ -4822,7 +4852,8 @@ else if(a==='audio-next'){audioStop();audioPlayer.index=Math.min(audioPlayer.lis
 else if(a==='audio-prev'){audioStop();audioPlayer.index=Math.max(0,audioPlayer.index-1);audioRender();audioStart()}
 else if(a==='audio-source'){audioStop();audioPlayer.source=b.dataset.value;audioPlayer.list=audioWords();audioPlayer.index=0;audioRender()}
 
-if(a==='cloud-panel'){cloudPanel()}
+if(a==='theme-toggle'){cycleAppearance()}
+else if(a==='cloud-panel'){cloudPanel()}
 else if(a==='cloud-close'){document.getElementById('cloudSyncPanel')?.remove()}
 else if(a==='open-add-word'){openAddWordModal()}
 else if(a==='lookup-word'){lookupCustomWord()}
