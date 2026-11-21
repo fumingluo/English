@@ -4814,10 +4814,15 @@ function parsePastedScripture(raw){
  const refPattern='(?:'+books+'|[1-3]?\\s*[A-Za-z]+(?:\\s+[A-Za-z]+){0,3})\\s*\\d{1,3}\\s*[:：章]\\s*\\d{1,3}(?:\\s*[-–—至~]\\s*\\d{1,3})?(?:\\s*节)?';
  const re=new RegExp(refPattern,'g'),matches=[...t.matchAll(re)];
  if(!matches.length)return {verse:t,reference:''};
- const match=matches[matches.length-1],reference=match[0].replace(/\\s+/g,' ').trim();
- let verse=(t.slice(0,match.index)+' '+t.slice(match.index+match[0].length)).trim();
- verse=verse.replace(/^[\\s【\[（(「『]+|[\\s】\]）)」』]+$/g,'').trim();
- verse=verse.replace(/^[：:、.．\s]+|[：:、.．\s]+$/g,'').trim();
+ const match=matches[matches.length-1],reference=match[0].replace(/\s+/g,' ').trim();
+ let before=t.slice(0,match.index).trimEnd(),after=t.slice(match.index+match[0].length).trimStart();
+ if(/[【\[(（「『]$/.test(before)&&/^[】\])）」』]/.test(after)){
+  before=before.slice(0,-1).trimEnd();
+  after=after.slice(1).trimStart();
+ }
+ let verse=(before+' '+after).trim();
+ verse=verse.replace(/^[\s【\[(（「『]+|[\s】\])）」』]+$/g,'').trim();
+ verse=verse.replace(/^[,，、;；\s]+|[,，、;；\s]+$/g,'').trim();
  return {verse,reference};
 }
 function addScriptureQuickCard(verse,reference){
