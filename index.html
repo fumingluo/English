@@ -227,10 +227,8 @@
 .example-tap-word{display:inline;border:0;background:transparent;color:inherit;font:inherit;font-weight:inherit;line-height:inherit;padding:0 1px;margin:0;cursor:pointer;border-radius:3px;transition:color .15s ease,background-color .15s ease,box-shadow .15s ease;transform:none!important;text-shadow:none!important;-webkit-font-smoothing:antialiased}
 .example-tap-word:hover,.example-tap-word:focus-visible{color:var(--green);background:rgba(73,137,82,.12);box-shadow:0 2px 0 rgba(73,137,82,.35);outline:none}
 .example-tap-word.is-selected{color:var(--green);background:rgba(73,137,82,.15);box-shadow:0 2px 0 var(--green)}
-.example-word-detail{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;padding:10px 12px;margin:10px 0;border:1px solid var(--line);border-radius:12px;background:var(--card,#fff);font-size:14px}
-.example-word-detail strong{font-size:17px}
-.example-word-meaning{flex:1;min-width:110px}
-.example-word-sound{white-space:nowrap}
+.example-word-detail{display:inline-block;vertical-align:baseline;margin:0 3px;padding:1px 6px;border-radius:5px;background:rgba(73,137,82,.10);color:var(--green);font-size:.85em;line-height:1.5;max-width:100%;overflow-wrap:anywhere;animation:example-meaning-in .16s ease-out}
+@keyframes example-meaning-in{from{opacity:.4;transform:translateY(3px)}to{opacity:1;transform:translateY(0)}}
 @media(prefers-reduced-motion:reduce){.example-tap-word{transition:none}}
 </style>
 </head>
@@ -3934,13 +3932,13 @@ async function showExampleWord(button){
  document.querySelectorAll('.example-word-detail').forEach(x=>x.remove());
  document.querySelectorAll('.example-tap-word.is-selected').forEach(x=>x.classList.remove('is-selected'));
  button.classList.add('is-selected');
- const panel=document.createElement('div');panel.className='example-word-detail';panel.innerHTML='<strong>'+esc(word)+'</strong><span class="example-word-meaning">正在查询释义…</span><button type="button" class="btn secondary example-word-sound">🔊 播放读音</button>';
- button.closest('.example').appendChild(panel);
- panel.querySelector('.example-word-sound').addEventListener('click',()=>say(word));
+ say(word);
+ const panel=document.createElement('span');panel.className='example-word-detail';panel.setAttribute('role','status');
+ panel.textContent='查询中…';button.insertAdjacentElement('afterend',panel);
  const local=allWords().find(w=>String(w.word||'').toLowerCase()===word.toLowerCase()&&w.meaning);
- if(local){panel.querySelector('.example-word-meaning').textContent=local.meaning;return}
- try{const meaning=await translateQuickEntry(word,'en','zh-CN');if(panel.isConnected)panel.querySelector('.example-word-meaning').textContent=meaning}
- catch(_){if(panel.isConnected)panel.querySelector('.example-word-meaning').textContent='暂时无法获取释义，请稍后重试'}
+ if(local){panel.textContent=local.meaning;return}
+ try{const meaning=await translateQuickEntry(word,'en','zh-CN');if(panel.isConnected)panel.textContent=meaning}
+ catch(_){if(panel.isConnected)panel.textContent='释义暂不可用'}
 }
 
 
