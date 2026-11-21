@@ -4870,7 +4870,7 @@ function openAddWordModal(){
   '<label class="label">英文例句<textarea class="field" name="en" maxlength="300" rows="2"></textarea></label>'+
   '<label class="label">例句中文翻译<textarea class="field" name="zh" maxlength="300" rows="2"></textarea></label>'+
   '<label class="label">难度等级<select class="field" name="level"><option>初级</option><option>中级</option><option>高级</option></select></label>'+
-  '<button class="btn primary" type="submit">保存并立即学习</button></details></div></form></section>';
+  '</details><button class="btn primary" type="submit" style="width:100%;margin-top:12px">一键保存单词卡</button></div></form></section>';
  document.body.appendChild(backdrop);
  backdrop.querySelector('[name="level"]').value=state.level;
  const paste=backdrop.querySelector('#scripturePaste'),verse=backdrop.querySelector('#scriptureText'),ref=backdrop.querySelector('#scriptureReference');
