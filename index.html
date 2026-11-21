@@ -85,7 +85,7 @@
 .reader-token{cursor:pointer;margin:0 1px;padding:0 1px;border:0;background:transparent;color:inherit;font:inherit;line-height:inherit;border-radius:4px}.reader-token:hover,.reader-token.selected{background:#f5edcf;color:#765c20}.reader-token.status-familiar{color:#315b91}.reader-token.status-known{color:#426b45}.reader-token.status-fluent{color:#758276}
 .reader-ref{display:inline-block;font:700 10px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:#8b9688;margin:0 7px 0 0;vertical-align:middle}
 .reader-word{display:inline;border:0!important;border-radius:0!important;background:transparent!important;color:inherit;padding:0!important;margin:0 1px!important;font:inherit;font-weight:400;line-height:inherit;text-decoration:none!important;box-shadow:none!important;position:relative;z-index:1;transform:translateY(0) scale(1);transform-origin:center;transition:transform .18s cubic-bezier(.2,.75,.25,1),color .18s ease,text-shadow .18s ease;will-change:transform}
-.reader-word:hover,.reader-word:focus-visible{background:transparent!important;outline:none!important;color:var(--green)!important;transform:translateY(-2px) scale(1.055);text-shadow:0 2px 7px #263b2926;z-index:5}
+.reader-word:hover,.reader-word:focus-visible{background:transparent!important;outline:none!important;color:var(--green)!important;transform:translateY(-2px);text-shadow:none;z-index:5}
 .reader-word.selected{background:transparent!important;outline:none!important;text-decoration:underline!important;text-decoration-color:#9aaa94!important;text-underline-offset:4px;transform:translateY(-1px)}
 .reader-word.status-unlearned{color:#29352b}
 .reader-word.status-familiar{color:#3977b8}
@@ -100,7 +100,7 @@
 .reader-detail strong{font-size:18px}
 .reader-word-wrap{position:relative;display:inline-block;vertical-align:baseline;white-space:normal;z-index:4}
 .reader-inline-detail{position:absolute;z-index:20;left:50%;top:auto;bottom:calc(100% + 11px);transform:translateX(-50%);display:block;width:min(270px,78vw);padding:12px;background:#fff;border:1px solid #dce6d8;border-radius:14px;box-shadow:0 12px 34px #1d321d2b;text-align:left;white-space:normal;font:13px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:var(--ink);animation:reader-pop-in .22s cubic-bezier(.2,.8,.2,1) both;transform-origin:50% 100%}
-@keyframes reader-pop-in{from{opacity:0;transform:translate(-50%,7px) scale(.94);filter:blur(2px)}to{opacity:1;transform:translate(-50%,0) scale(1);filter:blur(0)}}
+@keyframes reader-pop-in{from{opacity:0;transform:translate(-50%,7px) scale(.98)}to{opacity:1;transform:translate(-50%,0) scale(1)}}
 .reader-word-wrap.is-open{z-index:21}
 .reader-inline-detail:before{content:"";position:absolute;left:50%;bottom:-6px;width:10px;height:10px;background:#fff;border-right:1px solid #dce6d8;border-bottom:1px solid #dce6d8;transform:translateX(-50%) rotate(45deg)}
 @media(prefers-reduced-motion:reduce){.reader-inline-detail{animation:none}}
@@ -223,6 +223,15 @@
 :root[data-theme="dark"] input,:root[data-theme="dark"] textarea,:root[data-theme="dark"] select{background:#1c2a22;color:#e9f1e9;border-color:#405548}
 :root[data-theme="dark"] .progress{background:#344638}
 :root[data-theme="dark"] .sound{color:#e4f6e5}
+.example-interactive{line-height:1.95}
+.example-tap-word{display:inline;border:0;background:transparent;color:inherit;font:inherit;font-weight:inherit;line-height:inherit;padding:0 1px;margin:0;cursor:pointer;border-radius:3px;transition:color .15s ease,background-color .15s ease,box-shadow .15s ease;transform:none!important;text-shadow:none!important;-webkit-font-smoothing:antialiased}
+.example-tap-word:hover,.example-tap-word:focus-visible{color:var(--green);background:rgba(73,137,82,.12);box-shadow:0 2px 0 rgba(73,137,82,.35);outline:none}
+.example-tap-word.is-selected{color:var(--green);background:rgba(73,137,82,.15);box-shadow:0 2px 0 var(--green)}
+.example-word-detail{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;padding:10px 12px;margin:10px 0;border:1px solid var(--line);border-radius:12px;background:var(--card,#fff);font-size:14px}
+.example-word-detail strong{font-size:17px}
+.example-word-meaning{flex:1;min-width:110px}
+.example-word-sound{white-space:nowrap}
+@media(prefers-reduced-motion:reduce){.example-tap-word{transition:none}}
 </style>
 </head>
 <body>
@@ -3915,7 +3924,25 @@ function morphologyHTML(wordOrEntry){
 }
 
 function bibleStudyWords(){return BIBLE_MEMORY_BOOKS.flatMap(b=>Array.from({length:b.chapters},(_,i)=>{const chapter=i+1;return{id:'bible:'+b.id+':'+chapter,word:b.name+' 第'+chapter+'章',meaning:BIBLE_MEMORY_TITLES[b.id+':'+chapter]||'本章概要尚未整理',level:state.level,category:'圣经记忆',bibleCard:true,hasSummary:!!BIBLE_MEMORY_TITLES[b.id+':'+chapter]}})).filter(w=>w.hasSummary)}
-function allWords(){return FAMILY_ALBUM_WORDS.concat(WORDS,state.custom||[],bibleStudyWords())}function wordById(id){return allWords().find(w=>w.id===id)}function wordExampleHTML(w){let en=String(w.en||'').trim(),zh=String(w.zh||'').trim();if(!en)return '';return '<div class="example"><p>'+esc(en)+'</p>'+(zh&&zh!==String(w.meaning||'').trim()?'<p class="zh">'+esc(zh)+'</p>':'')+'</div>'}
+function allWords(){return FAMILY_ALBUM_WORDS.concat(WORDS,state.custom||[],bibleStudyWords())}function wordById(id){return allWords().find(w=>w.id===id)}function wordExampleHTML(w){
+ let en=String(w.en||'').trim(),zh=String(w.zh||'').trim();if(!en)return '';
+ const words=en.split(/([A-Za-z]+(?:['’][A-Za-z]+)?(?:-[A-Za-z]+)*)/g).map((part,i)=>/^[A-Za-z]/.test(part)?'<button type="button" class="example-tap-word" data-example-word="'+esc(part)+'" aria-label="查看 '+esc(part)+' 的释义和发音">'+esc(part)+'</button>':esc(part)).join('');
+ return '<div class="example"><p class="example-interactive">'+words+'</p>'+(zh&&zh!==String(w.meaning||'').trim()?'<p class="zh">'+esc(zh)+'</p>':'')+'</div>';
+}
+async function showExampleWord(button){
+ const word=button.dataset.exampleWord;if(!word)return;
+ document.querySelectorAll('.example-word-detail').forEach(x=>x.remove());
+ document.querySelectorAll('.example-tap-word.is-selected').forEach(x=>x.classList.remove('is-selected'));
+ button.classList.add('is-selected');
+ const panel=document.createElement('div');panel.className='example-word-detail';panel.innerHTML='<strong>'+esc(word)+'</strong><span class="example-word-meaning">正在查询释义…</span><button type="button" class="btn secondary example-word-sound">🔊 播放读音</button>';
+ button.closest('.example').appendChild(panel);
+ panel.querySelector('.example-word-sound').addEventListener('click',()=>say(word));
+ const local=allWords().find(w=>String(w.word||'').toLowerCase()===word.toLowerCase()&&w.meaning);
+ if(local){panel.querySelector('.example-word-meaning').textContent=local.meaning;return}
+ try{const meaning=await translateQuickEntry(word,'en','zh-CN');if(panel.isConnected)panel.querySelector('.example-word-meaning').textContent=meaning}
+ catch(_){if(panel.isConnected)panel.querySelector('.example-word-meaning').textContent='暂时无法获取释义，请稍后重试'}
+}
+
 
 
 const REINFORCE_REQUIRED=2,REINFORCE_STEPS=[600000,3600000];
@@ -5014,6 +5041,7 @@ document.getElementById('app').addEventListener('change',e=>{if(e.target.id==='b
 document.getElementById('app').addEventListener('change',e=>{if(e.target.id==='audioMode'){if(audioPlayer.playing)audioStop();audioPlayer.mode=e.target.value;audioRender()}else if(e.target.id==='audioGap'){audioPlayer.gap=Number(e.target.value);audioRender()}else if(e.target.id==='audioRate'){audioPlayer.rate=Number(e.target.value);audioRender()}else if(e.target.id==='audioLoop'){audioPlayer.loop=e.target.value==='1';audioRender()}});
 document.addEventListener('click',e=>{let b=e.target.closest('[data-action]');if(b){action(b);return}let card=e.target.closest('.minimal-word-card[data-swipe-card]');if(card&&Date.now()>suppressWordCardClickUntil){let w=wordById(card.dataset.swipeId);if(w)say(w.word)}});
 document.addEventListener('change',e=>{if(e.target?.id==='reinforceL3'){state.reinforce.level3=e.target.checked;save();render();}});
+document.addEventListener('click',e=>{const button=e.target.closest('.example-tap-word');if(button){showExampleWord(button);return}if(!e.target.closest('.example-word-detail')){document.querySelectorAll('.example-word-detail').forEach(x=>x.remove());document.querySelectorAll('.example-tap-word.is-selected').forEach(x=>x.classList.remove('is-selected'))}});
 document.addEventListener('click',e=>{if(!state.bible.readerWord||state.view!=='reader')return;if(e.target.closest('.reader-word-wrap')||e.target.closest('[data-action="reader-word"]'))return;state.bible.readerWord=null;renderPreservingScroll()});
 function swipeDirection(dx,dy){return Math.abs(dx)>Math.abs(dy)?(dx>0?'right':'left'):(dy<0?'up':'down')}
 function paintSwipe(g,dx,dy){let card=g.area,dir=swipeDirection(dx,dy),angle=Math.max(-11,Math.min(11,dx*.04));if(g.lastDir!==dir){card.classList.remove('drag-right','drag-left','drag-up','drag-down');card.classList.add('drag-'+dir);g.lastDir=dir}card.style.transform='translate3d('+dx+'px,'+dy+'px,0) rotate('+angle+'deg)'}
