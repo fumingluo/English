@@ -260,6 +260,24 @@
 :root[data-theme="dark"] .key-word{background:#293d30;color:#c6e2ca}
 :root[data-theme="dark"] .bible-book,:root[data-theme="dark"] .bible-chapter{background:#1c2a22;color:#e9f1e9;border-color:#3a5141}
 :root[data-theme="dark"] .bible-book.selected,:root[data-theme="dark"] .bible-chapter.selected{background:#2b5038;color:#e2f5e6;border-color:#679c73}
+
+/* Reader: coherent dark palette and compact non-reflow vocabulary tooltip */
+:root[data-theme="dark"] .reader-article,:root[data-theme="dark"] .reader-detail{background:#1c2a22;color:#e9f1e9;border:1px solid #34473b}
+:root[data-theme="dark"] .reader-verse,:root[data-theme="dark"] .reader-word.status-unlearned{color:#e9f1e9}
+:root[data-theme="dark"] .reader-ref{color:#a9b9aa}
+:root[data-theme="dark"] .reader-token:hover,:root[data-theme="dark"] .reader-token.selected{background:transparent;color:#a5d0aa}
+:root[data-theme="dark"] .reader-level,:root[data-theme="dark"] .reader-rating{background:#26372b;color:#e9f1e9;border-color:#405548}
+:root[data-theme="dark"] .reader-level.active,:root[data-theme="dark"] .reader-rating.active{background:#31573d;color:#e6f6e8;border-color:#739b79}
+:root[data-theme="dark"] .reader-inline-detail{background:#202f25;color:#e9f1e9;border-color:#405548}
+:root[data-theme="dark"] .reader-inline-detail:before{background:#202f25;border-color:#405548}
+.reader-word{will-change:auto!important;transform:none!important;transition:color .15s ease,background .15s ease!important}
+.reader-word:hover,.reader-word:focus-visible{transform:none!important}
+.reader-vocab-tip{position:fixed;z-index:9999;pointer-events:none;max-width:min(230px,calc(100vw - 24px));padding:7px 11px;border-radius:9px;background:#f7faf5;color:#263b29;border:1px solid #cbdcca;box-shadow:0 7px 22px #0002;font:13px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;overflow-wrap:anywhere}
+:root[data-theme="dark"] .reader-vocab-tip{background:#26372b;color:#e9f1e9;border-color:#48614e;box-shadow:0 9px 25px #0006}
+.reader-word.status-unknown{color:inherit}
+:root[data-theme="dark"] .reader-word.status-familiar{color:#89baff}
+:root[data-theme="dark"] .reader-word.status-known{color:#8cce9a}
+:root[data-theme="dark"] .reader-word.status-fluent{color:#e5c17b}
 </style>
 </head>
 <body>
@@ -5084,6 +5102,62 @@ if(state.daily.date!==today()){state.daily.date='';state.daily.ids=[];state.dail
 if(state.view==='speak')state.view='learn';
 if(dueWords().length)state.view='learn';
 render();
+
+/* Reader interactions: hover for meaning, click for audio, right click cycles proficiency.
+   Use a fixed tooltip so edge words never alter layout or trigger scroll jumps. */
+(function(){
+ let hoverTimer=null,tip=null,active=null;
+ const ratings=['unknown','familiar','known','fluent'];
+ function hide(){clearTimeout(hoverTimer);hoverTimer=null;if(tip){tip.remove();tip=null}active=null}
+ function show(b){
+  if(!b.isConnected||state.view!=='reader')return;
+  hide();active=b;
+  const word=b.dataset.word||b.textContent.trim();
+  const stored=state.bible.readerDefinitions||{};
+  const meaning=stored[word.toLowerCase()]||b.dataset.meaning||'';
+  tip=document.createElement('div');tip.className='reader-vocab-tip';tip.setAttribute('role','tooltip');
+  tip.textContent=word+' · '+(meaning==='点击查询中文释义'?'释义查询中':meaning);
+  document.body.appendChild(tip);
+  const rect=b.getBoundingClientRect(),w=tip.offsetWidth,h=tip.offsetHeight;
+  const left=Math.max(12,Math.min(window.innerWidth-w-12,rect.left+rect.width/2-w/2));
+  const top=rect.top-h-9>=8?rect.top-h-9:Math.min(window.innerHeight-h-8,rect.bottom+9);
+  tip.style.left=left+'px';tip.style.top=Math.max(8,top)+'px';
+ }
+ document.addEventListener('mouseover',function(e){
+  const b=e.target.closest('.reader-word[data-action="reader-word"]');
+  if(!b||state.view!=='reader')return;
+  if(active===b)return;
+  hide();hoverTimer=setTimeout(()=>show(b),550);
+ },true);
+ document.addEventListener('mouseout',function(e){
+  const b=e.target.closest('.reader-word[data-action="reader-word"]');
+  if(b&&!b.contains(e.relatedTarget))hide();
+ },true);
+ document.addEventListener('scroll',hide,true);
+ document.addEventListener('click',function(e){
+  const b=e.target.closest('.reader-word[data-action="reader-word"]');
+  if(!b||state.view!=='reader')return;
+  e.preventDefault();e.stopImmediatePropagation();
+  hide();readerSpeak(b.dataset.word,b.dataset.meaning,b.dataset.ref);
+ },true);
+ document.addEventListener('contextmenu',function(e){
+  const b=e.target.closest('.reader-word[data-action="reader-word"]');
+  if(!b||state.view!=='reader')return;
+  e.preventDefault();e.stopImmediatePropagation();hide();
+  const word=String(b.dataset.word||'').toLowerCase();
+  const levels=state.bible.readerWordLevels||(state.bible.readerWordLevels={});
+  const current=levels[word]||'unknown';
+  const next=ratings[(ratings.indexOf(current)+1)%ratings.length];
+  levels[word]=next;save();
+  document.querySelectorAll('.reader-word[data-word]').forEach(el=>{
+   if(String(el.dataset.word||'').toLowerCase()!==word)return;
+   el.classList.remove('status-unknown','status-unlearned','status-familiar','status-known','status-fluent');
+   el.classList.add('status-'+next);
+  });
+  showToast(['陌生','熟悉','掌握','熟练'][ratings.indexOf(next)]);
+ },true);
+ window.addEventListener('resize',hide);
+})();
 </script>
 
 <script type="module">
