@@ -281,6 +281,20 @@
 .scripture-static{cursor:default!important;transform:none!important;box-shadow:none!important}
 .review-session-card{border:1px solid var(--border);box-shadow:none}.review-session-head{border-left:3px solid var(--accent)}
 .stat-review-entry{appearance:none;-webkit-appearance:none;border:0;text-align:left;color:inherit;font:inherit;cursor:pointer;width:100%;transition:transform .18s ease,box-shadow .18s ease}.stat-review-entry:active{transform:scale(.98)}.stat-review-entry:focus-visible{outline:2px solid var(--green);outline-offset:2px}.stat-review-entry span span{font-size:13px;margin-left:2px}.shell.compact-page .stats-row{display:grid}
+
+/* FSRS difficulty colors: distinct, restrained fills in both themes. */
+.rating-grid .rating[data-rating="easy"]{background:#dff3e5;border-color:#9bcfab;color:#205b39}
+.rating-grid .rating[data-rating="good"]{background:#e3eefb;border-color:#a9c8eb;color:#275782}
+.rating-grid .rating[data-rating="hard"]{background:#fff0d5;border-color:#e8c88e;color:#815518}
+.rating-grid .rating[data-rating="again"]{background:#fbe3e2;border-color:#e6aaa6;color:#963d39}
+.rating-grid .rating[data-rating] small{color:inherit;opacity:.78}
+.rating-grid .rating[data-rating]{transition:filter .18s ease,transform .18s ease}
+.rating-grid .rating[data-rating]:active{transform:scale(.97)}
+.rating-grid .rating[data-rating]:hover{filter:brightness(.97)}
+:root[data-theme="dark"] .rating-grid .rating[data-rating="easy"]{background:#234b36;border-color:#397d55;color:#b7e8c7}
+:root[data-theme="dark"] .rating-grid .rating[data-rating="good"]{background:#223e5c;border-color:#426c9a;color:#c3def9}
+:root[data-theme="dark"] .rating-grid .rating[data-rating="hard"]{background:#534021;border-color:#8b6834;color:#f6d89b}
+:root[data-theme="dark"] .rating-grid .rating[data-rating="again"]{background:#592f31;border-color:#995155;color:#f6c4c1}
 </style>
 </head>
 <body>
