@@ -3827,8 +3827,8 @@ function fsrsRatingValue(value){
 }
 function fsrsRatingsHTML(actionName){
  return '<div class="rating-grid desktop-ratings">'+[
-  ['again','重来','1分钟后'],['hard','吃力','短期再学'],
-  ['good','良好','智能复习'],['easy','轻松','延长间隔']
+  ['easy','轻松','延长间隔'],['good','良好','智能复习'],
+  ['hard','吃力','短期再学'],['again','重来','1分钟后']
  ].map(x=>'<button class="rating" data-action="'+actionName+'" data-rating="'+x[0]+'">'+x[1]+'<small>'+x[2]+'</small></button>').join('')+'</div>';
 }
 
