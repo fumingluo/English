@@ -290,7 +290,6 @@
 </div>
 <nav class="nav"><div class="nav-inner" id="nav">
  <button data-view="learn" class="active"><b>📖</b>单词</button>
- <button data-view="review"><b>🔁</b>复习</button>
  <button data-view="reader"><b>📜</b>语境阅读</button>
 </div></nav>
 <div id="toast" class="toast hidden" role="status"></div>
@@ -4424,7 +4423,7 @@ function cloudPanel(){
  el.addEventListener('click',e=>{if(e.target===el)el.remove()});document.body.appendChild(el)
 }
 function updateHeader(){document.getElementById('dateLabel').textContent=new Date().toLocaleDateString('zh-CN',{month:'long',day:'numeric',weekday:'short'});let learned=Object.keys(state.cards).filter(k=>state.cards[k]&&state.cards[k].seen&&!k.startsWith('bible:')).length;document.getElementById('summaryStats').innerHTML='<div class="stat"><strong>🔥 '+(state.stats.streak||0)+'</strong><span>连续学习天数</span></div><div class="stat"><strong>📚 '+learned+'</strong><span>累计学习词数</span></div>';document.querySelector('.shell').classList.toggle('compact-page',state.view!=='learn')}
-function render(){if(state.view==='speak'||state.view==='explore')state.view='learn';if(state.view==='bible'||state.view==='bible-memory'){state.view='learn';state.learnBible=false;}if(state.view==='listen'||state.view==='audio')state.view='review';if(state.view==='mine')state.view='learn';updateHeader();document.querySelectorAll('#nav button').forEach(b=>b.classList.toggle('active',b.dataset.view===state.view));let views={learn:learnView,review:reviewView,reader:contextReadingView,reinforce:reinforceView};(views[state.view]||learnView)(document.getElementById('app'))}
+function render(){if(state.view==='speak'||state.view==='explore')state.view='learn';if(state.view==='bible'||state.view==='bible-memory'){state.view='learn';state.learnBible=false;}if(state.view==='listen'||state.view==='audio')state.view='review';if(state.view==='mine')state.view='learn';updateHeader();document.querySelectorAll('#nav button').forEach(b=>b.classList.toggle('active',b.dataset.view===state.view||(state.view==='review'&&b.dataset.view==='learn')));let views={learn:learnView,review:reviewView,reader:contextReadingView,reinforce:reinforceView};(views[state.view]||learnView)(document.getElementById('app'))}
 window.getAppState=function(){return state};
  window.getAllWordsCount=function(){return allWords().length};
 window.applyCloudState=function(data){if(!data||typeof data!=='object')return;let fresh=blank();state=Object.assign(fresh,data);state.stats=Object.assign(blank().stats,data.stats||{});state.listenStats=Object.assign(blank().listenStats,data.listenStats||{});state.daily=Object.assign(blank().daily,data.daily||{});state.review=Object.assign(blank().review,data.review||{});state.bible=Object.assign(blank().bible,data.bible||{});state.reinforce=Object.assign(blank().reinforce,data.reinforce||{});state.cards=data.cards&&typeof data.cards==='object'?data.cards:{};Object.keys(state.cards).forEach(k=>{let c=state.cards[k];if(c&&c.struggleCount==null)c.struggleCount=c.rating==='unknown'?1:0;if(c&&c.unknownCount==null)c.unknownCount=c.rating==='unknown'?1:0;if(c&&c.reinforceSuccesses==null)c.reinforceSuccesses=0});Object.values(state.cards).forEach(migrateFsrsCard);state.custom=Array.isArray(data.custom)?data.custom:[];if(!Array.isArray(state.bible.revelationVerses))state.bible.revelationVerses=[];dailyDueBootstrap=false;try{localStorage.setItem(KEY,JSON.stringify(state))}catch(e){}render();showToast('已从云端同步最新学习进度')};
@@ -4450,13 +4449,13 @@ function learnView(app){
  let remaining=availableNewWords().length;
  if(!w){
   const canContinue=remaining>0;
-  app.innerHTML=reinforceBanner+'<div class="card empty"><div style="font-size:32px">🎉</div><h2>这一组新词学完了</h2><p>'+(canContinue?'这组单词和短期重学都完成了。继续下一组，会再加入最多 20 个尚未学过的新词。':'当前词库中暂时没有更多未学新词。你也可以进入复习计划巩固记忆。')+'</p><div class="actions">'+(canContinue?'<button class="btn primary" data-action="continue-learning">继续学习下一组（最多 20 个）</button>':'<button class="btn secondary" data-action="go-review">查看复习计划</button>')+'</div></div>';
+  app.innerHTML=reinforceBanner+'<div class="card empty"><button class="btn quiet" data-action="go-review" style="float:right">🔁 复习</button><div style="font-size:32px">🎉</div><h2>这一组新词学完了</h2><p>'+(canContinue?'这组单词和短期重学都完成了。继续下一组，会再加入最多 20 个尚未学过的新词。':'当前词库中暂时没有更多未学新词。你也可以进入复习计划巩固记忆。')+'</p><div class="actions">'+(canContinue?'<button class="btn primary" data-action="continue-learning">继续学习下一组（最多 20 个）</button>':'<button class="btn secondary" data-action="go-review">查看复习计划</button>')+'</div></div>';
   return;
  }
  const entry=w._dailyEntry,currentBatch=Number(state.daily.batch)||1;
  const newDone=state.daily.studyQueue.slice(0,i+1).filter(x=>x.kind==='new').length;
  const pending=(state.daily.shortQueue||[]).length;
- const progress='<div class="row" style="margin:8px 3px 0"><span class="small muted">新词学习 · 第 '+currentBatch+' 组</span><span class="tag">新词 '+newDone+' / '+state.daily.ids.length+'</span></div>'+(pending?'<div class="small muted" style="text-align:center;margin-top:5px">短期重学队列：'+pending+' 个待插入</div>':'');
+ const progress='<div class="row" style="margin:8px 3px 0;align-items:center;justify-content:space-between"><span class="small muted">新词学习 · 第 '+currentBatch+' 组</span><div class="row" style="gap:8px;align-items:center"><button class="btn quiet" style="padding:5px 9px;font-size:12px" data-action="go-review">🔁 复习</button><span class="tag">新词 '+newDone+' / '+state.daily.ids.length+'</span></div></div>'+(pending?'<div class="small muted" style="text-align:center;margin-top:5px">短期重学队列：'+pending+' 个待插入</div>':'');
  const sourceLabel=entry.kind==='due'?'<div class="small muted" style="text-align:center;margin:6px 0 0">到期复习 · 已自动排在新词之前</div>':(entry.kind==='relearn'?'<div class="small muted" style="text-align:center;margin:6px 0 0">即时重学 · 第 '+entry.attempt+' 次回忆</div>':(w.category==='走遍美国'?'<div class="small muted" style="text-align:center;margin:6px 0 0">走遍美国 · 第 '+w.episode+' 集 · '+esc(w.episodeTitle)+'</div>':''));
  let c=state.cards[w.id]||{};
  const struggleHint=Number(c.struggleCount)>0?'<div class="small muted" style="text-align:center;margin:5px 0 0">记忆困难值：'+Math.min(REINFORCE_THRESHOLD,Number(c.struggleCount))+' / '+REINFORCE_THRESHOLD+'</div>':'';
@@ -4564,7 +4563,7 @@ function reviewView(app){
 
  const learnedWords=allWords().filter(w=>state.cards[w.id]?.seen),difficult=learnedWords.filter(w=>(Number(state.cards[w.id]?.struggleCount)||0)>0),tab=state.reviewHubTab||'home';
  const tiles=[['due','📅 到期复习',due.length],['cloze','🧩 完形词',learnedWords.length],['difficult','🔥 难词强化',difficult.length],['special','🎯 专项复习',learnedWords.length],['all','📚 全部已学卡片',learnedWords.length],['bible','📖 圣经记忆记录',learnedWords.filter(w=>w.bibleCard).length]];
- const top='<div class="card"><div class="row"><h2 class="section-title">复习中心</h2>'+(tab!=='home'?'<button class="btn quiet" data-action="review-hub" data-tab="home">返回</button>':'')+'</div></div>';
+ const top='<div class="card"><div class="row"><h2 class="section-title">复习中心</h2><button class="btn quiet" data-action="go-learn">返回单词</button>'+(tab!=='home'?'<button class="btn quiet" data-action="review-hub" data-tab="home">返回</button>':'')+'</div></div>';
  if(tab==='home'){app.innerHTML=reinforceBannerHTML()+top+'<div class="card"><div class="row" style="gap:8px;flex-wrap:wrap"><button class="btn primary" data-action="review-play-learned">▶ 连续播放已学单词 · 浮窗同步</button><button class="btn secondary" data-action="review-stop-learned">■ 停止播放</button></div></div><div class="review-hub-grid">'+tiles.map(t=>'<button class="review-hub-tile" data-action="review-hub" data-tab="'+t[0]+'"><strong>'+t[1]+'</strong><span>'+t[2]+' 个</span></button>').join('')+'</div>';return;}
  if(tab==='all'||tab==='bible'){const q=String(state.reviewSearch||'').toLowerCase(),filtered=learnedWords.filter(w=>(tab!=='bible'||w.bibleCard)&&(w.word+' '+w.meaning).toLowerCase().includes(q));app.innerHTML=top+'<div class="card"><input class="field" id="reviewSearch" placeholder="搜索单词或释义" value="'+esc(state.reviewSearch||'')+'"><p>共 '+filtered.length+' 个</p><div class="review-word-list">'+filtered.slice(0,150).map(w=>'<button class="review-word-row" data-action="review-word" data-id="'+esc(w.id)+'"><strong>'+esc(w.word)+'</strong><span>'+esc(w.meaning)+'</span></button>').join('')+'</div>'+(filtered.length>150?'<p>仅显示前150项，请搜索缩小范围</p>':'')+'</div>';return;}
  if(tab==='cloze'){const words=learnedWords.filter(w=>!w.bibleCard&&w.en),w=wordById(state.reviewClozeId)||words[0];if(!w){app.innerHTML=top+'<div class="card">请先学习带例句的单词。</div>';return;}state.reviewClozeId=w.id;const sentence=String(w.en).replace(new RegExp(w.word,'ig'),'______');app.innerHTML=top+'<div class="card"><h3>完形词复习</h3><p class="reinforce-prompt">'+esc(sentence)+'</p><p>'+esc(w.zh||'')+'</p>'+(state.reviewClozeRevealed?'<div class="answer">'+esc(w.word)+' · '+esc(w.meaning)+'</div>':'')+'<button class="btn secondary" data-action="cloze-reveal">查看答案</button><button class="btn primary" data-action="cloze-next">下一题</button></div>';return;}
@@ -5022,6 +5021,7 @@ else if(a==='reinforce-speak'){const w=wordById(b.dataset.id);if(w)say(w.word)}
 else if(a==='reinforce-choice')answerReinforceChoice(b.dataset.id)
 else if(a==='reinforce-next')advanceReinforceQuestion()
 else if(a==='go-review'){state.view='review';render()}
+else if(a==='go-learn'){state.review.active=false;state.view='learn';save();render()}
 else if(a==='continue-learning')continueLearning()
 else if(a==='auto-review-reveal'){let w=dueWords()[0];if(w){say(w.word);state.cards[w.id]=Object.assign({},state.cards[w.id]||{},{reviewRevealed:true});save();render()}}
  else if(a==='auto-review-rate'){let w=dueWords()[0];if(w)schedule(w.id,b.dataset.rating,'auto')}
