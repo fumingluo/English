@@ -295,6 +295,15 @@
 :root[data-theme="dark"] .rating-grid .rating[data-rating="good"]{background:#223e5c;border-color:#426c9a;color:#c3def9}
 :root[data-theme="dark"] .rating-grid .rating[data-rating="hard"]{background:#534021;border-color:#8b6834;color:#f6d89b}
 :root[data-theme="dark"] .rating-grid .rating[data-rating="again"]{background:#592f31;border-color:#995155;color:#f6c4c1}
+
+/* Three focused learning pillars: vocabulary, scripture memory, context reading */
+.nav-inner{grid-template-columns:repeat(3,minmax(0,1fr));max-width:600px;gap:6px}
+.nav button{font-size:11px;font-weight:650;min-height:54px}
+.nav button.active{background:#e7f0e7;color:#28533d}
+.bible-memory-card{border:1px solid #e4eae1;background:linear-gradient(145deg,#fff,#f9fbf7)}
+.bible-memory-card h3{font-size:clamp(19px,5vw,26px);line-height:1.5}
+.bible-book-grid,.bible-chapter-grid{scroll-margin-top:15px}
+@media(max-width:420px){.nav{padding-left:7px;padding-right:7px}.nav-inner{gap:3px}.nav button{font-size:10px}}
 </style>
 </head>
 <body>
@@ -304,7 +313,8 @@
  <main id="app" aria-live="polite"></main>
 </div>
 <nav class="nav"><div class="nav-inner" id="nav">
- <button data-view="learn" class="active"><b>📖</b>单词</button>
+ <button data-view="learn" class="active"><b>📖</b>单词学习</button>
+ <button data-view="bible-memory"><b>🧠</b>圣经记忆</button>
  <button data-view="reader"><b>📜</b>语境阅读</button>
 </div></nav>
 <div id="toast" class="toast hidden" role="status"></div>
@@ -4438,7 +4448,7 @@ function cloudPanel(){
  el.addEventListener('click',e=>{if(e.target===el)el.remove()});document.body.appendChild(el)
 }
 function updateHeader(){document.getElementById('dateLabel').textContent=new Date().toLocaleDateString('zh-CN',{month:'long',day:'numeric',weekday:'short'});let learned=Object.keys(state.cards).filter(k=>state.cards[k]&&state.cards[k].seen&&!k.startsWith('bible:')).length;document.getElementById('summaryStats').innerHTML='<div class="stat"><strong>🔥 '+(state.stats.streak||0)+'</strong><span>连续学习天数</span></div><button type="button" class="stat stat-review-entry" data-action="go-review" aria-label="查看累计学习词数与复习中心"><strong>📚 '+learned+'</strong><span>累计学习词数 <span aria-hidden="true">›</span></span></button>';document.querySelector('.shell').classList.toggle('compact-page',state.view!=='learn')}
-function render(){if(state.view==='speak'||state.view==='explore')state.view='learn';if(state.view==='bible'||state.view==='bible-memory'){state.view='learn';state.learnBible=false;}if(state.view==='listen'||state.view==='audio')state.view='review';if(state.view==='mine')state.view='learn';updateHeader();document.querySelectorAll('#nav button').forEach(b=>b.classList.toggle('active',b.dataset.view===state.view||(state.view==='review'&&b.dataset.view==='learn')));let views={learn:learnView,review:reviewView,reader:contextReadingView,reinforce:reinforceView};(views[state.view]||learnView)(document.getElementById('app'))}
+function render(){if(state.view==='speak'||state.view==='explore')state.view='learn';if(state.view==='bible'){state.view='bible-memory';state.learnBible=false;}if(state.view==='listen'||state.view==='audio')state.view='review';if(state.view==='mine')state.view='learn';updateHeader();document.querySelectorAll('#nav button').forEach(b=>b.classList.toggle('active',b.dataset.view===state.view||(state.view==='review'&&b.dataset.view==='learn')));let views={learn:learnView,'bible-memory':bibleMemoryView,review:reviewView,reader:contextReadingView,reinforce:reinforceView};(views[state.view]||learnView)(document.getElementById('app'))}
 window.getAppState=function(){return state};
  window.getAllWordsCount=function(){return allWords().length};
 window.applyCloudState=function(data){if(!data||typeof data!=='object')return;let fresh=blank();state=Object.assign(fresh,data);state.stats=Object.assign(blank().stats,data.stats||{});state.listenStats=Object.assign(blank().listenStats,data.listenStats||{});state.daily=Object.assign(blank().daily,data.daily||{});state.review=Object.assign(blank().review,data.review||{});state.bible=Object.assign(blank().bible,data.bible||{});state.reinforce=Object.assign(blank().reinforce,data.reinforce||{});state.cards=data.cards&&typeof data.cards==='object'?data.cards:{};Object.keys(state.cards).forEach(k=>{let c=state.cards[k];if(c&&c.struggleCount==null)c.struggleCount=c.rating==='unknown'?1:0;if(c&&c.unknownCount==null)c.unknownCount=c.rating==='unknown'?1:0;if(c&&c.reinforceSuccesses==null)c.reinforceSuccesses=0});Object.values(state.cards).forEach(migrateFsrsCard);state.custom=Array.isArray(data.custom)?data.custom:[];if(!Array.isArray(state.bible.revelationVerses))state.bible.revelationVerses=[];dailyDueBootstrap=false;try{localStorage.setItem(KEY,JSON.stringify(state))}catch(e){}render();showToast('已从云端同步最新学习进度')};
